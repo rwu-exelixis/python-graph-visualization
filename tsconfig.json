@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "module": "ESNext",
+    "target": "ESNext",
+    "allowJs": true,
+    "declaration": true,
+    "useDefineForClassFields": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "Bundler",
+    "outDir": "./nvl_package/dist/"
+  },
+  "files": ["src/index.ts"]
+}

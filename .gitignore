@@ -1,0 +1,54 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+docs
+
+# dependencies
+node_modules
+
+# testing
+coverage
+test
+
+# misc
+.DS_Store
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# yarn/vite build
+lib
+dist
+
+# playwright
+playwright
+testDataDump
+
+# typescript
+tsconfig.tsbuildinfo
+
+# ide
+*.code-workspace
+
+# intellij
+.idea
+
+*.egg-info
+.ipynb_checkpoints
+
+__pycache__
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
