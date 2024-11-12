@@ -1,7 +1,4 @@
 const path = require('path')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const GenerateJsonWebpackPlugin = require('generate-json-webpack-plugin')
-const basePackageJson = require('./package.json')
 
 module.exports = [
   {
@@ -27,19 +24,6 @@ module.exports = [
     resolve: {
       extensions: ['.ts', '.js']
     },
-    plugins: [
-      new GenerateJsonWebpackPlugin(
-        'package.json',
-        {
-          name: basePackageJson.name,
-          main: './base.js',
-          version: basePackageJson.version,
-          license: basePackageJson.license
-        },
-        null,
-        2
-      )
-    ],
     output: {
       path: path.resolve(__dirname, 'nvl_package/dist'),
       publicPath: '',
