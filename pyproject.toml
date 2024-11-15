@@ -10,8 +10,21 @@ readme = "README.md"
 authors = [{ name = "Neo4j", email = "team-gds@neo4j.org" }]
 license = { file = "LICENSE" }
 classifiers = [
+    "Development Status :: 2 - Pre-alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Database :: Front-Ends",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development",
+    "Typing :: Typed",
 ]
 keywords = ["graph", "visualization", "neo4j"]
 dependencies = ["ipython >=8, <9"]
