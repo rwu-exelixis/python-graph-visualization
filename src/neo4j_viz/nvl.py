@@ -1,6 +1,4 @@
 from importlib.abc import Traversable
-import os
-import pathlib
 import uuid
 from typing import Any
 from importlib.resources import files
