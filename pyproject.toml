@@ -49,7 +49,7 @@ include = [
 namespaces = false # only scan directories with __init__.py files (true by default)
 
 [tool.setuptools.package-data]
-nvl_package = ["resources/nvl_entrypoint/base.js"]
+nvl_package = ["resources/nvl_entrypoint/base.js", "py.typed"]
 
 
 [tool.ruff]
