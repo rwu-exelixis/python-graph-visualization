@@ -1,6 +1,12 @@
+import sys
 import uuid
 from importlib.resources import files
-from importlib.resources.abc import Traversable
+
+if sys.version_info >= (3, 11):
+    from importlib.resources.abc import Traversable
+else:
+    from importlib.abc import Traversable
+
 from typing import Any
 
 from IPython.display import HTML
