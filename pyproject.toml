@@ -1,6 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neo4j-viz"
+version = "0.1.0"
+description = "A simple graph visualization tool"
+readme = "README.md"
+authors = [{ name = "Neo4j", email = "team-gds@neo4j.org" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["graph", "visualization", "neo4j"]
+dependencies = ["ipython >=8, <9"]
+requires-python = ">=3.9"
+
+
+[project.optional-dependencies]
+dev = ["ruff==0.7.3", "mypy==1.13.0"]
+notebook = ["ipykernel==6.29.5", "pykernel==0.1.6", "neo4j>=5.26.0"]
+
+[project.urls]
+Homepage = "https://neo4j.com/"
+
+[tool.setuptools]
+include-package-data = true
+packages = ["nvl_package"]
+
+[tool.setuptools.package-data]
+nvl_package = ["dist/base.js"]
+
+
 [tool.ruff]
 line-length = 120
-
 include = ["*.py", "*.ipynb"]
 
 exclude = [
@@ -42,9 +76,11 @@ exclude = [
 
 [tool.ruff.lint]
 select = [
-    "E4", "E7", "E9", # default pycodestyle rules
-    "F", # flake8
-    "I" # isort
+    "E4",
+    "E7",
+    "E9", # default pycodestyle rules
+    "F",  # flake8
+    "I",  # isort
 ]
 
 [tool.mypy]
