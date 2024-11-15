@@ -2,6 +2,8 @@ import sys
 import uuid
 from importlib.resources import files
 
+from .node import Node
+
 if sys.version_info >= (3, 11):
     from importlib.resources.abc import Traversable
 else:
@@ -21,17 +23,19 @@ class NVL:
 
     def render(
         self,
-        nodes: list[dict[str, Any]],
+        nodes: list[Node],
         relationships: list[dict[str, Any]],
         options: dict[str, Any] = {},
         width: str = "100%",
         height: str = "300px",
     ) -> HTML:
+
+        nodes_json = [node.to_dict() for node in nodes]
         container_id = str(uuid.uuid4())
         js_code = f"""
         var myNvl = new NVLBase.NVL(
             document.getElementById('{container_id}'),
-            {nodes},
+            {nodes_json},
             {relationships},
             {options}
         );
