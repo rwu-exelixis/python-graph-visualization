@@ -66,5 +66,5 @@ tsconfig.tsbuildinfo
 
 __pycache__
 
-# Tmp
-src/neo4j_viz/resources/nvl_entrypoint/*
+# Should we ignore the following?
+# src/neo4j_viz/resources/nvl_entrypoint/*

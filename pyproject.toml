@@ -32,7 +32,7 @@ requires-python = ">=3.9"
 
 
 [project.optional-dependencies]
-dev = ["ruff==0.7.3", "mypy==1.13.0"]
+dev = ["ruff==0.7.3", "mypy==1.13.0", "pytest==8.3.3"]
 notebook = ["ipykernel==6.29.5", "pykernel==0.1.6", "neo4j>=5.26.0"]
 
 [project.urls]
@@ -49,8 +49,12 @@ include = [
 namespaces = false # only scan directories with __init__.py files (true by default)
 
 [tool.setuptools.package-data]
-nvl_package = ["resources/nvl_entrypoint/base.js", "py.typed"]
+neo4j_viz = ["resources/nvl_entrypoint/base.js", "py.typed"]
 
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
 
 [tool.ruff]
 line-length = 120
