@@ -31,6 +31,7 @@ def test_nodes_minimal_node() -> None:
         "id": "1",
     }
 
+
 def test_node_to_json() -> None:
     node = Node(
         id="1",

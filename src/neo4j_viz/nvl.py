@@ -29,7 +29,6 @@ class NVL:
         width: str = "100%",
         height: str = "300px",
     ) -> HTML:
-
         nodes_json = [node.to_dict() for node in nodes]
         container_id = str(uuid.uuid4())
         js_code = f"""

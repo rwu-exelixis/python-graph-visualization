@@ -30,7 +30,7 @@ class Node:
 
     def to_dict(self) -> dict[str, Any]:
         # skip None values in the dict
-        return {k:v for k, v in asdict(self).items() if v is not None}
+        return {k: v for k, v in asdict(self).items() if v is not None}
 
     def to_json(self) -> str:
         return dumps(self.to_dict())
