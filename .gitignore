@@ -38,6 +38,16 @@ yarn-error.log*
 lib
 dist
 
+# yarn
+yarn.lock
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # playwright
 playwright
 testDataDump
@@ -55,10 +65,3 @@ tsconfig.tsbuildinfo
 .ipynb_checkpoints
 
 __pycache__
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
