@@ -6,3 +6,4 @@ set -o pipefail
 
 python -m ruff check .
 python -m ruff format --check .
+mypy .
