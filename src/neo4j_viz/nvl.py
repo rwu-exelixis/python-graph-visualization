@@ -1,6 +1,6 @@
 import uuid
-from importlib.abc import Traversable
 from importlib.resources import files
+from importlib.resources.abc import Traversable
 from typing import Any
 
 from IPython.display import HTML
