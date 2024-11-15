@@ -6,16 +6,16 @@ This project contains an experimental Python wrapper with the NVL JavaScript lib
 
 To build the Python packages, run
 
-```
-yarn
-yarn build
-yarn install-package # or `pip install .`
+```sh
+yarn          # Install JavaScript dependencies
+yarn build    # Build JavaScript resources to be used by Python code
+pip install . # run with --editable for development mode
 ```
 
-To test if the wrapper is working and see some examples, you can use the `neo4j-nvl-example.ipynb` notebook:
+To test if the wrapper is working and see some examples checkout the `/examples` directory
 
-```
-jupyter notebook neo4j-nvl-example.ipynb
+```sh
+jupyter notebook examples/neo4j-nvl-example.ipynb
 ```
 
 
@@ -32,7 +32,22 @@ This is a multi-language project.
 /tests
 ```
 
-`babel.config.js` - Config for the JavaScript compiler
-`tsconfig.json` - Configuration for TypeScript code
-`package.json` - ...
-`webpack.config.js` -
+#### JavaScipts configs
+
+* `babel.config.js` - Config for the JavaScript compiler
+* `tsconfig.json` - Configuration for TypeScript code
+* `package.json` - For yarn, define dependencies and `build` target
+* `webpack.config.js` - Config for bundling JS parts
+
+#### Python
+
+Everything is configured inside `pyproject.toml`
+
+To keep a consistent code-style, we use `ruff` and `mypy`.
+For convenience there are a couple of scripts:
+
+```sh
+./scripts/makestyle.sh # try to fix linting violations and format code
+./scripts/checkstyle.sh # check for linting, format or typing issues
+
+```
