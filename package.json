@@ -2,7 +2,7 @@
   "name": "nvl-python-wrapper",
   "version": "0.3.6",
   "files": [
-    "nvl_package"
+    "src/neo4j_viz"
   ],
   "scripts": {
     "build": "webpack",

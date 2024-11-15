@@ -10,9 +10,14 @@
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "moduleResolution": "Bundler",
-    "outDir": "./nvl_package/dist/"
+    "outDir": "./src/neo4j_viz/resources/nvl_entrypoint"
   },
-  "files": ["src/index.ts"]
+  "files": [
+    "src/nvl_entrypoint/index.ts"
+  ]
 }

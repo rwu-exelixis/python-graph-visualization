@@ -27,10 +27,16 @@ Homepage = "https://neo4j.com/"
 
 [tool.setuptools]
 include-package-data = true
-packages = ["nvl_package"]
+
+[tool.setuptools.packages.find]
+where = ["src"] # list of folders that contain the packages (["."] by default)
+include = [
+    "neo4j_viz*",
+] # package names should match these glob patterns (["*"] by default)
+namespaces = false # only scan directories with __init__.py files (true by default)
 
 [tool.setuptools.package-data]
-nvl_package = ["dist/base.js"]
+nvl_package = ["resources/nvl_entrypoint/base.js"]
 
 
 [tool.ruff]
