@@ -1,16 +1,26 @@
 import os
 import uuid
+from typing import Any
+
 from IPython.display import HTML
 
-class NVL:
-    def __init__(self):
-        module_dir = os.path.dirname(__file__)
-        js_path = os.path.join(module_dir, 'dist', 'base.js')
 
-        with open(js_path, 'r', encoding='utf-8') as file:
+class NVL:
+    def __init__(self) -> None:
+        module_dir = os.path.dirname(__file__)
+        js_path = os.path.join(module_dir, "dist", "base.js")
+
+        with open(js_path, "r", encoding="utf-8") as file:
             self.library_code = file.read()
 
-    def render(self, nodes, relationships, options={}, width='100%', height='300px'):
+    def render(
+        self,
+        nodes: list[dict[str, Any]],
+        relationships: list[dict[str, Any]],
+        options: dict[str, Any] = {},
+        width: str = "100%",
+        height: str = "300px",
+    ) -> HTML:
         container_id = str(uuid.uuid4())
         js_code = f"""
         var myNvl = new NVLBase.NVL(
@@ -27,4 +37,4 @@ class NVL:
             {full_code}
         </script>
         """
-        display(HTML(html_output))
+        return HTML(html_output)  # type: ignore[no-untyped-call]
