@@ -51,6 +51,10 @@ namespaces = false # only scan directories with __init__.py files (true by defau
 [tool.setuptools.package-data]
 nvl_package = ["resources/nvl_entrypoint/base.js", "py.typed"]
 
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
 
 [tool.ruff]
 line-length = 120
