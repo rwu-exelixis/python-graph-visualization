@@ -1,19 +1,19 @@
-### NVL Python Wrapper
+# NVL Python Wrapper
 
 This project contains an experimental Python wrapper with the NVL JavaScript library.
 
-##### Getting started
+## Getting started
 
 To build the Python packages, run
 
-```
-yarn
-yarn build
-yarn install-package
+```sh
+yarn          # Install JavaScript dependencies
+yarn build    # Build JavaScript resources to be used by Python code
+pip install . # run with --editable for development mode
 ```
 
-To test if the wrapper is working and see some examples, you can use the `neo4j-nvl-example.ipynb` notebook:
+To test if the wrapper is working and see some examples checkout the `/examples` directory
 
-```
-jupyter notebook neo4j-nvl-example.ipynb
+```sh
+jupyter notebook examples/neo4j-nvl-example.ipynb
 ```

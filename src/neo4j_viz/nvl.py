@@ -1,16 +1,17 @@
+from importlib.abc import Traversable
 import os
+import pathlib
 import uuid
 from typing import Any
-
+from importlib.resources import files
 from IPython.display import HTML
 
 
 class NVL:
     def __init__(self) -> None:
-        module_dir = os.path.dirname(__file__)
-        js_path = os.path.join(module_dir, "dist", "base.js")
+        js_path: Traversable = files("neo4j_viz.resources.nvl_entrypoint") / "base.js"
 
-        with open(js_path, "r", encoding="utf-8") as file:
+        with js_path.open("r", encoding="utf-8") as file:
             self.library_code = file.read()
 
     def render(

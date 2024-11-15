@@ -1,12 +1,8 @@
 {
   "name": "nvl-python-wrapper",
   "version": "0.3.6",
-  "files": [
-    "nvl_package"
-  ],
   "scripts": {
-    "build": "webpack",
-    "install-package": "pip install ."
+    "build": "webpack"
   },
   "devDependencies": {
     "babel-loader": "^8.2.5",

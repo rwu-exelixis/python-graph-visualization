@@ -65,3 +65,6 @@ tsconfig.tsbuildinfo
 .ipynb_checkpoints
 
 __pycache__
+
+# Tmp
+src/neo4j_viz/resources/nvl_entrypoint/*
