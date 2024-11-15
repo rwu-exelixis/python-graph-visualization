@@ -46,3 +46,7 @@ select = [
     "F", # flake8
     "I" # isort
 ]
+
+[tool.mypy]
+strict = true
+exclude = '(^build|^\.?venv)'
