@@ -11,7 +11,7 @@ if sys.version_info >= (3, 11):
 else:
     from importlib.abc import Traversable
 
-from typing import Any
+from typing import Any, Optional
 
 from IPython.display import HTML
 
@@ -27,7 +27,7 @@ class NVL:
         self,
         nodes: list[Node],
         relationships: list[Relationship],
-        options: dict[str, Any] = {},
+        options: Optional[dict[str, Any]] = None,
         width: str = "100%",
         height: str = "300px",
     ) -> HTML:
@@ -39,7 +39,7 @@ class NVL:
             document.getElementById('{container_id}'),
             {nodes_json},
             {rels_json},
-            {options}
+            {options if options is not None else {}}
         );
         """
         full_code = self.library_code + js_code
