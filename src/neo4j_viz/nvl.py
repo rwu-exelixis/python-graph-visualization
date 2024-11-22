@@ -1,6 +1,10 @@
+import json
 import sys
 import uuid
 from importlib.resources import files
+
+from .node import Node
+from .relationship import Relationship
 
 if sys.version_info >= (3, 11):
     from importlib.resources.abc import Traversable
@@ -21,18 +25,20 @@ class NVL:
 
     def render(
         self,
-        nodes: list[dict[str, Any]],
-        relationships: list[dict[str, Any]],
+        nodes: list[Node],
+        relationships: list[Relationship],
         options: dict[str, Any] = {},
         width: str = "100%",
         height: str = "300px",
     ) -> HTML:
+        nodes_json = json.dumps([node.to_dict() for node in nodes])
+        rels_json = json.dumps([rel.to_dict() for rel in relationships])
         container_id = str(uuid.uuid4())
         js_code = f"""
         var myNvl = new NVLBase.NVL(
             document.getElementById('{container_id}'),
-            {nodes},
-            {relationships},
+            {nodes_json},
+            {rels_json},
             {options}
         );
         """
