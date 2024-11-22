@@ -34,6 +34,7 @@ jobs:
           cache: 'pip'
           cache-dependency-path: pyproject.toml
       - run: pip install ".[dev]"
+      - run: pip install ".[pandas]"
 
       - name: Run tests
         run: cd ${GITHUB_WORKSPACE} && pytest -Werror
