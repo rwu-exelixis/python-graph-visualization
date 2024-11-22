@@ -5,7 +5,8 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     paths:
-      - "!examples/**" # examples dont change the unit tests
+      - "src/neo4j_viz/**" # python code + its resources
+      - "pyproject.toml" # dependencies
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]

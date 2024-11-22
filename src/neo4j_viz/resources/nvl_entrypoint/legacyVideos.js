@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkNVLBase=self.webpackChunkNVLBase||[]).push([[694],{4503:(e,n,s)=>{s.r(n),s.d(n,{loadLegacyVideoPlugins:()=>i});var t=s(1635);function i(e){return(0,t.sH)(this,void 0,void 0,(function(){var n;return(0,t.YH)(this,(function(t){switch(t.label){case 0:return[4,s.e(572).then(s.t.bind(s,572,23))];case 1:return n=t.sent(),e._plugins=n,[2]}}))}))}}}]);

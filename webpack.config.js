@@ -29,7 +29,7 @@ module.exports = [
       publicPath: '',
       library: 'NVLBase',
       libraryTarget: 'var',
-      clean: true
+      clean: false
     }
   }
 ]
