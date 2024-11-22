@@ -54,18 +54,18 @@ def test_basic_render(tmp_path: Path) -> None:
 
     file_path = tmp_path / "basic_render.html"
 
-    with open(file_path, 'w+') as the_file:
+    with open(file_path, "w+") as the_file:
         the_file.write(html.data)
 
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--headless") # avoid browser window popping up
+    chrome_options.add_argument("--headless")  # avoid browser window popping up
     driver = webdriver.Chrome(options=chrome_options)
     # wait for page to render
     driver.implicitly_wait(3)
 
     driver.get(f"file://{file_path}")
 
-    logs = driver.get_log("browser")
+    logs = driver.get_log("browser")  # type: ignore[no-untyped-call]
 
     severe_logs = [log for log in logs if log["level"] == "SEVERE"]
 
