@@ -3,6 +3,7 @@ from pathlib import Path
 from selenium import webdriver
 
 from neo4j_viz import NVL, Node
+from neo4j_viz.relationship import Relationship
 
 
 def test_basic_render(tmp_path: Path) -> None:
@@ -18,18 +19,16 @@ def test_basic_render(tmp_path: Path) -> None:
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:8", caption="Product"),
     ]
     relationships = [
-        {
-            "id": "5:d09f48a4-5fca-421d-921d-a30a896c604d:1152921504606846976",
-            "from": "4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
-            "to": "4:d09f48a4-5fca-421d-921d-a30a896c604d:6",
-            "caption": "BUYS",
-        },
-        {
-            "id": "5:d09f48a4-5fca-421d-921d-a30a896c604d:1155173304420532224",
-            "from": "4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
-            "to": "4:d09f48a4-5fca-421d-921d-a30a896c604d:11",
-            "caption": "BUYS",
-        },
+        Relationship(
+            source="4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
+            target="4:d09f48a4-5fca-421d-921d-a30a896c604d:6",
+            caption="BUYS",
+        ),
+        Relationship(
+            source="4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
+            target="4:d09f48a4-5fca-421d-921d-a30a896c604d:11",
+            caption="BUYS",
+        ),
     ]
 
     html = nvl.render(nodes, relationships)

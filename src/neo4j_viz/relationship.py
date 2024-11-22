@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Optional
+from uuid import uuid4
 
 from pydantic import BaseModel, Field, field_serializer
 from pydantic_extra_types.color import Color
@@ -8,21 +9,22 @@ from pydantic_extra_types.color import Color
 from .options import CaptionAlignment
 
 
-class Node(BaseModel):
+class Relationship(BaseModel):
     """
-    A node in a graph to visualize.
-    Hold options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_nodes)
+    A relationship in a graph to visualize.
+    Hold options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_relationships)
     """
 
-    id: str = Field(description="Unique identifier for the node")
-    caption: Optional[str] = Field(None, description="The caption of the node")
+    id: str = Field(default_factory=lambda: uuid4().hex, description="Unique identifier for the relationship")
+    source: str = Field(serialization_alias="from", description="Node ID where the relationship points from")
+    target: str = Field(serialization_alias="to", description="Node ID where the relationship points to")
+    caption: Optional[str] = Field(None, description="The caption of the relationship")
     caption_align: Optional[CaptionAlignment] = Field(
         None, serialization_alias="captionAlign", description="The alignment of the caption text"
     )
     caption_size: Optional[int] = Field(
         None, serialization_alias="captionSize", description="The size of the caption text"
     )
-    size: Optional[int] = Field(None, ge=0, description="The size of the node as radius in pixel")
     color: Optional[Color] = Field(None, description="The color of the relationship. A hex color string")
 
     @field_serializer("color")
