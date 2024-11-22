@@ -1,9 +1,11 @@
-from IPython.display import HTML
+from pathlib import Path
+
+from selenium import webdriver
 
 from neo4j_viz.nvl import NVL
 
 
-def test_basic_render() -> None:
+def test_basic_render(tmp_path: Path) -> None:
     nvl = NVL()
 
     nodes = [
@@ -50,4 +52,21 @@ def test_basic_render() -> None:
 
     html = nvl.render(nodes, relationships)
 
-    assert isinstance(html, HTML)
+    file_path = tmp_path / "basic_render.html"
+
+    with open(file_path, 'w+') as the_file:
+        the_file.write(html.data)
+
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--headless") # avoid browser window popping up
+    driver = webdriver.Chrome(options=chrome_options)
+    # wait for page to render
+    driver.implicitly_wait(3)
+
+    driver.get(f"file://{file_path}")
+
+    logs = driver.get_log("browser")
+
+    severe_logs = [log for log in logs if log["level"] == "SEVERE"]
+
+    assert not severe_logs, f"Severe logs found: {severe_logs}"
