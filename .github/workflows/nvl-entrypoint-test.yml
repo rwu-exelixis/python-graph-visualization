@@ -34,5 +34,5 @@ jobs:
         run: yarn
       - name: Build
         run: yarn build
-      - name: Check for changes
+      - name: Check for changes (run `yarn build` locally + commit if this fails)
         run: git diff --exit-code
