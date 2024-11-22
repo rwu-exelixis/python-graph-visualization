@@ -11,7 +11,7 @@ def test_nodes_with_all_options() -> None:
         size=10,
     )
 
-    assert node.to_dict() == {
+    assert node.model_dump() == {
         "id": "4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
         "caption": "Person",
         "captionAlign": "top",
@@ -30,11 +30,3 @@ def test_nodes_minimal_node() -> None:
     assert node.to_dict() == {
         "id": "1",
     }
-
-
-def test_node_to_json() -> None:
-    node = Node(
-        id="1",
-    )
-
-    assert '"id": "1"' in node.to_json()

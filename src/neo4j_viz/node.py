@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
-from json import dumps
 from typing import Any, Optional
+
+from pydantic import BaseModel, Field
 
 from .options import CaptionAlignment
 
 
-@dataclass(frozen=True, repr=True)
-class Node:
+class Node(BaseModel):
     """
     A node in a graph to visualize.
-    Hold options availble in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_nodes)
+    Hold options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_nodes)
 
     Args:
         id (str): Unique identifier for the node.
@@ -26,11 +25,7 @@ class Node:
     captionAlign: Optional[CaptionAlignment] = None
     captionSize: Optional[int] = None
     color: Optional[str] = None
-    size: Optional[int] = None
+    size: Optional[int] = Field(None, ge=0)
 
     def to_dict(self) -> dict[str, Any]:
-        # skip None values in the dict
-        return {k: v for k, v in asdict(self).items() if v is not None}
-
-    def to_json(self) -> str:
-        return dumps(self.to_dict())
+        return self.model_dump(exclude_none=True)

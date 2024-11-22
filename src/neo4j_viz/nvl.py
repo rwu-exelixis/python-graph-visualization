@@ -1,3 +1,4 @@
+import json
 import sys
 import uuid
 from importlib.resources import files
@@ -29,7 +30,7 @@ class NVL:
         width: str = "100%",
         height: str = "300px",
     ) -> HTML:
-        nodes_json = [node.to_dict() for node in nodes]
+        nodes_json = json.dumps([node.to_dict() for node in nodes])
         container_id = str(uuid.uuid4())
         js_code = f"""
         var myNvl = new NVLBase.NVL(

@@ -29,7 +29,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 keywords = ["graph", "visualization", "neo4j"]
-dependencies = ["ipython >=8, <9"]
+dependencies = ["ipython >=8, <9", "pydantic >=2 , <3"]
 requires-python = ">=3.9"
 
 
@@ -114,3 +114,4 @@ select = [
 [tool.mypy]
 strict = true
 exclude = '(^build|^\.?venv)'
+plugins = ['pydantic.mypy']
