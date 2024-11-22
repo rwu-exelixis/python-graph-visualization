@@ -2,7 +2,7 @@ from pathlib import Path
 
 from selenium import webdriver
 
-from neo4j_viz import Graph, Node, Relationship
+from neo4j_viz import Node, Relationship, VisualizationGraph
 
 
 def test_basic_render(tmp_path: Path) -> None:
@@ -28,9 +28,9 @@ def test_basic_render(tmp_path: Path) -> None:
         ),
     ]
 
-    G = Graph(nodes=nodes, relationships=relationships)
+    VG = VisualizationGraph(nodes=nodes, relationships=relationships)
 
-    html = G.render()
+    html = VG.render()
 
     file_path = tmp_path / "basic_render.html"
 

@@ -10,7 +10,7 @@ from .nvl import NVL
 from .relationship import Relationship
 
 
-class Graph(BaseModel):
+class VisualizationGraph(BaseModel):
     """
     A graph to visualize.
     """
