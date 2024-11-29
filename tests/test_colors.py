@@ -1,5 +1,6 @@
+import sys
+
 import pytest
-from palettable.wesanderson import Moonrise1_5  # type: ignore[import-untyped]
 from pydantic_extra_types.color import Color
 
 from neo4j_viz import Node, VisualizationGraph
@@ -69,7 +70,10 @@ def test_color_nodes_iter_exhausted() -> None:
     assert VG.nodes[3].color == Color("#000000")
 
 
+@pytest.mark.skipif(sys.version_info >= (3, 12), reason="requires python 3.11 or lower")
 def test_color_nodes_palette() -> None:
+    from palettable.wesanderson import Moonrise1_5  # type: ignore[import-untyped]
+
     nodes = [
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person"),
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product"),
