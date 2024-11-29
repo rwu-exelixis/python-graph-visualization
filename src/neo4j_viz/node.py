@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, field_serializer, field_validator
 from pydantic_extra_types.color import Color, ColorType
 
 from .options import CaptionAlignment
+from numbers import Number
 
 
 class Node(BaseModel, extra="allow"):
@@ -22,7 +23,7 @@ class Node(BaseModel, extra="allow"):
     caption_size: Optional[int] = Field(
         None, serialization_alias="captionSize", description="The size of the caption text"
     )
-    size: Optional[int] = Field(None, ge=0, description="The size of the node as radius in pixel")
+    size: Optional[Union[int, float]] = Field(None, ge=0, description="The size of the node as radius in pixel")
     color: Optional[ColorType] = Field(None, description="The color of the node")
 
     @field_serializer("color")
