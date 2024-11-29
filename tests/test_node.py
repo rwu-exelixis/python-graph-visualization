@@ -30,6 +30,7 @@ def test_nodes_minimal_node() -> None:
         "id": "1",
     }
 
+
 def test_node_with_float_size() -> None:
     node = Node(
         id="1",
@@ -40,6 +41,7 @@ def test_node_with_float_size() -> None:
         "id": "1",
         "size": 10.2,
     }
+
 
 def test_node_with_additional_fields() -> None:
     node = Node(

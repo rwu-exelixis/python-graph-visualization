@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field, field_serializer, field_validator
 from pydantic_extra_types.color import Color, ColorType
 
 from .options import CaptionAlignment
-from numbers import Number
 
 
 class Node(BaseModel, extra="allow"):
