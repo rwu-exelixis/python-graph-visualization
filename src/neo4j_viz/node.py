@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Optional, Union
 
-from pydantic import BaseModel, Field, field_serializer
+from pydantic import BaseModel, Field, field_serializer, field_validator
 from pydantic_extra_types.color import Color
 
 from .options import CaptionAlignment
@@ -23,7 +23,7 @@ class Node(BaseModel):
         None, serialization_alias="captionSize", description="The size of the caption text"
     )
     size: Optional[int] = Field(None, ge=0, description="The size of the node as radius in pixel")
-    color: Optional[Color] = Field(None, description="The color of the relationship. A hex color string")
+    color: Optional[Union[Color, str]] = Field(None, description="The color of the node")
 
     @field_serializer("color")
     def serialize_color(self, color: Color) -> str:
@@ -32,6 +32,14 @@ class Node(BaseModel):
     @field_serializer("id")
     def serialize_id(self, id: Union[str, int]) -> str:
         return str(id)
+
+    @field_validator("color")
+    @classmethod
+    def cast_color(cls, color: Union[Color, str]) -> Color:
+        if isinstance(color, str):
+            return Color(color)
+
+        return color
 
     def to_dict(self) -> dict[str, Any]:
         return self.model_dump(exclude_none=True, by_alias=True)
