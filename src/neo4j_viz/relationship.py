@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Optional, Union
 from uuid import uuid4
 
 from pydantic import BaseModel, Field, field_serializer
@@ -15,9 +15,13 @@ class Relationship(BaseModel):
     All options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_relationships)
     """
 
-    id: str | int = Field(default_factory=lambda: uuid4().hex, description="Unique identifier for the relationship")
-    source: str | int = Field(serialization_alias="from", description="Node ID where the relationship points from")
-    target: str | int = Field(serialization_alias="to", description="Node ID where the relationship points to")
+    id: Union[str, int] = Field(
+        default_factory=lambda: uuid4().hex, description="Unique identifier for the relationship"
+    )
+    source: Union[str, int] = Field(
+        serialization_alias="from", description="Node ID where the relationship points from"
+    )
+    target: Union[str, int] = Field(serialization_alias="to", description="Node ID where the relationship points to")
     caption: Optional[str] = Field(None, description="The caption of the relationship")
     caption_align: Optional[CaptionAlignment] = Field(
         None, serialization_alias="captionAlign", description="The alignment of the caption text"
@@ -32,15 +36,15 @@ class Relationship(BaseModel):
         return color.as_hex(format="long")
 
     @field_serializer("id")
-    def serialize_id(self, id: str | int) -> str:
+    def serialize_id(self, id: Union[str, int]) -> str:
         return str(id)
 
     @field_serializer("source")
-    def serialize_source(self, source: str | int) -> str:
+    def serialize_source(self, source: Union[str, int]) -> str:
         return str(source)
 
     @field_serializer("target")
-    def serialize_target(self, target: str | int) -> str:
+    def serialize_target(self, target: Union[str, int]) -> str:
         return str(target)
 
     def to_dict(self) -> dict[str, Any]:

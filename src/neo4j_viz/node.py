@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from pydantic import BaseModel, Field, field_serializer
 from pydantic_extra_types.color import Color
@@ -14,7 +14,7 @@ class Node(BaseModel):
     All options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_nodes)
     """
 
-    id: str | int = Field(description="Unique identifier for the node")
+    id: Union[str, int] = Field(description="Unique identifier for the node")
     caption: Optional[str] = Field(None, description="The caption of the node")
     caption_align: Optional[CaptionAlignment] = Field(
         None, serialization_alias="captionAlign", description="The alignment of the caption text"
@@ -30,7 +30,7 @@ class Node(BaseModel):
         return color.as_hex(format="long")
 
     @field_serializer("id")
-    def serialize_id(self, id: str | int) -> str:
+    def serialize_id(self, id: Union[str, int]) -> str:
         return str(id)
 
     def to_dict(self) -> dict[str, Any]:
