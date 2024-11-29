@@ -6,6 +6,7 @@ from uuid import uuid4
 from pydantic import BaseModel, Field, field_serializer, field_validator
 from pydantic_extra_types.color import Color
 
+from .colors import ColorType
 from .options import CaptionAlignment
 
 
@@ -29,7 +30,7 @@ class Relationship(BaseModel):
     caption_size: Optional[int] = Field(
         None, serialization_alias="captionSize", description="The size of the caption text"
     )
-    color: Optional[Union[Color, str]] = Field(None, description="The color of the relationship")
+    color: Optional[ColorType] = Field(None, description="The color of the relationship")
 
     @field_serializer("color")
     def serialize_color(self, color: Color) -> str:
