@@ -1,4 +1,5 @@
 import pytest
+from palettable.wesanderson import Moonrise1_5  # type: ignore[import-untyped]
 from pydantic_extra_types.color import Color
 
 from neo4j_viz import Node, VisualizationGraph
@@ -44,7 +45,7 @@ def test_color_nodes_iter_basic(override: bool) -> None:
         assert VG.nodes[2].color == Color("#ff0000")
 
 
-def test_color_nodes_iter() -> None:
+def test_color_nodes_iter_exhausted() -> None:
     nodes = [
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person"),
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product"),
@@ -65,3 +66,20 @@ def test_color_nodes_iter() -> None:
     assert VG.nodes[1].color == Color("#00ff00")
     assert VG.nodes[2].color == Color("#00ff00")
     assert VG.nodes[3].color == Color("#000000")
+
+
+def test_color_nodes_palette() -> None:
+    nodes = [
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person"),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product"),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", caption="Product"),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:12", caption="Review"),
+    ]
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    VG.color_nodes("caption", Moonrise1_5.colors)
+
+    assert VG.nodes[0].color == Color((114, 202, 221))
+    assert VG.nodes[1].color == Color((240, 165, 176))
+    assert VG.nodes[2].color == Color((240, 165, 176))
+    assert VG.nodes[3].color == Color((140, 133, 54))

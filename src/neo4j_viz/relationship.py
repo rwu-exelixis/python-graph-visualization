@@ -4,9 +4,8 @@ from typing import Any, Optional, Union
 from uuid import uuid4
 
 from pydantic import BaseModel, Field, field_serializer, field_validator
-from pydantic_extra_types.color import Color
+from pydantic_extra_types.color import Color, ColorType
 
-from .colors import ColorType
 from .options import CaptionAlignment
 
 
@@ -50,8 +49,8 @@ class Relationship(BaseModel):
 
     @field_validator("color")
     @classmethod
-    def cast_color(cls, color: Union[Color, str]) -> Color:
-        if isinstance(color, str):
+    def cast_color(cls, color: ColorType) -> Color:
+        if not isinstance(color, Color):
             return Color(color)
 
         return color

@@ -6,9 +6,9 @@ from typing import Any, Optional
 
 from IPython.display import HTML
 from pydantic import BaseModel, Field
-from pydantic_extra_types.color import Color
+from pydantic_extra_types.color import Color, ColorType
 
-from .colors import ColorsType, ColorType
+from .colors import ColorsType
 from .node import Node
 from .nvl import NVL
 from .relationship import Relationship
@@ -41,7 +41,7 @@ class VisualizationGraph(BaseModel):
             if node.color is not None and not override:
                 continue
 
-            if isinstance(color, str):
+            if not isinstance(color, Color):
                 node.color = Color(color)
             else:
                 node.color = color
@@ -66,7 +66,7 @@ class VisualizationGraph(BaseModel):
             if node.color is not None and not override:
                 continue
 
-            if isinstance(color, str):
+            if not isinstance(color, Color):
                 node.color = Color(color)
             else:
                 node.color = color
