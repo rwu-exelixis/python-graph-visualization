@@ -35,3 +35,14 @@ def test_rels_minimal_rel() -> None:
     assert {"id", "from", "to"} == set(rel_dict.keys())
     assert rel_dict["from"] == "1"
     assert rel_dict["to"] == "2"
+
+def test_rels_additional_fields() -> None:
+    rel = Relationship(
+        source="1",
+        target="2",
+        componentId=2,
+    )
+
+    rel_dict = rel.to_dict()
+    assert {"id", "from", "to", "componentId"} == set(rel_dict.keys())
+    assert rel.componentId == 2

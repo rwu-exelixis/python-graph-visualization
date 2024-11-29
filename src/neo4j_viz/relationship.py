@@ -9,7 +9,7 @@ from pydantic_extra_types.color import Color, ColorType
 from .options import CaptionAlignment
 
 
-class Relationship(BaseModel):
+class Relationship(BaseModel, extra="allow"):
     """
     A relationship in a graph to visualize.
     All options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_relationships)

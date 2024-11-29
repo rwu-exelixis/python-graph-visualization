@@ -8,7 +8,7 @@ from pydantic_extra_types.color import Color, ColorType
 from .options import CaptionAlignment
 
 
-class Node(BaseModel):
+class Node(BaseModel, extra="allow"):
     """
     A node in a graph to visualize.
     All options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_nodes)
