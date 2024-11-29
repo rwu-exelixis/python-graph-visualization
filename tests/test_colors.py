@@ -3,6 +3,7 @@ from palettable.wesanderson import Moonrise1_5  # type: ignore[import-untyped]
 from pydantic_extra_types.color import Color
 
 from neo4j_viz import Node, VisualizationGraph
+from neo4j_viz.colors import neo4j_colors
 
 
 @pytest.mark.parametrize("override", [True, False])
@@ -83,3 +84,20 @@ def test_color_nodes_palette() -> None:
     assert VG.nodes[1].color == Color((240, 165, 176))
     assert VG.nodes[2].color == Color((240, 165, 176))
     assert VG.nodes[3].color == Color((140, 133, 54))
+
+
+def test_color_nodes_default() -> None:
+    nodes = [
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person"),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product"),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", caption="Product"),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:12", caption="Review"),
+    ]
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    VG.color_nodes("caption")
+
+    assert VG.nodes[0].color == Color(neo4j_colors[0])
+    assert VG.nodes[1].color == Color(neo4j_colors[1])
+    assert VG.nodes[2].color == Color(neo4j_colors[1])
+    assert VG.nodes[3].color == Color(neo4j_colors[2])

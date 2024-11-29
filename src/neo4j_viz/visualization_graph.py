@@ -8,7 +8,7 @@ from IPython.display import HTML
 from pydantic import BaseModel, Field
 from pydantic_extra_types.color import Color, ColorType
 
-from .colors import ColorsType
+from .colors import ColorsType, neo4j_colors
 from .node import Node
 from .nvl import NVL
 from .relationship import Relationship
@@ -25,7 +25,10 @@ class VisualizationGraph(BaseModel):
     def render(self, options: Optional[dict[str, Any]] = None, width: str = "100%", height: str = "300px") -> HTML:
         return NVL().render(self.nodes, self.relationships, options=options, width=width, height=height)
 
-    def color_nodes(self, property: str, colors: ColorsType, override: bool = False) -> None:
+    def color_nodes(self, property: str, colors: Optional[ColorsType] = None, override: bool = False) -> None:
+        if colors is None:
+            colors = neo4j_colors
+
         if isinstance(colors, dict):
             self._color_nodes_dict(property, colors, override)
         else:
