@@ -26,6 +26,20 @@ class VisualizationGraph(BaseModel):
         return NVL().render(self.nodes, self.relationships, options=options, width=width, height=height)
 
     def color_nodes(self, property: str, colors: Optional[ColorsType] = None, override: bool = False) -> None:
+        """
+        Color the nodes in the graph based on a property.
+
+        Parameters
+        ----------
+        property:
+            The property of the nodes to use for coloring.
+        colors:
+            The colors to use for the nodes. If a dictionary is given, it should map from property to color.
+            If an iterable is given, the colors are used in order.
+            The default colors are the Neo4j graph colors.
+        override:
+            Whether to override existing colors of the nodes, if they have any.
+        """
         if colors is None:
             colors = neo4j_colors
 
