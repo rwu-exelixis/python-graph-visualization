@@ -30,4 +30,8 @@ This package is still in development and the API is subject to change.
 pip install neo4j-viz
 ```
 
+inside the `python-wrapper` folder. This will install the Python package and make it available to Jupyter notebooks.
+
+### Examples
+
 For some Jupyter Notebook examples checkout the `/examples` directory

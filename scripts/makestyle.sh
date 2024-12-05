@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd python-wrapper
+
 set -o errexit
 set -o nounset
 set -o pipefail

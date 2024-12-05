@@ -1,27 +1,29 @@
 import json
 import sys
 import uuid
-from importlib.resources import files
-
-from .node import Node
-from .relationship import Relationship
-
-if sys.version_info >= (3, 11):
-    from importlib.resources.abc import Traversable
-else:
-    from importlib.abc import Traversable
-
+from importlib.resources import path
 from typing import Any, Optional
 
 from IPython.display import HTML
 
+from .node import Node
+from .relationship import Relationship
+
 
 class NVL:
     def __init__(self) -> None:
-        js_path: Traversable = files("neo4j_viz.resources.nvl_entrypoint") / "base.js"
+        if sys.version_info >= (3, 10):
+            from importlib.resources import files
 
-        with js_path.open("r", encoding="utf-8") as file:
-            self.library_code = file.read()
+            js_path = files("neo4j_viz.resources.nvl_entrypoint") / "base.js"
+
+            with js_path.open("r", encoding="utf-8") as file:
+                self.library_code = file.read()
+        else:
+            # not using `files()` because in CI 3.9 had issues resolving the package
+            with path("neo4j_viz.resources.nvl_entrypoint", "base.js") as js_path:
+                with js_path.open("r", encoding="utf-8") as file:
+                    self.library_code = file.read()
 
     def render(
         self,

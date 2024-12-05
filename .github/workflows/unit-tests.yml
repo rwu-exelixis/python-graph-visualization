@@ -5,8 +5,8 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     paths:
-      - "src/neo4j_viz/**" # python code + its resources
-      - "pyproject.toml" # dependencies
+      - "python-wrapper/src/neo4j_viz/**" # python code + its resources
+      - "python-wrapper/pyproject.toml" # dependencies
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
@@ -20,9 +20,14 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os}}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    defaults:
+      run:
+        working-directory: python-wrapper
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -38,10 +43,13 @@ jobs:
       - run: pip install ".[gds]"
 
       - name: Run tests
-        run: cd ${GITHUB_WORKSPACE} && pytest tests -Werror
+        run: pytest tests/ -Werror
 
   tests-313:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python-wrapper
     steps:
       - uses: actions/checkout@v4
 
@@ -55,4 +63,4 @@ jobs:
       # skip gds for now as it is not available for python 3.13
 
       - name: Run tests
-        run: cd ${GITHUB_WORKSPACE} && pytest tests -Werror
+        run: pytest tests/ -Werror

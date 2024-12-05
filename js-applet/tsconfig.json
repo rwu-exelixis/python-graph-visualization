@@ -15,9 +15,9 @@
       "DOM"
     ],
     "moduleResolution": "Bundler",
-    "outDir": "./src/neo4j_viz/resources/nvl_entrypoint"
+    "outDir": "./dist"
   },
   "files": [
-    "src/nvl_entrypoint/index.ts"
+    "src/index.ts"
   ]
 }

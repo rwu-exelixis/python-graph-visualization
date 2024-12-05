@@ -6,11 +6,11 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     paths:
-      - "src/nvl_entrypoint/**" # JS sources
-      - "webpack.config.js"
-      - "babel.config.js"
-      - "package.json"
-      - "tsconfig.json"
+      - "js-applet/src/nvl_entrypoint/**" # JS sources
+      - "js-applet/webpack.config.js"
+      - "js-applet/babel.config.js"
+      - "js-applet/package.json"
+      - "js-applet/tsconfig.json"
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
@@ -25,6 +25,11 @@ jobs:
 
     # The type of runner that the job will run on
     runs-on: "ubuntu-latest"
+
+    defaults:
+      run:
+        working-directory: js-applet
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

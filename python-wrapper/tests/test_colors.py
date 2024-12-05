@@ -68,6 +68,7 @@ def test_color_nodes_iter_exhausted() -> None:
     assert VG.nodes[3].color == Color("#000000")
 
 
+@pytest.mark.filterwarnings("ignore:pkg_resources is deprecated as an API")
 def test_color_nodes_palette() -> None:
     from palettable.wesanderson import Moonrise1_5  # type: ignore[import-untyped]
 
