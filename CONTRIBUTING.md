@@ -50,6 +50,21 @@ We can't guarantee that we'll accept pull requests and may ask you to make some 
 Occasionally, we might also have logistical, commercial, or legal reasons why we can't accept your work but we'll try to find an alternative way for you to contribute in that case.
 Remember that many community members have become regular contributors and some are now even Neo employees!
 
+## Building the project locally
+
+To build the Python packages, run:
+
+```sh
+pip install . # run with --editable for development mode
+```
+
+To rebuild the JavaScript applet, run:
+
+```sh
+yarn          # Install JavaScript dependencies
+yarn build    # Build JavaScript resources to be used by Python code
+```
+
 
 ## Specifically for this project
 
