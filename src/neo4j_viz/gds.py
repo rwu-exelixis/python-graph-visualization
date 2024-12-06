@@ -10,6 +10,21 @@ from .pandas import from_dfs
 from .visualization_graph import VisualizationGraph
 
 
+def _node_dfs(
+    gds: GraphDataScience, G: Graph, node_properties: list[str], node_labels: list[str]
+) -> dict[str, pd.DataFrame]:
+    return {
+        lbl: gds.graph.nodeProperties.stream(
+            G, node_properties=node_properties, node_labels=[lbl], separate_property_columns=True
+        )
+        for lbl in node_labels
+    }
+
+
+def _rel_df(gds: GraphDataScience, G: Graph) -> pd.DataFrame:
+    return gds.graph.relationships.stream(G)
+
+
 def from_gds(
     gds: GraphDataScience,
     G: Graph,
@@ -36,12 +51,7 @@ def from_gds(
         node_properties.add(size_property)
 
     node_properties = list(node_properties)
-    node_dfs = {
-        lbl: gds.graph.nodeProperties.stream(
-            G, node_properties=node_properties, node_labels=[lbl], separate_property_columns=True
-        )
-        for lbl in G.node_labels()
-    }
+    node_dfs = _node_dfs(gds, G, node_properties, G.node_labels())
     for df in node_dfs.values():
         df.rename(columns={"nodeId": "id"}, inplace=True)
 
@@ -57,7 +67,7 @@ def from_gds(
 
     node_df = node_props_df.merge(node_lbls_df, on="id")
 
-    rel_df = gds.graph.relationships.stream(G)
+    rel_df = _rel_df(gds, G)
     rel_df.rename(columns={"sourceNodeId": "source", "targetNodeId": "target"}, inplace=True)
 
     return from_dfs(node_df, rel_df)
