@@ -103,12 +103,12 @@ def test_from_gds_mocked(mocker: MockerFixture) -> None:
         lambda x: pd.Series({lbl: node_properties for lbl in nodes.keys()}),
     )
     mocker.patch("graphdatascience.Graph.node_labels", lambda x: list(nodes.keys()))
-    mocker.patch("graphdatascience.GraphDataScience.__init__", lambda x, y, z: None)
+    mocker.patch("graphdatascience.GraphDataScience.__init__", lambda x: None)
     mocker.patch("neo4j_viz.gds._node_dfs", return_value=nodes)
     mocker.patch("neo4j_viz.gds._rel_df", return_value=rels)
 
-    gds = GraphDataScience("123", auth=("neo4j", "password"))
-    G = Graph()  # type: ignore
+    gds = GraphDataScience()  # type: ignore[call-arg]
+    G = Graph()  # type: ignore[call-arg]
 
     VG = from_gds(gds, G, size_property="score", additional_node_properties=["component"])
 

@@ -35,6 +35,7 @@ jobs:
           cache-dependency-path: pyproject.toml
       - run: pip install ".[dev]"
       - run: pip install ".[pandas]"
+      - run: pip install ".[graphdatascience]"
 
       - name: Run tests
-        run: cd ${GITHUB_WORKSPACE} && pytest -Werror
+        run: cd ${GITHUB_WORKSPACE} && pytest tests -Werror
