@@ -10,7 +10,7 @@ readme = "README.md"
 authors = [{ name = "Neo4j", email = "team-gds@neo4j.org" }]
 license = { file = "LICENSE" }
 classifiers = [
-    "Development Status :: 2 - Pre-alpha",
+    "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
