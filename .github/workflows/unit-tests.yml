@@ -55,4 +55,4 @@ jobs:
       # skip gds for now as it is not available for python 3.13
 
       - name: Run tests
-        run: cd ${GITHUB_WORKSPACE} && pytest tests -Werror
+        run: cd ${GITHUB_WORKSPACE} && pytest tests -Werror --ignore tests/test_gds.py
