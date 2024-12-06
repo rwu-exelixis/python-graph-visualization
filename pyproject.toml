@@ -36,7 +36,7 @@ requires-python = ">=3.9"
 [project.optional-dependencies]
 dev = ["ruff==0.8.2", "mypy==1.13.0", "pytest==8.3.3", "selenium==4.27.1", "palettable==3.3.0", "pytest-mock==3.14.0"]
 pandas = ["pandas>=2, <3", "pandas-stubs>=2, <3"]
-graphdatascience = ["graphdatascience>=1, <2"] # not compatible yet with Python 3.13
+gds = ["graphdatascience>=1, <2"] # not compatible yet with Python 3.13
 notebook = [
     "ipykernel==6.29.5",
     "pykernel==0.1.6",

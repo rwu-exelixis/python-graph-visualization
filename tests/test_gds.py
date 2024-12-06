@@ -18,6 +18,7 @@ if os.environ.get("NEO4J_USER"):
         os.environ.get("NEO4J_PASSWORD", "neo4j"),
     )
 
+
 @pytest.mark.skipif(sys.version_info >= (3, 13), reason="requires python 3.12 or lower")
 @pytest.mark.requires_neo4j_and_gds
 def test_from_gds_integration() -> None:
@@ -56,6 +57,7 @@ def test_from_gds_integration() -> None:
             (1, 2, "REL2"),
             (2, 0, "REL"),
         ]
+
 
 @pytest.mark.skipif(sys.version_info >= (3, 13), reason="requires python 3.12 or lower")
 def test_from_gds_mocked(mocker: MockerFixture) -> None:
