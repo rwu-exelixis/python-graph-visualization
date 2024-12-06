@@ -28,6 +28,7 @@ jobs:
           cache-dependency-path: pyproject.toml
       - run: pip install ".[dev]"
       - run: pip install ".[pandas]"
+      - run: pip install ".[gds]"
 
       - name: Check code style
         run: cd ${GITHUB_WORKSPACE} && ./scripts/checkstyle.sh
