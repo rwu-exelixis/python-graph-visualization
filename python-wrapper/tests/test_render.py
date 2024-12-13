@@ -5,14 +5,14 @@ from selenium import webdriver
 
 from neo4j_viz import Node, Relationship, RenderOptions, VisualizationGraph
 
-render_options = [
-    RenderOptions(),
-    RenderOptions(layout=RenderOptions.Layout.FORCE_DIRECTED),
-    RenderOptions(layout=RenderOptions.Layout.GRID),
-]
+render_cases = {
+    "default": RenderOptions(),
+    "force layout": RenderOptions(layout=RenderOptions.Layout.FORCE_DIRECTED),
+    "grid layout": RenderOptions(layout=RenderOptions.Layout.GRID),
+}
 
 
-@pytest.mark.parametrize("render_option", render_options, ids=[str(opt) for opt in render_options])
+@pytest.mark.parametrize("render_option", render_cases.values(), ids=render_cases.keys())
 def test_basic_render(render_option: RenderOptions, tmp_path: Path) -> None:
     nodes = [
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person"),

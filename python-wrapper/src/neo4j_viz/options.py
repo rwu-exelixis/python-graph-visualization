@@ -17,8 +17,8 @@ class RenderOptions(BaseModel, extra="allow"):
     Options as documented at https://neo4j.com/docs/nvl/current/base-library/#_options
     """
 
-    layout: Optional[RenderOptions.Layout] = Field(None)
-    renderer: Optional[Renderer] = Field(None)
+    layout: Optional[RenderOptions.Layout] = None
+    renderer: Optional[Renderer] = None
 
     pan_X: Optional[float] = Field(None, serialization_alias="panX")
     pan_Y: Optional[float] = Field(None, serialization_alias="panY")
