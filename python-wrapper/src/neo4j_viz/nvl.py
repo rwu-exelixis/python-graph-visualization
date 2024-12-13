@@ -1,7 +1,6 @@
 import json
-import sys
 import uuid
-from importlib.resources import path
+from importlib.resources import files
 from typing import Any, Optional
 
 from IPython.display import HTML
@@ -12,18 +11,15 @@ from .relationship import Relationship
 
 class NVL:
     def __init__(self) -> None:
-        if sys.version_info >= (3, 10):
-            from importlib.resources import files
+        # at which point we get None?
+        base_folder = files("neo4j_viz")
+        resource_folder = base_folder / "resources"
+        nvl_entry_point = resource_folder / "nvl_entrypoint"
 
-            js_path = files("neo4j_viz.resources.nvl_entrypoint") / "base.js"
+        js_path = nvl_entry_point / "base.js"
 
-            with js_path.open("r", encoding="utf-8") as file:
-                self.library_code = file.read()
-        else:
-            # not using `files()` because in CI 3.9 had issues resolving the package
-            with path("neo4j_viz.resources.nvl_entrypoint", "base.js") as js_path:
-                with js_path.open("r", encoding="utf-8") as file:
-                    self.library_code = file.read()
+        with js_path.open("r", encoding="utf-8") as file:
+            self.library_code = file.read()
 
     def render(
         self,
