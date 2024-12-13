@@ -11,7 +11,7 @@ from pydantic_extra_types.color import Color, ColorType
 from .colors import ColorsType, neo4j_colors
 from .node import Node
 from .nvl import NVL
-from .options import RenderOptions
+from .options import Layout, Renderer, RenderOptions
 from .relationship import Relationship
 
 
@@ -23,8 +23,36 @@ class VisualizationGraph(BaseModel):
     nodes: list[Node] = Field(description="The nodes in the graph")
     relationships: list[Relationship] = Field(description="The relationships in the graph")
 
-    def render(self, options: Optional[RenderOptions] = None, width: str = "100%", height: str = "300px") -> HTML:
-        return NVL().render(self.nodes, self.relationships, options=options, width=width, height=height)
+    def render(
+        self,
+        layout: Optional[Layout] = None,
+        renderer: Optional[Renderer] = None,
+        width: str = "100%",
+        height: str = "300px",
+        pan_position: Optional[tuple[float, float]] = None,
+        initial_zoom: Optional[float] = None,
+        min_zoom: float = 0.075,
+        max_zoom: float = 10,
+        allow_dynamic_min_zoom: bool = True,
+    ) -> HTML:
+        render_options = RenderOptions(
+            layout=layout,
+            renderer=renderer,
+            pan_X=pan_position[0] if pan_position is not None else None,
+            pan_Y=pan_position[1] if pan_position is not None else None,
+            initial_zoom=initial_zoom,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            allow_dynamic_min_zoom=allow_dynamic_min_zoom,
+        )
+
+        return NVL().render(
+            self.nodes,
+            self.relationships,
+            render_options,
+            width,
+            height,
+        )
 
     def color_nodes(self, property: str, colors: Optional[ColorsType] = None, override: bool = False) -> None:
         """

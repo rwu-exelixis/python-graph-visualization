@@ -1,19 +1,21 @@
 from pathlib import Path
+from typing import Any
 
 import pytest
 from selenium import webdriver
 
-from neo4j_viz import Node, Relationship, RenderOptions, VisualizationGraph
+from neo4j_viz import Node, Relationship, VisualizationGraph
+from neo4j_viz.options import Layout
 
 render_cases = {
-    "default": RenderOptions(),
-    "force layout": RenderOptions(layout=RenderOptions.Layout.FORCE_DIRECTED),
-    "grid layout": RenderOptions(layout=RenderOptions.Layout.GRID),
+    "default": {},
+    "force layout": {"layout": Layout.FORCE_DIRECTED},
+    "grid layout": {"layout": Layout.GRID},
 }
 
 
 @pytest.mark.parametrize("render_option", render_cases.values(), ids=render_cases.keys())
-def test_basic_render(render_option: RenderOptions, tmp_path: Path) -> None:
+def test_basic_render(render_option: dict[str, Any], tmp_path: Path) -> None:
     nodes = [
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person"),
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product"),
@@ -38,7 +40,7 @@ def test_basic_render(render_option: RenderOptions, tmp_path: Path) -> None:
 
     VG = VisualizationGraph(nodes=nodes, relationships=relationships)
 
-    html = VG.render(options=render_option)
+    html = VG.render(**render_option)
 
     file_path = tmp_path / "basic_render.html"
 
