@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 import json
 import uuid
 from importlib.resources import files
-from typing import Any, Optional
+from typing import Optional
 
 from IPython.display import HTML
 
 from .node import Node
+from .options import RenderOptions
 from .relationship import Relationship
 
 
@@ -25,19 +28,23 @@ class NVL:
         self,
         nodes: list[Node],
         relationships: list[Relationship],
-        options: Optional[dict[str, Any]] = None,
+        # TODO combine with width and height?
+        options: Optional[RenderOptions] = None,
         width: str = "100%",
         height: str = "300px",
     ) -> HTML:
         nodes_json = json.dumps([node.to_dict() for node in nodes])
         rels_json = json.dumps([rel.to_dict() for rel in relationships])
+
+        render_options_json = json.dumps(options.to_dict()) if options is not None else {}
+
         container_id = str(uuid.uuid4())
         js_code = f"""
         var myNvl = new NVLBase.NVL(
             document.getElementById('{container_id}'),
             {nodes_json},
             {rels_json},
-            {options if options is not None else {}}
+            {render_options_json}
         );
         """
         full_code = self.library_code + js_code
