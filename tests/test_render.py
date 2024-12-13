@@ -49,4 +49,4 @@ def test_basic_render(tmp_path: Path) -> None:
 
     severe_logs = [log for log in logs if log["level"] == "SEVERE"]
 
-    assert not severe_logs, f"Severe logs found: {severe_logs}"
+    assert not severe_logs, f"Severe logs found: {severe_logs}, all logs: {logs}"

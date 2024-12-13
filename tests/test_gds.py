@@ -3,11 +3,9 @@ import sys
 
 import pandas as pd
 import pytest
-from graphdatascience import Graph, GraphDataScience
 from pytest_mock import MockerFixture
 
 from neo4j_viz import Node
-from neo4j_viz.gds import from_gds
 
 NEO4J_URI = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
 
@@ -22,6 +20,10 @@ if os.environ.get("NEO4J_USER"):
 @pytest.mark.skipif(sys.version_info >= (3, 13), reason="requires python 3.12 or lower")
 @pytest.mark.requires_neo4j_and_gds
 def test_from_gds_integration() -> None:
+    from graphdatascience import GraphDataScience
+
+    from neo4j_viz.gds import from_gds
+
     nodes = pd.DataFrame(
         {
             "nodeId": [0, 1, 2],
@@ -61,6 +63,10 @@ def test_from_gds_integration() -> None:
 
 @pytest.mark.skipif(sys.version_info >= (3, 13), reason="requires python 3.12 or lower")
 def test_from_gds_mocked(mocker: MockerFixture) -> None:
+    from graphdatascience import Graph, GraphDataScience
+
+    from neo4j_viz.gds import from_gds
+
     nodes = {
         "A": pd.DataFrame(
             {
