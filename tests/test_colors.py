@@ -1,4 +1,3 @@
-
 import pytest
 from pydantic_extra_types.color import Color
 
