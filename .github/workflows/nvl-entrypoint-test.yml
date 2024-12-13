@@ -1,18 +1,18 @@
-name: Build nvl_entrypoint and check for changes
+name: Build JS Applet and check for changes
 # This workflow builds the nvl_entrypoint and checks for changes in the neo4j_viz resources
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
+    branches: [ "main" ]
+  pull_request:
     paths:
       - "js-applet/src/nvl_entrypoint/**" # JS sources
       - "js-applet/webpack.config.js"
       - "js-applet/babel.config.js"
       - "js-applet/package.json"
       - "js-applet/tsconfig.json"
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab

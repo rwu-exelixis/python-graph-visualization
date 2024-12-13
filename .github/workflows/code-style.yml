@@ -4,10 +4,10 @@ name: Check code style
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    paths:
-    - "python-wrapper/src/neo4j_viz/**" # python code + its resources
     branches: [ "main" ]
   pull_request:
+    paths:
+      - "python-wrapper/src/neo4j_viz/**" # python code + its resources
     branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
