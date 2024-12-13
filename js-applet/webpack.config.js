@@ -5,7 +5,7 @@ module.exports = [
     name: 'base',
     mode: 'production',
     entry: {
-      base: ['./src/nvl_entrypoint/index.ts']
+      base: ['./src/index.ts']
     },
     module: {
       rules: [
@@ -25,7 +25,7 @@ module.exports = [
       extensions: ['.ts', '.js']
     },
     output: {
-      path: path.resolve(__dirname, 'src/neo4j_viz/resources/nvl_entrypoint'),
+      path: path.resolve(__dirname, 'dist'),
       publicPath: '',
       library: 'NVLBase',
       libraryTarget: 'var',

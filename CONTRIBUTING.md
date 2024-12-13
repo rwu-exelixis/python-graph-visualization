@@ -52,19 +52,20 @@ Remember that many community members have become regular contributors and some a
 
 ## Building the project locally
 
-To build the Python packages, run:
+To build the Python packages, run inside the `python-wrapper` folder:
 
 ```sh
 pip install . # run with --editable for development mode
 ```
 
-To rebuild the JavaScript applet, run:
+To rebuild the JavaScript applet, run inside the `js-applet` folder:
 
 ```sh
 yarn          # Install JavaScript dependencies
 yarn build    # Build JavaScript resources to be used by Python code
 ```
 
+This will build the app and copy the relevant files to the python wrapper
 
 ## Specifically for this project
 
@@ -81,14 +82,11 @@ Setting up the Python development environment:
 
 ### Project structure
 
-This is a multi-language project.
+The project contains of three parts:
 
-```
-/src
-    /neo4j_viz #python code to produce HTML(+JS) file
-    /nvl_entrypoint # defines JavaScript code + packages it to be used by neo4j-viz
-/tests
-```
+- a JavaScript applet whith a basic NVL implementation under the `js-applect` folder
+- a Python package which loads the applet and offers convenience functions to pass data to the applet
+- Jupyter notebooks to test the NVL Python wrapper
 
 
 ### JavaScipts configs

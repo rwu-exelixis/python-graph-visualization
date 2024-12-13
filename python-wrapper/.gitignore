@@ -1,0 +1,8 @@
+*.egg-info
+__pycache__
+build
+
+# Should we ignore the following?
+src/neo4j_viz/resources/nvl_entrypoint/*
+!src/neo4j_viz/resources/nvl_entrypoint/base.js
+!src/neo4j_viz/resources/nvl_entrypoint/__init__.py

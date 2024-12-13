@@ -1,24 +1,22 @@
 import json
-import sys
 import uuid
 from importlib.resources import files
-
-from .node import Node
-from .relationship import Relationship
-
-if sys.version_info >= (3, 11):
-    from importlib.resources.abc import Traversable
-else:
-    from importlib.abc import Traversable
-
 from typing import Any, Optional
 
 from IPython.display import HTML
 
+from .node import Node
+from .relationship import Relationship
+
 
 class NVL:
     def __init__(self) -> None:
-        js_path: Traversable = files("neo4j_viz.resources.nvl_entrypoint") / "base.js"
+        # at which point we get None?
+        base_folder = files("neo4j_viz")
+        resource_folder = base_folder / "resources"
+        nvl_entry_point = resource_folder / "nvl_entrypoint"
+
+        js_path = nvl_entry_point / "base.js"
 
         with js_path.open("r", encoding="utf-8") as file:
             self.library_code = file.read()
