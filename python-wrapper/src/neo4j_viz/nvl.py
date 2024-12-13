@@ -28,8 +28,8 @@ class NVL:
         nodes: list[Node],
         relationships: list[Relationship],
         render_options: RenderOptions,
-        width: str = "100%",
-        height: str = "300px",
+        width: str,
+        height: str,
     ) -> HTML:
         nodes_json = json.dumps([node.to_dict() for node in nodes])
         rels_json = json.dumps([rel.to_dict() for rel in relationships])

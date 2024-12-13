@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Optional
+from typing import Callable, Optional
+import warnings
 
 import pandas as pd
 from graphdatascience import Graph, GraphDataScience
@@ -30,6 +31,7 @@ def from_gds(
     G: Graph,
     size_property: Optional[str] = None,
     additional_node_properties: Optional[list[str]] = None,
+    node_radius_min_max: Optional[tuple[float, float]] = (3, 60),
 ) -> VisualizationGraph:
     node_properties_from_gds = G.node_properties()
     assert isinstance(node_properties_from_gds, pd.Series)
@@ -66,6 +68,13 @@ def from_gds(
     node_lbls_df = node_lbls_df.groupby("id").agg({"labels": list})
 
     node_df = node_props_df.merge(node_lbls_df, on="id")
+
+    if node_radius_min_max and size_property:
+        min_radius, max_radius = node_radius_min_max
+        max_size = node_df["size"].max()
+        node_df["size"] = node_df["size"]*max_radius/max_size
+        if node_df["size"].min() < min_radius:
+            warnings.warn("Some nodes have a size smaller than the minimum radius.")
 
     rel_df = _rel_df(gds, G)
     rel_df.rename(columns={"sourceNodeId": "source", "targetNodeId": "target"}, inplace=True)
