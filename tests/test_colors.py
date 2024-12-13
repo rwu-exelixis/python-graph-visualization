@@ -1,4 +1,3 @@
-import sys
 
 import pytest
 from pydantic_extra_types.color import Color
@@ -70,7 +69,6 @@ def test_color_nodes_iter_exhausted() -> None:
     assert VG.nodes[3].color == Color("#000000")
 
 
-@pytest.mark.skipif(sys.version_info >= (3, 12), reason="requires python 3.11 or lower")
 def test_color_nodes_palette() -> None:
     from palettable.wesanderson import Moonrise1_5  # type: ignore[import-untyped]
 
