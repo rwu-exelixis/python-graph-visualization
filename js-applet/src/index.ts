@@ -18,7 +18,7 @@ class PyNVL {
     options: NvlOptions = {},
     callbacks = {}
   ) {
-    this.nvl = new NVL(frame, nvlNodes, nvlRels, options, callbacks)
+    this.nvl = new NVL(frame, nvlNodes, nvlRels, { ...options, disableTelemetry: true }, callbacks)
     this.zoomInteraction = new ZoomInteraction(this.nvl)
     this.panInteraction = new PanInteraction(this.nvl)
     this.dragNodeInteraction = new DragNodeInteraction(this.nvl)
