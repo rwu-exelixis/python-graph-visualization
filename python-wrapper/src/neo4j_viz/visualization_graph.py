@@ -28,7 +28,7 @@ class VisualizationGraph(BaseModel):
         layout: Optional[Layout] = None,
         renderer: Optional[Renderer] = None,
         width: str = "100%",
-        height: str = "300px",
+        height: str = "600px",
         pan_position: Optional[tuple[float, float]] = None,
         initial_zoom: Optional[float] = None,
         min_zoom: float = 0.075,

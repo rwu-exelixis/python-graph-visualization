@@ -1,3 +1,4 @@
+import pandas as pd
 from pandas import DataFrame
 from pydantic_extra_types.color import Color
 
@@ -20,7 +21,7 @@ def test_from_df() -> None:
             "caption": ["REL", "REL2"],
         }
     )
-    VG = from_dfs(nodes, relationships)
+    VG = from_dfs(nodes, relationships, node_radius_min_max=(42, 1337))
 
     assert len(VG.nodes) == 2
 
@@ -43,3 +44,15 @@ def test_from_df() -> None:
     assert VG.relationships[1].source == 1
     assert VG.relationships[1].target == 0
     assert VG.relationships[1].caption == "REL2"
+
+
+def test_node_scaling() -> None:
+    from neo4j_viz.pandas import _scale_node_size
+
+    sizes = pd.Series([0, 2, 3, 4, 10])
+    min_size = 3
+    max_size = 6
+
+    scaled_sizes = _scale_node_size(sizes, min_size, max_size)
+
+    assert scaled_sizes.equals(pd.Series([3.0, 3.6, 3.9, 4.2, 6.0]))

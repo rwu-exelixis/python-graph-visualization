@@ -119,7 +119,9 @@ def test_from_gds_mocked(mocker: MockerFixture) -> None:
     gds = GraphDataScience()  # type: ignore[call-arg]
     G = Graph()  # type: ignore[call-arg]
 
-    VG = from_gds(gds, G, size_property="score", additional_node_properties=["component"])
+    VG = from_gds(
+        gds, G, size_property="score", additional_node_properties=["component"], node_radius_min_max=(3.14, 1337)
+    )
 
     assert len(VG.nodes) == 3
     assert sorted(VG.nodes, key=lambda x: x.id) == [

@@ -30,7 +30,25 @@ def from_gds(
     G: Graph,
     size_property: Optional[str] = None,
     additional_node_properties: Optional[list[str]] = None,
+    node_radius_min_max: Optional[tuple[float, float]] = (3, 60),
 ) -> VisualizationGraph:
+    """ "
+    Create a VisualizationGraph from a GraphDataScience object and a Graph object.
+
+    Parameters
+    ----------
+    gds : GraphDataScience
+        GraphDataScience object.
+    G : Graph
+        Graph object.
+    size_property : str, optional
+        Property to use for node size, by default None.
+    additional_node_properties : list[str], optional
+        Additional properties to include in the visualization node, by default None. They can be used later for modifying the node appearance.
+    node_radius_min_max : tuple[float, float], optional
+        Minimum and maximum node radius, by default (3, 60).
+        To avoid tiny or huge nodes in the visualization, the node sizes are scaled to fit in the given range.
+    """
     node_properties_from_gds = G.node_properties()
     assert isinstance(node_properties_from_gds, pd.Series)
     actual_node_properties = list(chain.from_iterable(node_properties_from_gds.to_dict().values()))
@@ -70,4 +88,4 @@ def from_gds(
     rel_df = _rel_df(gds, G)
     rel_df.rename(columns={"sourceNodeId": "source", "targetNodeId": "target"}, inplace=True)
 
-    return from_dfs(node_df, rel_df)
+    return from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max)
