@@ -26,8 +26,8 @@ class Relationship(BaseModel, extra="allow"):
     caption_align: Optional[CaptionAlignment] = Field(
         None, serialization_alias="captionAlign", description="The alignment of the caption text"
     )
-    caption_size: Optional[int] = Field(
-        None, serialization_alias="captionSize", description="The size of the caption text"
+    caption_size: Optional[Union[int, float]] = Field(
+        None, gt=0.0, serialization_alias="captionSize", description="The size of the caption text"
     )
     color: Optional[ColorType] = Field(None, description="The color of the relationship")
 
