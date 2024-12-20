@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "neo4j-viz"
 version = "0.1.5"
 description = "A simple graph visualization tool"
-readme = "../README.md"
+readme = "README.md"
 authors = [{ name = "Neo4j", email = "team-gds@neo4j.org" }]
 license = { file = "LICENSE" }
 classifiers = [
