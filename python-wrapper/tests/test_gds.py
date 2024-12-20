@@ -119,7 +119,7 @@ def test_from_gds_mocked(mocker: MockerFixture) -> None:
     gds = GraphDataScience()  # type: ignore[call-arg]
     G = Graph()  # type: ignore[call-arg]
 
-    VG = from_gds(gds, G, size_property="score", additional_node_properties=["component"])
+    VG = from_gds(gds, G, size_property="score", additional_node_properties=["component"], node_radius_min_max=(3.14, 1337))
 
     assert len(VG.nodes) == 3
     assert sorted(VG.nodes, key=lambda x: x.id) == [
@@ -135,3 +135,14 @@ def test_from_gds_mocked(mocker: MockerFixture) -> None:
         (1, 2, "REL2"),
         (2, 0, "REL"),
     ]
+
+def test_node_scaling() -> None:
+    from neo4j_viz.gds import _scale_node_size
+
+    sizes = pd.Series([0, 2, 3, 4, 10])
+    min_size = 3
+    max_size = 6
+
+    scaled_sizes = _scale_node_size(sizes, min_size, max_size)
+
+    assert scaled_sizes.equals(pd.Series([3.0, 3.6, 3.9, 4.2, 6.0]))

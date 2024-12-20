@@ -25,6 +25,17 @@ def _node_dfs(
 def _rel_df(gds: GraphDataScience, G: Graph) -> pd.DataFrame:
     return gds.graph.relationships.stream(G)
 
+def _scale_node_size(sizes: pd.Series, min_size: float, max_size: float) -> pd.Series:
+    normalized_sizes = (sizes - sizes.min()) / (sizes.max() - sizes.min())
+
+    new_size_range = max_size - min_size
+
+    range_scaled_sizes = normalized_sizes * new_size_range
+    scaled_sizes = range_scaled_sizes + min_size
+
+    return scaled_sizes
+
+
 
 def from_gds(
     gds: GraphDataScience,
@@ -33,6 +44,23 @@ def from_gds(
     additional_node_properties: Optional[list[str]] = None,
     node_radius_min_max: Optional[tuple[float, float]] = (3, 60),
 ) -> VisualizationGraph:
+    """"
+    Create a VisualizationGraph from a GraphDataScience object and a Graph object.
+
+    Parameters
+    ----------
+    gds : GraphDataScience
+        GraphDataScience object.
+    G : Graph
+        Graph object.
+    size_property : str, optional
+        Property to use for node size, by default None.
+    additional_node_properties : list[str], optional
+        Additional properties to include in the visualization node, by default None. They can be used later for modifying the node appearance.
+    node_radius_min_max : tuple[float, float], optional
+        Minimum and maximum node radius, by default (3, 60).
+        To avoid tiny or huge nodes in the visualization, the node sizes are scaled to fit in the given range.
+    """
     node_properties_from_gds = G.node_properties()
     assert isinstance(node_properties_from_gds, pd.Series)
     actual_node_properties = list(chain.from_iterable(node_properties_from_gds.to_dict().values()))
@@ -70,11 +98,7 @@ def from_gds(
     node_df = node_props_df.merge(node_lbls_df, on="id")
 
     if node_radius_min_max and size_property:
-        min_radius, max_radius = node_radius_min_max
-        max_size = node_df["size"].max()
-        node_df["size"] = node_df["size"]*max_radius/max_size
-        if node_df["size"].min() < min_radius:
-            warnings.warn("Some nodes have a size smaller than the minimum radius.")
+        node_df["size"] = _scale_node_size(node_df["size"], min_size=node_radius_min_max[0], max_size=node_radius_min_max[1])
 
     rel_df = _rel_df(gds, G)
     rel_df.rename(columns={"sourceNodeId": "source", "targetNodeId": "target"}, inplace=True)
