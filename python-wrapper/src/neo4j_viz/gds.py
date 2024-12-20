@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Callable, Optional
-import warnings
+from typing import Any, Optional
 
 import pandas as pd
 from graphdatascience import Graph, GraphDataScience
@@ -25,8 +24,9 @@ def _node_dfs(
 def _rel_df(gds: GraphDataScience, G: Graph) -> pd.DataFrame:
     return gds.graph.relationships.stream(G)
 
-def _scale_node_size(sizes: pd.Series, min_size: float, max_size: float) -> pd.Series:
-    normalized_sizes = (sizes - sizes.min()) / (sizes.max() - sizes.min())
+
+def _scale_node_size(sizes: pd.Series[Any], min_size: float, max_size: float) -> pd.Series[Any]:
+    normalized_sizes: pd.Series[Any] = (sizes - sizes.min()) / (sizes.max() - sizes.min())
 
     new_size_range = max_size - min_size
 
@@ -36,7 +36,6 @@ def _scale_node_size(sizes: pd.Series, min_size: float, max_size: float) -> pd.S
     return scaled_sizes
 
 
-
 def from_gds(
     gds: GraphDataScience,
     G: Graph,
@@ -44,7 +43,7 @@ def from_gds(
     additional_node_properties: Optional[list[str]] = None,
     node_radius_min_max: Optional[tuple[float, float]] = (3, 60),
 ) -> VisualizationGraph:
-    """"
+    """ "
     Create a VisualizationGraph from a GraphDataScience object and a Graph object.
 
     Parameters
@@ -98,7 +97,9 @@ def from_gds(
     node_df = node_props_df.merge(node_lbls_df, on="id")
 
     if node_radius_min_max and size_property:
-        node_df["size"] = _scale_node_size(node_df["size"], min_size=node_radius_min_max[0], max_size=node_radius_min_max[1])
+        node_df["size"] = _scale_node_size(
+            node_df["size"], min_size=node_radius_min_max[0], max_size=node_radius_min_max[1]
+        )
 
     rel_df = _rel_df(gds, G)
     rel_df.rename(columns={"sourceNodeId": "source", "targetNodeId": "target"}, inplace=True)
