@@ -20,7 +20,11 @@ class Node(BaseModel, extra="allow"):
         None, serialization_alias="captionAlign", description="The alignment of the caption text"
     )
     caption_size: Optional[int] = Field(
-        None, serialization_alias="captionSize", description="The size of the caption text"
+        None,
+        ge=1,
+        le=3,
+        serialization_alias="captionSize",
+        description="The size of the caption text. The font size to node radius ratio",
     )
     size: Optional[Union[int, float]] = Field(None, ge=0, description="The size of the node as radius in pixel")
     color: Optional[ColorType] = Field(None, description="The color of the node")

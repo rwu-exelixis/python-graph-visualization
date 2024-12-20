@@ -6,7 +6,7 @@ def test_nodes_with_all_options() -> None:
         id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
         caption="Person",
         caption_align=CaptionAlignment.TOP,
-        caption_size=12,
+        caption_size=1,
         color="#FF0000",
         size=10,
     )
@@ -15,7 +15,7 @@ def test_nodes_with_all_options() -> None:
         "id": "4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
         "caption": "Person",
         "captionAlign": "top",
-        "captionSize": 12,
+        "captionSize": 1,
         "color": "#ff0000",
         "size": 10,
     }
