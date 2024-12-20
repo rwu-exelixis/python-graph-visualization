@@ -11,6 +11,10 @@ jobs:
   publish-to-pypi:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: python-wrapper
+
     steps:
       - uses: actions/checkout@v4
 
