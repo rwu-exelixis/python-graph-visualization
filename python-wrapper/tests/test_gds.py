@@ -16,7 +16,7 @@ def test_from_gds_integration(gds: Any) -> None:
     nodes = pd.DataFrame(
         {
             "nodeId": [0, 1, 2],
-            "labels": ["A", "C", ["A", "B"]],
+            "labels": [["A"], ["C"], ["A", "B"]],
             "score": [1337, 42, 3.14],
             "component": [1, 4, 2],
         }

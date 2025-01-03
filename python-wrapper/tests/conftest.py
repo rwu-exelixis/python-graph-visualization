@@ -39,7 +39,6 @@ def gds() -> Generator[Any, None, None]:
             auth=(dbms_connection_info.username, dbms_connection_info.password),
             aura_ds=True,
             database="neo4j",
-            arrow=False,
         )
 
         api.delete_instance(id)

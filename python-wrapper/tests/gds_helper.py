@@ -11,7 +11,7 @@ def connect_to_plugin_gds(uri: str) -> GraphDataScience:
     if os.environ.get("NEO4J_USER"):
         NEO4J_AUTH = (os.environ.get("NEO4J_USER", "DUMMY"), os.environ.get("NEO4J_PASSWORD", "neo4j"))
 
-    return GraphDataScience(endpoint=uri, auth=NEO4J_AUTH, database="neo4j", arrow=False)
+    return GraphDataScience(endpoint=uri, auth=NEO4J_AUTH, database="neo4j")
 
 
 def aura_api() -> AuraApi:
