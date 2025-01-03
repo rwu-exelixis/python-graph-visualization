@@ -1,5 +1,5 @@
-import os
 import sys
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -7,21 +7,10 @@ from pytest_mock import MockerFixture
 
 from neo4j_viz import Node
 
-NEO4J_URI = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
-
-NEO4J_AUTH = ("neo4j", "password")
-if os.environ.get("NEO4J_USER"):
-    NEO4J_AUTH = (
-        os.environ.get("NEO4J_USER", "DUMMY"),
-        os.environ.get("NEO4J_PASSWORD", "neo4j"),
-    )
-
 
 @pytest.mark.skipif(sys.version_info >= (3, 13), reason="requires python 3.12 or lower")
 @pytest.mark.requires_neo4j_and_gds
-def test_from_gds_integration() -> None:
-    from graphdatascience import GraphDataScience
-
+def test_from_gds_integration(gds: Any) -> None:
     from neo4j_viz.gds import from_gds
 
     nodes = pd.DataFrame(
@@ -40,10 +29,8 @@ def test_from_gds_integration() -> None:
         }
     )
 
-    gds = GraphDataScience(NEO4J_URI, auth=NEO4J_AUTH)
-
     with gds.graph.construct("flo", nodes, rels) as G:
-        VG = from_gds(gds, G, size_property="score", additional_node_properties=["component"])
+        VG = from_gds(gds, G, size_property="score", additional_node_properties=["component"], node_radius_min_max=(3.14, 1337))
 
         assert len(VG.nodes) == 3
         assert sorted(VG.nodes, key=lambda x: x.id) == [
