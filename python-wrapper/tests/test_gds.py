@@ -30,7 +30,9 @@ def test_from_gds_integration(gds: Any) -> None:
     )
 
     with gds.graph.construct("flo", nodes, rels) as G:
-        VG = from_gds(gds, G, size_property="score", additional_node_properties=["component"], node_radius_min_max=(3.14, 1337))
+        VG = from_gds(
+            gds, G, size_property="score", additional_node_properties=["component"], node_radius_min_max=(3.14, 1337)
+        )
 
         assert len(VG.nodes) == 3
         assert sorted(VG.nodes, key=lambda x: x.id) == [
