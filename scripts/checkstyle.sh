@@ -7,7 +7,7 @@ set -o pipefail
 
 python -m ruff check .
 python -m ruff format --check .
-mypy .
+mypy --config-file python-wrapper/pyproject.toml .
 
 
 if [ "${SKIP_NOTEBOOKS:-false}" == "true" ]; then

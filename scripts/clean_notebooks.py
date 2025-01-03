@@ -25,11 +25,15 @@ class CustomClearOutputPreprocessor(Preprocessor):
     Option to keep cell output for cells with a given metadata tag
     """
 
-    def preprocess_cell(self, cell: Any, resources: Any, cell_index: Any) -> tuple[Any, Any]:
+    def preprocess_cell(
+        self, cell: Any, resources: Any, cell_index: Any
+    ) -> tuple[Any, Any]:
         """
         Apply a transformation on each cell. See base.py for details.
         """
-        if cell.cell_type == "code" and PRESERVE_CELL_OUTPUT_KEY not in cell["metadata"].get(METADATA_TAG_KEY, []):
+        if cell.cell_type == "code" and PRESERVE_CELL_OUTPUT_KEY not in cell[
+            "metadata"
+        ].get(METADATA_TAG_KEY, []):
             cell.outputs = []
             cell.execution_count = None
         return cell, resources
@@ -41,7 +45,9 @@ def main(input_path: Path, output_mode: OutputMode) -> None:
 
     exporter = nbconvert.NotebookExporter()
 
-    metadata_cleaner = nbconvert.preprocessors.ClearMetadataPreprocessor(preserve_cell_metadata_mask=METADATA_TAG_KEY)
+    metadata_cleaner = nbconvert.preprocessors.ClearMetadataPreprocessor(
+        preserve_cell_metadata_mask=METADATA_TAG_KEY
+    )
     output_cleaner = CustomClearOutputPreprocessor()  # type: ignore
 
     exporter.register_preprocessor(metadata_cleaner, enabled=True)
@@ -50,7 +56,9 @@ def main(input_path: Path, output_mode: OutputMode) -> None:
     if input_path.is_file():
         notebooks = [input_path]
     else:
-        notebooks = [f for f in input_path.iterdir() if f.is_file() and f.suffix == ".ipynb"]
+        notebooks = [
+            f for f in input_path.iterdir() if f.is_file() and f.suffix == ".ipynb"
+        ]
 
     logger.info(f"Formatting {len(notebooks)} notebooks.")
 
@@ -69,7 +77,9 @@ def main(input_path: Path, output_mode: OutputMode) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-o", "--output", choices=[e.value for e in OutputMode])
-    parser.add_argument("-i", "--input", default="examples", help="path to the notebook file or folder")
+    parser.add_argument(
+        "-i", "--input", default="examples", help="path to the notebook file or folder"
+    )
 
     args = parser.parse_args()
 

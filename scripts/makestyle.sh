@@ -14,5 +14,4 @@ if [ "${SKIP_NOTEBOOKS:-false}" == "true" ]; then
   exit 0
 fi
 
-GIT_ROOT=$(git rev-parse --show-toplevel)
 python "${GIT_ROOT}/scripts/clean_notebooks.py" -i "${GIT_ROOT}/examples/" -o inplace

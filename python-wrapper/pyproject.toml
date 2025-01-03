@@ -129,5 +129,9 @@ select = [
 
 [tool.mypy]
 strict = true
-exclude = '(^build|^\.?venv)'
+exclude = [
+    '(^build|^\.?venv)',
+    'build',
+    ]
 plugins = ['pydantic.mypy']
+untyped_calls_exclude=["nbconvert"]
