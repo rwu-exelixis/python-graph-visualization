@@ -1,3 +1,5 @@
+import pytest
+
 from neo4j_viz import CaptionAlignment
 from neo4j_viz.relationship import Relationship
 
@@ -47,3 +49,20 @@ def test_rels_additional_fields() -> None:
     rel_dict = rel.to_dict()
     assert {"id", "from", "to", "componentId"} == set(rel_dict.keys())
     assert rel.componentId == 2  # type: ignore[attr-defined]
+
+
+@pytest.mark.parametrize("src_alias", ["source", "sourceNodeId", "source_node_id", "from"])
+@pytest.mark.parametrize("trg_alias", ["target", "targetNodeId", "target_node_id", "to"])
+def test_aliases(src_alias: str, trg_alias: str) -> None:
+    rel = Relationship(
+        **{
+            src_alias: "1",
+            trg_alias: "2",
+        }
+    )
+
+    rel_dict = rel.to_dict()
+
+    assert {"id", "from", "to"} == set(rel_dict.keys())
+    assert rel_dict["from"] == "1"
+    assert rel_dict["to"] == "2"

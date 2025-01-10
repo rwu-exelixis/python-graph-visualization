@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Optional, Union
 
-from pydantic import BaseModel, Field, field_serializer, field_validator
+from pydantic import AliasChoices, BaseModel, Field, field_serializer, field_validator
 from pydantic_extra_types.color import Color, ColorType
 
 from .options import CaptionAlignment
@@ -14,7 +14,9 @@ class Node(BaseModel, extra="allow"):
     All options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_nodes)
     """
 
-    id: Union[str, int] = Field(description="Unique identifier for the node")
+    id: Union[str, int] = Field(
+        validation_alias=AliasChoices("id", "nodeId", "node_id"), description="Unique identifier for the node"
+    )
     caption: Optional[str] = Field(None, description="The caption of the node")
     caption_align: Optional[CaptionAlignment] = Field(
         None, serialization_alias="captionAlign", description="The alignment of the caption text"
