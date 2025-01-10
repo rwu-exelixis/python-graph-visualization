@@ -30,6 +30,7 @@ jobs:
           cache: 'pip'
           cache-dependency-path: pyproject.toml
       - run: pip install "python-wrapper/[dev, pandas, docs]"
+      - run: pip install docs/source/themes
 
       - name: Render ref docs
         run: ./scripts/render_docs.sh
