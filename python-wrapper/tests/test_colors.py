@@ -57,7 +57,7 @@ def test_color_nodes_iter_exhausted() -> None:
     with pytest.warns(
         UserWarning,
         match=(
-            "Ran out of colors for property 'caption'. 3 colors were needed, but only 2 were given, " "so reused colors"
+            "Ran out of colors for property 'caption'. 3 colors were needed, but only 2 were given, so reused colors"
         ),
     ):
         VG.color_nodes("caption", ["#000000", "#00FF00"])
