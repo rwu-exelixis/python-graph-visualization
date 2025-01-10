@@ -20,8 +20,20 @@ class Layout(str, Enum):
 
 
 class Renderer(str, Enum):
+    """
+    The renderer used to render the visualization.
+    """
+
     WEB_GL = "webgl"
+    """
+    The WebGL renderer is optimized for performance and handles large graphs better.
+    However, it does not render text, icons, and arrowheads on relationships.
+    """
     CANVAS = "canvas"
+    """
+    The canvas renderer has worse performance than the WebGL renderer, so is less well suited to render large graphs.
+    However, it can render text, icons, and arrowheads on relationships.
+    """
 
 
 class RenderOptions(BaseModel, extra="allow"):
