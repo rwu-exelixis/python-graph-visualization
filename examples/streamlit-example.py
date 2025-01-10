@@ -56,7 +56,6 @@ st.text(
 )
 
 components.html(
-    # Feel free to change these values according your own data an screen size
     render_graph(VG, height=height).data,
     height=height,
 )
