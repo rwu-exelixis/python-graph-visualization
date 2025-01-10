@@ -10,7 +10,7 @@ GIT_ROOT=$(git rev-parse --show-toplevel)
 
 (
     cd "${GIT_ROOT}/docs"
-    make clean html
+    make clean
 )
 
 sphinx-build -M html "${GIT_ROOT}/docs/source/" "${GIT_ROOT}docs/build/" --fresh-env --exception-on-warning
