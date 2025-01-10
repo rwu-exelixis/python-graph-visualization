@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Optional, Union
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, field_serializer, field_validator
+from pydantic import AliasChoices, BaseModel, Field, field_serializer, field_validator
 from pydantic_extra_types.color import Color, ColorType
 
 from .options import CaptionAlignment
@@ -19,9 +19,15 @@ class Relationship(BaseModel, extra="allow"):
         default_factory=lambda: uuid4().hex, description="Unique identifier for the relationship"
     )
     source: Union[str, int] = Field(
-        serialization_alias="from", description="Node ID where the relationship points from"
+        serialization_alias="from",
+        validation_alias=AliasChoices("source", "sourceNodeId", "source_node_id", "from"),
+        description="Node ID where the relationship points from",
     )
-    target: Union[str, int] = Field(serialization_alias="to", description="Node ID where the relationship points to")
+    target: Union[str, int] = Field(
+        serialization_alias="to",
+        validation_alias=AliasChoices("target", "targetNodeId", "target_node_id", "to"),
+        description="Node ID where the relationship points to",
+    )
     caption: Optional[str] = Field(None, description="The caption of the relationship")
     caption_align: Optional[CaptionAlignment] = Field(
         None, serialization_alias="captionAlign", description="The alignment of the caption text"

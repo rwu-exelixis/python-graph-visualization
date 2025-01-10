@@ -1,3 +1,5 @@
+import pytest
+
 from neo4j_viz import CaptionAlignment, Node
 
 
@@ -52,4 +54,13 @@ def test_node_with_additional_fields() -> None:
     assert node.to_dict() == {
         "id": "1",
         "componentId": 2,
+    }
+
+
+@pytest.mark.parametrize("alias", ["id", "nodeId", "node_id"])
+def test_id_aliases(alias: str) -> None:
+    node = Node(**{alias: 1})
+
+    assert node.to_dict() == {
+        "id": "1",
     }
