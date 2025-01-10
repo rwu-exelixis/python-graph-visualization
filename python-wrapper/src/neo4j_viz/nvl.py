@@ -23,6 +23,11 @@ class NVL:
         with js_path.open("r", encoding="utf-8") as file:
             self.library_code = file.read()
 
+    def unsupported_field_type_error(self, e: TypeError, entity: str) -> Exception:
+        if "not JSON serializable" in str(e):
+            return ValueError(f"A field of a {entity} object is not supported: {str(e)}")
+        return e
+
     def render(
         self,
         nodes: list[Node],
@@ -31,8 +36,14 @@ class NVL:
         width: str,
         height: str,
     ) -> HTML:
-        nodes_json = json.dumps([node.to_dict() for node in nodes])
-        rels_json = json.dumps([rel.to_dict() for rel in relationships])
+        try:
+            nodes_json = json.dumps([node.to_dict() for node in nodes])
+        except TypeError as e:
+            raise self.unsupported_field_type_error(e, "node")
+        try:
+            rels_json = json.dumps([rel.to_dict() for rel in relationships])
+        except TypeError as e:
+            raise self.unsupported_field_type_error(e, "relationship")
 
         render_options_json = json.dumps(render_options.to_dict())
 
