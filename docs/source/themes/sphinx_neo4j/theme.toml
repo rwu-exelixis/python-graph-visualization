@@ -1,0 +1,10 @@
+[theme]
+inherit = "basic"
+stylesheets = [
+    "css/neo4j.css",
+]
+sidebars = [
+    "navigation.html",
+    "searchbox.html",
+]
+pygments_style = { default = "sphinx" }

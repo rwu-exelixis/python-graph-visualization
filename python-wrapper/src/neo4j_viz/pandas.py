@@ -13,6 +13,19 @@ from .visualization_graph import VisualizationGraph
 def from_dfs(
     node_df: DataFrame, rel_df: DataFrame, node_radius_min_max: Optional[tuple[float, float]] = (3, 60)
 ) -> VisualizationGraph:
+    """
+    Create a VisualizationGraph from two pandas DataFrames.
+
+    Parameters
+    ----------
+    node_df : DataFrame
+        DataFrame containing node data.
+    rel_df : DataFrame
+        DataFrame containing relationship data.
+    node_radius_min_max : tuple[float, float], optional
+        Minimum and maximum node radius.
+        To avoid tiny or huge nodes in the visualization, the node sizes are scaled to fit in the given range.
+    """
     if node_radius_min_max and "size" in node_df.columns:
         node_df["size"] = _scale_node_size(
             node_df["size"], min_size=node_radius_min_max[0], max_size=node_radius_min_max[1]

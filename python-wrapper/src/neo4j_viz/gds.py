@@ -32,7 +32,7 @@ def from_gds(
     additional_node_properties: Optional[list[str]] = None,
     node_radius_min_max: Optional[tuple[float, float]] = (3, 60),
 ) -> VisualizationGraph:
-    """ "
+    """
     Create a VisualizationGraph from a GraphDataScience object and a Graph object.
 
     Parameters
