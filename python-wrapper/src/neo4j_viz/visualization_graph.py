@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from pydantic_extra_types.color import Color, ColorType
 
 from .colors import ColorsType, neo4j_colors
-from .node import Node
+from .node import Node, NodeIdType, NodeSizeType
 from .nvl import NVL
 from .options import Layout, Renderer, RenderOptions
 from .relationship import Relationship
@@ -64,6 +64,27 @@ class VisualizationGraph(BaseModel):
             width,
             height,
         )
+
+    def resize_nodes(self, sizes: dict[NodeIdType, NodeSizeType]) -> None:
+        """
+        Resize the nodes in the graph.
+
+        Parameters
+        ----------
+        sizes:
+            A dictionary mapping from node ID to the new size of the node.
+            If a node ID is not in the dictionary, the size of the node is not changed.
+        """
+        for node in self.nodes:
+            size = sizes.get(node.id)
+
+            if size is None:
+                continue
+
+            if size < 0:
+                raise ValueError(f"Size for node '{node.id}' must be non-negative, but was {size}")
+
+            node.size = size
 
     def color_nodes(self, property: str, colors: Optional[ColorsType] = None, override: bool = False) -> None:
         """

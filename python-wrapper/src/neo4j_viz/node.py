@@ -7,6 +7,9 @@ from pydantic_extra_types.color import Color, ColorType
 
 from .options import CaptionAlignment
 
+NodeIdType = Union[str, int]
+NodeSizeType = Union[int, float]
+
 
 class Node(BaseModel, extra="allow"):
     """
@@ -14,7 +17,7 @@ class Node(BaseModel, extra="allow"):
     All options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_nodes)
     """
 
-    id: Union[str, int] = Field(
+    id: NodeIdType = Field(
         validation_alias=AliasChoices("id", "nodeId", "node_id"), description="Unique identifier for the node"
     )
     caption: Optional[str] = Field(None, description="The caption of the node")
@@ -28,7 +31,7 @@ class Node(BaseModel, extra="allow"):
         serialization_alias="captionSize",
         description="The size of the caption text. The font size to node radius ratio",
     )
-    size: Optional[Union[int, float]] = Field(None, ge=0, description="The size of the node as radius in pixel")
+    size: Optional[NodeSizeType] = Field(None, ge=0, description="The size of the node as radius in pixel")
     color: Optional[ColorType] = Field(None, description="The color of the node")
 
     @field_serializer("color")
