@@ -38,13 +38,22 @@ def render_graph(
 
 
 VG = create_visualization_graph()
+
 st.title("Neo4j Viz Streamlit Example")
+st.text(
+    "This is an example of how to use Streamlit with the Graph "
+    "Visualization for Python library by Neo4j."
+)
 
 with st.sidebar:
     height = st.slider("Height in pixels", 100, 2000, 600, 50)
     show_code = st.checkbox("Show code")
 
 st.header("Visualization")
+st.text(
+    "A visualization of the famous Cora citation network. Each of its "
+    "seven scientific subjects is represented by a different color."
+)
 
 components.html(
     # Feel free to change these values according your own data an screen size
