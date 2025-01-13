@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import Any
 
@@ -5,7 +6,7 @@ import pytest
 from selenium import webdriver
 
 from neo4j_viz import Node, Relationship, VisualizationGraph
-from neo4j_viz.options import Layout
+from neo4j_viz.options import Layout, Renderer
 
 render_cases = {
     "default": {},
@@ -86,3 +87,34 @@ def test_unsupported_field_type() -> None:
         ]
         VG = VisualizationGraph(nodes=[], relationships=relationships)
         VG.render()
+
+
+def test_max_allowed_nodes_limit() -> None:
+    nodes = [Node(id=i) for i in range(10_001)]
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "Too many nodes (10001) to render. Maximum allowed nodes is set to 10000 for performance reasons. "
+            "It can be increased by overriding `max_allowed_nodes`, but rendering could then take a long time"
+        ),
+    ):
+        VG.render(max_allowed_nodes=10_000)
+
+
+def test_render_warnings() -> None:
+    nodes = [Node(id=i) for i in range(10_001)]
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+    with pytest.warns(
+        UserWarning,
+        match="To visualize more than 10.000 nodes, we recommend using the WebGL renderer instead of the "
+        "canvas renderer for better performance. You can set the renderer using the `renderer` parameter",
+    ):
+        VG.render(max_allowed_nodes=20_000, renderer=Renderer.CANVAS)
+
+    with pytest.warns(
+        UserWarning,
+        match="Although better for performance, the WebGL renderer cannot render text, icons and arrowheads on "
+        "relationships. If you need these features, use the canvas renderer by setting the `renderer` parameter",
+    ):
+        VG.render(max_allowed_nodes=20_000, renderer=Renderer.WEB_GL)

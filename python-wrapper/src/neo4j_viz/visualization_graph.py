@@ -26,7 +26,7 @@ class VisualizationGraph(BaseModel):
     def render(
         self,
         layout: Optional[Layout] = None,
-        renderer: Optional[Renderer] = None,
+        renderer: Renderer = Renderer.CANVAS,
         width: str = "100%",
         height: str = "600px",
         pan_position: Optional[tuple[float, float]] = None,
@@ -34,7 +34,18 @@ class VisualizationGraph(BaseModel):
         min_zoom: float = 0.075,
         max_zoom: float = 10,
         allow_dynamic_min_zoom: bool = True,
+        max_allowed_nodes: int = 10_000,
     ) -> HTML:
+        num_nodes = len(self.nodes)
+        if num_nodes > max_allowed_nodes:
+            raise ValueError(
+                f"Too many nodes ({num_nodes}) to render. Maximum allowed nodes is set "
+                f"to {max_allowed_nodes} for performance reasons. It can be increased by "
+                "overriding `max_allowed_nodes`, but rendering could then take a long time"
+            )
+
+        Renderer.check(renderer, num_nodes)
+
         render_options = RenderOptions(
             layout=layout,
             renderer=renderer,
