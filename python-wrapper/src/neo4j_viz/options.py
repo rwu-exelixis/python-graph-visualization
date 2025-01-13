@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from enum import Enum
 from typing import Any, Optional
 
@@ -34,6 +35,21 @@ class Renderer(str, Enum):
     The canvas renderer has worse performance than the WebGL renderer, so is less well suited to render large graphs.
     However, it can render text, icons, and arrowheads on relationships.
     """
+
+    @classmethod
+    def check(self, renderer: Renderer, num_nodes: int) -> None:
+        if renderer == Renderer.CANVAS and num_nodes > 10_000:
+            warnings.warn(
+                "To visualize more than 10.000 nodes, we recommend using the WebGL renderer "
+                "instead of the canvas renderer for better performance. You can set the renderer "
+                "using the `renderer` parameter"
+            )
+        if renderer == Renderer.WEB_GL:
+            warnings.warn(
+                "Although better for performance, the WebGL renderer cannot render text, icons "
+                "and arrowheads on relationships. If you need these features, use the canvas renderer "
+                "by setting the `renderer` parameter"
+            )
 
 
 class RenderOptions(BaseModel, extra="allow"):

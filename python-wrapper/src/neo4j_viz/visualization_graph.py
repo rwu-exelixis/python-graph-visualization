@@ -43,18 +43,8 @@ class VisualizationGraph(BaseModel):
                 f"to {max_allowed_nodes} for performance reasons. It can be increased by "
                 "overriding `max_allowed_nodes`, but rendering could then take a long time"
             )
-        if renderer == Renderer.CANVAS and num_nodes > 10_000:
-            warnings.warn(
-                "To visualize more than 10.000 nodes, we recommend using the WebGL renderer "
-                "instead of the canvas renderer for better performance. You can set the renderer "
-                "using the `renderer` parameter"
-            )
-        if renderer == Renderer.WEB_GL:
-            warnings.warn(
-                "Although better for performance, the WebGL renderer cannot render text, icons "
-                "and arrowheads on relationships. If you need these features, use the canvas renderer "
-                "by setting the `renderer` parameter"
-            )
+
+        Renderer.check(renderer, num_nodes)
 
         render_options = RenderOptions(
             layout=layout,
