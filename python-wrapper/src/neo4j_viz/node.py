@@ -5,10 +5,10 @@ from typing import Any, Optional, Union
 from pydantic import AliasChoices, BaseModel, Field, field_serializer, field_validator
 from pydantic_extra_types.color import Color, ColorType
 
+from .node_size import RealNumber
 from .options import CaptionAlignment
 
 NodeIdType = Union[str, int]
-NodeSizeType = Union[int, float]
 
 
 class Node(BaseModel, extra="allow"):
@@ -31,7 +31,7 @@ class Node(BaseModel, extra="allow"):
         serialization_alias="captionSize",
         description="The size of the caption text. The font size to node radius ratio",
     )
-    size: Optional[NodeSizeType] = Field(None, ge=0, description="The size of the node as radius in pixel")
+    size: Optional[RealNumber] = Field(None, ge=0, description="The size of the node as radius in pixel")
     color: Optional[ColorType] = Field(None, description="The color of the node")
 
     @field_serializer("color")

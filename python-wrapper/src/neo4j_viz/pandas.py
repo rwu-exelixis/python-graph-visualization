@@ -6,6 +6,7 @@ import pandas as pd
 from pandas import DataFrame
 
 from .node import Node
+from .node_size import verify_radii
 from .relationship import Relationship
 from .visualization_graph import VisualizationGraph
 
@@ -26,7 +27,8 @@ def from_dfs(
         Minimum and maximum node radius.
         To avoid tiny or huge nodes in the visualization, the node sizes are scaled to fit in the given range.
     """
-    if node_radius_min_max and "size" in node_df.columns:
+    if node_radius_min_max is not None and "size" in node_df.columns:
+        verify_radii(node_radius_min_max)
         node_df["size"] = _scale_node_size(
             node_df["size"], min_size=node_radius_min_max[0], max_size=node_radius_min_max[1]
         )
