@@ -20,7 +20,7 @@ def test_basic_render(render_option: dict[str, Any], tmp_path: Path) -> None:
     nodes = [
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person"),
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product"),
-        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", caption="Product"),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", caption="Product", pinned=True),
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:12", caption="Product"),
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:1", caption="Person"),
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:7", caption="Product"),
