@@ -11,6 +11,7 @@ def test_nodes_with_all_options() -> None:
         caption_size=1,
         color="#FF0000",
         size=10,
+        pinned=True,
     )
 
     assert node.to_dict() == {
@@ -20,6 +21,7 @@ def test_nodes_with_all_options() -> None:
         "captionSize": 1,
         "color": "#ff0000",
         "size": 10,
+        "pinned": True,
     }
 
 

@@ -66,6 +66,23 @@ class VisualizationGraph(BaseModel):
             height,
         )
 
+    def toggle_nodes_pinned(self, pinned: dict[NodeIdType, bool]) -> None:
+        """
+        Toggle whether nodes should be pinned or not.
+
+        Parameters
+        ----------
+        pinned:
+            A dictionary mapping from node ID to whether the node should be pinned or not.
+        """
+        for node in self.nodes:
+            node_pinned = pinned.get(node.id)
+
+            if node_pinned is None:
+                continue
+
+            node.pinned = node_pinned
+
     def resize_nodes(
         self,
         sizes: Optional[dict[NodeIdType, RealNumber]] = None,

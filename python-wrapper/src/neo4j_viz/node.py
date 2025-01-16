@@ -33,6 +33,7 @@ class Node(BaseModel, extra="allow"):
     )
     size: Optional[RealNumber] = Field(None, ge=0, description="The size of the node as radius in pixel")
     color: Optional[ColorType] = Field(None, description="The color of the node")
+    pinned: Optional[bool] = Field(None, description="Whether the node is pinned in the visualization")
 
     @field_serializer("color")
     def serialize_color(self, color: Color) -> str:
