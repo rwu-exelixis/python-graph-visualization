@@ -76,7 +76,7 @@ def test_resize_nodes_with_scaling_constant() -> None:
     assert VG.nodes[1].size == 3 + (60 - 3) / 2.0
 
 
-def test_resize_nodes_with_scaling_all_provided() -> None:
+def test_resize_nodes_with_scaling_all_sizes_provided() -> None:
     nodes = [
         Node(id=42, size=10),
         Node(id=43, size=10),
@@ -92,15 +92,37 @@ def test_resize_nodes_with_scaling_all_provided() -> None:
     assert VG.nodes[2].size == 60
 
 
-def test_resize_nodes_with_scaling_some_provided() -> None:
+def test_resize_nodes_with_scaling_some_sizes_provided() -> None:
     nodes = [
         Node(id=42, size=10),
         Node(id="1337", size=15),
     ]
     VG = VisualizationGraph(nodes=nodes, relationships=[])
 
-    new_sizes: dict[NodeIdType, RealNumber] = {"1337": 20}
+    new_sizes: dict[NodeIdType, RealNumber] = {"1337": 1}
     VG.resize_nodes(new_sizes, (3, 60))
 
+    assert VG.nodes[0].size == 60
+    assert VG.nodes[1].size == 3
+
+
+def test_resize_nodes_with_scaling_only() -> None:
+    nodes = [
+        Node(id=42, size=10),
+        Node(id=43, size=10),
+        Node(id="1337", size=15),
+    ]
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    VG.resize_nodes(node_radius_min_max=(3, 60))
+
     assert VG.nodes[0].size == 3
-    assert VG.nodes[1].size == 60
+    assert VG.nodes[1].size == 3
+    assert VG.nodes[2].size == 60
+
+
+def test_resize_nodes_no_args_failure() -> None:
+    VG = VisualizationGraph(nodes=[], relationships=[])
+
+    with pytest.raises(ValueError, match="At least one of `sizes` and `node_radius_min_max` must be given"):
+        VG.resize_nodes(node_radius_min_max=None)
