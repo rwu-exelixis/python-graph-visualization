@@ -9,7 +9,8 @@ from pydantic import BaseModel, Field
 from pydantic_extra_types.color import Color, ColorType
 
 from .colors import ColorsType, neo4j_colors
-from .node import Node
+from .node import Node, NodeIdType
+from .node_size import RealNumber, verify_radii
 from .nvl import NVL
 from .options import Layout, Renderer, RenderOptions
 from .relationship import Relationship
@@ -64,6 +65,75 @@ class VisualizationGraph(BaseModel):
             width,
             height,
         )
+
+    def resize_nodes(
+        self,
+        sizes: Optional[dict[NodeIdType, RealNumber]] = None,
+        node_radius_min_max: Optional[tuple[RealNumber, RealNumber]] = (3, 60),
+    ) -> None:
+        """
+        Resize the nodes in the graph.
+
+        Parameters
+        ----------
+        sizes:
+            A dictionary mapping from node ID to the new size of the node.
+            If a node ID is not in the dictionary, the size of the node is not changed.
+        node_radius_min_max:
+            Minimum and maximum node size radius as a tuple. To avoid tiny or huge nodes in the visualization, the
+            node sizes are scaled to fit in the given range. If None, the sizes are used as is.
+        """
+        if sizes is None and node_radius_min_max is None:
+            raise ValueError("At least one of `sizes` and `node_radius_min_max` must be given")
+
+        # Gather and verify all node size values we have to work with
+        all_sizes = {}
+        for node in self.nodes:
+            size = None
+            if sizes is not None:
+                size = sizes.get(node.id)
+
+                if size is not None:
+                    if not isinstance(size, (int, float)):
+                        raise ValueError(f"Size for node '{node.id}' must be a real number, but was {size}")
+
+                    if size < 0:
+                        raise ValueError(f"Size for node '{node.id}' must be non-negative, but was {size}")
+
+                    all_sizes[node.id] = size
+
+            if size is None:
+                if node.size is not None:
+                    all_sizes[node.id] = node.size
+
+        if node_radius_min_max is not None:
+            verify_radii(node_radius_min_max)
+
+            unscaled_min_size = min(all_sizes.values())
+            unscaled_max_size = max(all_sizes.values())
+            unscaled_size_range = float(unscaled_max_size - unscaled_min_size)
+
+            new_min_size, new_max_size = node_radius_min_max
+            new_size_range = new_max_size - new_min_size
+
+            if abs(unscaled_size_range) < 1e-6:
+                default_node_size = new_min_size + new_size_range / 2.0
+                final_sizes = {id: default_node_size for id in all_sizes}
+            else:
+                final_sizes = {
+                    id: new_min_size + new_size_range * ((nz - unscaled_min_size) / unscaled_size_range)
+                    for id, nz in all_sizes.items()
+                }
+        else:
+            final_sizes = all_sizes
+
+        for node in self.nodes:
+            size = final_sizes.get(node.id)
+
+            if size is None:
+                continue
+
+            node.size = size
 
     def color_nodes(self, property: str, colors: Optional[ColorsType] = None, override: bool = False) -> None:
         """

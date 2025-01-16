@@ -56,3 +56,15 @@ def test_node_scaling() -> None:
     scaled_sizes = _scale_node_size(sizes, min_size, max_size)
 
     assert scaled_sizes.equals(pd.Series([3.0, 3.6, 3.9, 4.2, 6.0]))
+
+
+def test_node_scaling_constant() -> None:
+    from neo4j_viz.pandas import _scale_node_size
+
+    sizes = pd.Series([2, 2, 2, 2, 2])
+    min_size = 3
+    max_size = 6
+
+    scaled_sizes = _scale_node_size(sizes, min_size, max_size)
+
+    assert scaled_sizes.equals(pd.Series([min_size + (max_size - min_size) / 2.0] * len(sizes)))
