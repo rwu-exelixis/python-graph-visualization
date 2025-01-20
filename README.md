@@ -4,22 +4,40 @@
 [![PyPI downloads month](https://img.shields.io/pypi/dm/neo4j-viz)](https://pypi.org/project/neo4j-viz/)
 ![Python versions](https://img.shields.io/pypi/pyversions/neo4j-viz)
 
-`neo4j-viz` is a Python package for visualizing graphs from the Neo4j ecosystem, such as the [Neo4j Graph Data Science (GDS) library](https://github.com/neo4j/graph-data-science).
-The package wraps the [Neo4j Visualization library (NVL)](https://neo4j.com/docs/nvl/current/).
+`neo4j-viz` is a Python package for creating interactive graph visualizations.
+The package wraps the [Neo4j Visualization JavaScript library (NVL)](https://neo4j.com/docs/nvl/current/).
+
+Proper documentation is forthcoming.
 
 **WARNING:**
 This package is still in development and the API is subject to change.
 
-## Supported features
 
-* Visualize graphs from Neo4j GDS and Pandas Dataframes
-* Nodes:
-    * Sizing
-    * Colors
-    * Caption
-* Relationships
-    * Colors
-    * Caption
+## Some notable features
+
+* Easy to import graphs represented as:
+  * projections in the Neo4j Graph Data Science (GDS) library
+  * pandas DataFrames
+* Node features:
+  * Sizing
+  * Colors
+  * Captions
+  * Pinning
+* Relationship features:
+  * Colors
+  * Captions
+* Graph features:
+  * Zooming
+  * Panning
+  * Moving nodes
+  * Using different layouts
+* Additional convenience functionality for:
+  * Resizing nodes, optionally including scale normalization
+  * Coloring nodes based on a property
+  * Toggle whether nodes should be pinned or not
+
+Please note that this list is by no means exhaustive.
+
 
 ![Example Graph](examples/example_cora_graph.png)
 
@@ -34,4 +52,4 @@ inside the `python-wrapper` folder. This will install the Python package and mak
 
 ### Examples
 
-For some Jupyter Notebook examples checkout the `/examples` directory
+For some Jupyter Notebook and streamlit examples, checkout the `/examples` directory.
