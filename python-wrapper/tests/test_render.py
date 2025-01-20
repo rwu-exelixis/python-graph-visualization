@@ -12,19 +12,20 @@ render_cases = {
     "default": {},
     "force layout": {"layout": Layout.FORCE_DIRECTED},
     "grid layout": {"layout": Layout.GRID},
+    "coordinate layout": {"layout": Layout.COORDINATE},
 }
 
 
 @pytest.mark.parametrize("render_option", render_cases.values(), ids=render_cases.keys())
 def test_basic_render(render_option: dict[str, Any], tmp_path: Path) -> None:
     nodes = [
-        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person"),
-        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product"),
-        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", caption="Product", pinned=True),
-        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:12", caption="Product"),
-        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:1", caption="Person"),
-        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:7", caption="Product"),
-        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:8", caption="Product"),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person", x=1, y=10),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product", x=2, y=15),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", caption="Product", x=3, pinned=True),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:12", caption="Product", x=4),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:1", caption="Person", x=5),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:7", caption="Product", x=6),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:8", caption="Product", x=7),
     ]
     relationships = [
         Relationship(

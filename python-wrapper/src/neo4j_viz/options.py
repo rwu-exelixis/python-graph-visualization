@@ -17,7 +17,10 @@ class Layout(str, Enum):
     FORCE_DIRECTED = "forcedirected"
     HIERARCHICAL = "hierarchical"
     GRID = "grid"
-    # TODO expose free layout for X,Y based
+    COORDINATE = "free"
+    """"
+    The coordinate layout sets the position of each node based on the `x` and `y` properties of the node.
+    """
 
 
 class Renderer(str, Enum):
