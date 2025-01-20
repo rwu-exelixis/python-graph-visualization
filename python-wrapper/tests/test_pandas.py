@@ -1,4 +1,3 @@
-import pandas as pd
 from pandas import DataFrame
 from pydantic_extra_types.color import Color
 
@@ -46,25 +45,62 @@ def test_from_df() -> None:
     assert VG.relationships[1].caption == "REL2"
 
 
-def test_node_scaling() -> None:
-    from neo4j_viz.pandas import _scale_node_size
+def test_from_dfs() -> None:
+    nodes = [
+        DataFrame(
+            {
+                "id": [0],
+                "caption": ["A"],
+                "size": [1337],
+                "color": "#FF0000",
+            }
+        ),
+        DataFrame(
+            {
+                "id": [1],
+                "caption": ["B"],
+                "size": [42],
+                "color": "#FF0000",
+            }
+        ),
+    ]
 
-    sizes = pd.Series([0, 2, 3, 4, 10])
-    min_size = 3
-    max_size = 6
+    relationships = [
+        DataFrame(
+            {
+                "source": [0],
+                "target": [1],
+                "caption": ["REL"],
+            }
+        ),
+        DataFrame(
+            {
+                "source": [1],
+                "target": [0],
+                "caption": ["REL2"],
+            }
+        ),
+    ]
+    VG = from_dfs(nodes, relationships, node_radius_min_max=(42, 1337))
 
-    scaled_sizes = _scale_node_size(sizes, min_size, max_size)
+    assert len(VG.nodes) == 2
 
-    assert scaled_sizes.equals(pd.Series([3.0, 3.6, 3.9, 4.2, 6.0]))
+    assert VG.nodes[0].id == 0
+    assert VG.nodes[0].caption == "A"
+    assert VG.nodes[0].size == 1337
+    assert VG.nodes[0].color == Color("#ff0000")
 
+    assert VG.nodes[1].id == 1
+    assert VG.nodes[1].caption == "B"
+    assert VG.nodes[1].size == 42
+    assert VG.nodes[0].color == Color("#ff0000")
 
-def test_node_scaling_constant() -> None:
-    from neo4j_viz.pandas import _scale_node_size
+    assert len(VG.relationships) == 2
 
-    sizes = pd.Series([2, 2, 2, 2, 2])
-    min_size = 3
-    max_size = 6
+    assert VG.relationships[0].source == 0
+    assert VG.relationships[0].target == 1
+    assert VG.relationships[0].caption == "REL"
 
-    scaled_sizes = _scale_node_size(sizes, min_size, max_size)
-
-    assert scaled_sizes.equals(pd.Series([min_size + (max_size - min_size) / 2.0] * len(sizes)))
+    assert VG.relationships[1].source == 1
+    assert VG.relationships[1].target == 0
+    assert VG.relationships[1].caption == "REL2"
