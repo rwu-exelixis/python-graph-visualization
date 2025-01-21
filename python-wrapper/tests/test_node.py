@@ -12,6 +12,8 @@ def test_nodes_with_all_options() -> None:
         color="#FF0000",
         size=10,
         pinned=True,
+        x=1,
+        y=10,
     )
 
     assert node.to_dict() == {
@@ -22,6 +24,8 @@ def test_nodes_with_all_options() -> None:
         "color": "#ff0000",
         "size": 10,
         "pinned": True,
+        "x": 1,
+        "y": 10,
     }
 
 
@@ -66,3 +70,8 @@ def test_id_aliases(alias: str) -> None:
     assert node.to_dict() == {
         "id": "1",
     }
+
+
+def test_node_validation() -> None:
+    with pytest.raises(ValueError, match="Input should be a valid integer, unable to parse string as an integer"):
+        Node(id="1", x="not a number")
