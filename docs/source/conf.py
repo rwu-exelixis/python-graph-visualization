@@ -21,11 +21,15 @@ extensions = [
     "sphinx.ext.autodoc",  # include docs from docstrings
     "enum_tools.autoenum",  # specialised autoclass for enums
     "sphinx.ext.napoleon",  # Support for NumPy and Google style docstrings
+    "nbsphinx",  # support for jupyter notebooks
+    "nbsphinx_link",  # support for jupyter notebooks from other directories
 ]
 
 templates_path = ["_templates"]
 exclude_patterns: list[str] = []
 
+# -- Options for notebook extension -------------------------------------------
+nbsphinx_execute = "never"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

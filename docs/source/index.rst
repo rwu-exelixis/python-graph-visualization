@@ -10,10 +10,9 @@ This API reference manual lists all available endpoints in the `neo4j_viz` `pack
 
 
 .. toctree::
-   :maxdepth: 2
+   :glob:
+   :maxdepth: 1
    :caption: Contents:
 
-   from_gds
-   from_pandas
-   graph
-   render_options
+   *
+   tutorials/*
