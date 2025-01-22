@@ -31,5 +31,10 @@ jobs:
           cache-dependency-path: pyproject.toml
       - run: pip install "python-wrapper/[dev, pandas, gds, docs]"
 
+      - name: Setup pandoc
+        uses: pandoc/actions/setup@v1
+        with:
+          version: 3.6.2
+
       - name: Render ref docs
         run: ./scripts/render_docs.sh
