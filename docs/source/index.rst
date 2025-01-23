@@ -12,7 +12,6 @@ This is the documentation for the `neo4j_viz` Python library by Neo4j for creati
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: Contents:
 
    installation.rst
    getting-started.rst
