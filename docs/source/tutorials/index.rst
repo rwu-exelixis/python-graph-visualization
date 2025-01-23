@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Graph Visualization for Python by Neo4j documentation
+Tutorials
 =====================================================
 
-This is the documentation for the `neo4j_viz` Python library by Neo4j for creating interactive graph visualizations.
+This chapter contains Jupyter notebook tutorials for the `neo4j_viz` package.
 
 
 .. toctree::
@@ -14,7 +14,4 @@ This is the documentation for the `neo4j_viz` Python library by Neo4j for creati
    :maxdepth: 1
    :caption: Contents:
 
-   installation.rst
-   getting-started.rst
-   api-reference/index.rst
-   tutorials/index.rst
+   *
