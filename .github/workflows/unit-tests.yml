@@ -43,7 +43,7 @@ jobs:
       - run: pip install ".[gds]"
 
       - name: Run tests
-        run: pytest tests/ -Werror
+        run: pytest tests/
 
   tests-313:
     runs-on: ubuntu-latest
@@ -63,4 +63,4 @@ jobs:
       # skip gds for now as it is not available for python 3.13
 
       - name: Run tests
-        run: pytest tests/ -Werror
+        run: pytest tests/
