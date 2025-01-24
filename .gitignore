@@ -9,6 +9,8 @@ env.bak/
 venv.bak/
 .conda.sh
 
+out/*
+
 # local env files
 .env.local
 .env.development.local

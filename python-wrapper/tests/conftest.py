@@ -34,11 +34,19 @@ def gds() -> Generator[Any, None, None]:
     else:
         api = aura_api()
         id, dbms_connection_info = create_aurads_instance(api)
+
+        # setting as environment variables to run notebooks with this connection
+        os.environ["NEO4J_URI"] = dbms_connection_info.uri
+        os.environ["NEO4J_USER"] = dbms_connection_info.username
+        os.environ["NEO4J_PASSWORD"] = dbms_connection_info.password
+
         yield GraphDataScience(
             endpoint=dbms_connection_info.uri,
             auth=(dbms_connection_info.username, dbms_connection_info.password),
             aura_ds=True,
             database="neo4j",
         )
+
+        os.environ["NEO4J_URI"] = None
 
         api.delete_instance(id)
