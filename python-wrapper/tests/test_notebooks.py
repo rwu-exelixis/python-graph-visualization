@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-
+import pathlib
 import signal
 import sys
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Callable, NamedTuple, Optional
+from typing import Any, Callable, NamedTuple
 
 import nbformat
+import pytest
 from nbclient.exceptions import CellExecutionError
 from nbconvert.preprocessors.execute import ExecutePreprocessor
 
@@ -43,9 +43,7 @@ class TeardownExecutePreprocessor(ExecutePreprocessor):
                 super().preprocess_cell(cell, resources, index)  # type: ignore
         except CellExecutionError as e:
             if self.tear_down_cells:
-                print(
-                    f"Running tear down cells due to error in notebook execution: {e}"
-                )
+                print(f"Running tear down cells due to error in notebook execution: {e}")
                 self.teardown(resources)
             raise e
 
@@ -72,13 +70,12 @@ class TearDownCollector(ExecutePreprocessor):
         return self._tear_down_cells
 
 
-def main(filter_func: Callable[[str], bool]) -> None:
-    examples_path = Path("examples")
+def run_notebooks(filter_func: Callable[[str], bool]) -> None:
+    current_dir = pathlib.Path(__file__).parent.resolve()
+    examples_path = current_dir.parent.parent / "examples"
 
     notebook_files = [
-        f
-        for f in examples_path.iterdir()
-        if f.is_file() and f.suffix == ".ipynb" and filter_func(f.name)
+        f for f in examples_path.iterdir() if f.is_file() and f.suffix == ".ipynb" and filter_func(f.name)
     ]
 
     ep = TeardownExecutePreprocessor(kernel_name="python3")
@@ -103,40 +100,39 @@ def main(filter_func: Callable[[str], bool]) -> None:
                 ep.preprocess(nb)
                 print(f"Finished executing notebook {notebook_filename}")
             except CellExecutionError as e:
-                exceptions.append(
-                    RuntimeError(f"Error executing notebook {notebook_filename}", e)
-                )
+                exceptions.append(RuntimeError(f"Error executing notebook {notebook_filename}", e))
                 continue
 
     if exceptions:
         for nb_ex in exceptions:
             print(nb_ex)
-        raise RuntimeError(
-            f"{len(exceptions)} Errors occurred while executing notebooks"
-        )
+        raise RuntimeError(f"{len(exceptions)} Errors occurred while executing notebooks")
     else:
         print("Finished executing notebooks")
 
 
-if __name__ == "__main__":
-    notebook_filter = sys.argv[1] if len(sys.argv) >= 2 else ""
-
+@pytest.mark.requires_neo4j_and_gds
+def test_neo4j(gds: Any) -> None:
     neo4j_notebooks = ["neo4j-nvl-example.ipynb", "gds-nvl-example.ipynb"]
-    snowflake_notebooks = ["snowflake-nvl-example.ipynb"]
-    simple_notebooks: list[str] = []
 
-    notebooks: Optional[list[str]] = None
-    if notebook_filter == "neo4j":
+    def filter_func(notebook: str) -> bool:
+        return notebook in neo4j_notebooks
 
-        def filter_func(notebook: str) -> bool:
-            return notebook in neo4j_notebooks
-    elif notebook_filter == "snowflake":
+    run_notebooks(filter_func)
 
-        def filter_func(notebook: str) -> bool:
-            return notebook in snowflake_notebooks
-    else:
 
-        def filter_func(notebook: str) -> bool:
-            return notebook in simple_notebooks
-
-    main(filter_func)
+# def test_snowflake() -> None:
+#     snowflake_notebooks = ["snowflake-nvl-example.ipynb"]
+#
+#     def filter_func(notebook: str) -> bool:
+#         return notebook in snowflake_notebooks
+#
+#     run_notebooks(filter_func)
+#
+# def test_simple() -> None:
+#     simple_notebooks = ["simple-nvl-example.ipynb"]
+#
+#     def filter_func(notebook: str) -> bool:
+#         return notebook in simple_notebooks
+#
+#     run_notebooks(filter_func)
