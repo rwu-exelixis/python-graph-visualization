@@ -6,7 +6,7 @@
 Tutorials
 =====================================================
 
-This chapter contains Jupyter notebook tutorials for the `neo4j_viz` package.
+This chapter contains Jupyter notebook tutorials for the `neo4j-viz` package.
 
 
 .. toctree::

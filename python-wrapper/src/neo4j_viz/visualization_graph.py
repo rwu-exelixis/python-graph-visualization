@@ -37,6 +37,33 @@ class VisualizationGraph(BaseModel):
         allow_dynamic_min_zoom: bool = True,
         max_allowed_nodes: int = 10_000,
     ) -> HTML:
+        """
+        Render the graph.
+
+        Parameters
+        ----------
+        layout:
+            The `Layout` to use.
+        renderer:
+            The `Renderer` to use.
+        width:
+            The width of the rendered graph.
+        height:
+            The height of the rendered graph.
+        pan_position:
+            The initial pan position.
+        initial_zoom:
+            The initial zoom level.
+        min_zoom:
+            The minimum zoom level.
+        max_zoom:
+            The maximum zoom level.
+        allow_dynamic_min_zoom:
+            Whether to allow dynamic minimum zoom level.
+        max_allowed_nodes:
+            The maximum allowed number of nodes to render.
+        """
+
         num_nodes = len(self.nodes)
         if num_nodes > max_allowed_nodes:
             raise ValueError(
