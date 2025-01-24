@@ -4,20 +4,19 @@ import warnings
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field
 import enum_tools.documentation
+from pydantic import BaseModel, Field
 
 
 @enum_tools.documentation.document_enum
 class CaptionAlignment(str, Enum):
-    """"
+    """
     The alignment of the caption text for nodes and relationships.
     """
 
     TOP = "top"
     CENTER = "center"
     BOTTOM = "bottom"
-
 
 
 @enum_tools.documentation.document_enum
@@ -32,6 +31,7 @@ class Layout(str, Enum):
     The coordinate layout sets the position of each node based on the `x` and `y` properties of the node.
     """
     GRID = "grid"
+
 
 @enum_tools.documentation.document_enum
 class Renderer(str, Enum):
