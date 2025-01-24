@@ -31,6 +31,10 @@ exclude_patterns: list[str] = []
 # -- Options for notebook extension -------------------------------------------
 nbsphinx_execute = "never"
 
+# -- Options for autodoc extension -------------------------------------------
+autodoc_typehints = "description"
+
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
