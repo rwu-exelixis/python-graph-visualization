@@ -195,6 +195,12 @@ div.code-block-caption:hover > a.headerlink {
     padding: 0.25rem 0;
 }
 
+/* links */
+.doc span {
+    margin: 0;
+    padding: 0;
+}
+
 /* lists */
 
 body.sphinx .doc ul li{
