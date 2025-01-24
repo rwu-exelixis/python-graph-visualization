@@ -17,13 +17,17 @@ class Node(BaseModel, extra="allow"):
     All options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_nodes)
     """
 
+    #: Unique identifier for the node
     id: NodeIdType = Field(
         validation_alias=AliasChoices("id", "nodeId", "node_id"), description="Unique identifier for the node"
     )
+    #: The caption of the node
     caption: Optional[str] = Field(None, description="The caption of the node")
+    #: The alignment of the caption text
     caption_align: Optional[CaptionAlignment] = Field(
         None, serialization_alias="captionAlign", description="The alignment of the caption text"
     )
+    #: The size of the caption text. The font size to node radius ratio
     caption_size: Optional[int] = Field(
         None,
         ge=1,
@@ -31,10 +35,15 @@ class Node(BaseModel, extra="allow"):
         serialization_alias="captionSize",
         description="The size of the caption text. The font size to node radius ratio",
     )
+    #: The size of the node as radius in pixel
     size: Optional[RealNumber] = Field(None, ge=0, description="The size of the node as radius in pixel")
+    #: The color of the node
     color: Optional[ColorType] = Field(None, description="The color of the node")
+    #: Whether the node is pinned in the visualization
     pinned: Optional[bool] = Field(None, description="Whether the node is pinned in the visualization")
+    #: The x-coordinate of the node
     x: Optional[RealNumber] = Field(None, description="The x-coordinate of the node")
+    #: The y-coordinate of the node
     y: Optional[RealNumber] = Field(None, description="The y-coordinate of the node")
 
     @field_serializer("color")

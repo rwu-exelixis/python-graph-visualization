@@ -5,7 +5,6 @@ from collections.abc import Iterable
 from typing import Optional
 
 from IPython.display import HTML
-from pydantic import BaseModel, Field
 from pydantic_extra_types.color import Color, ColorType
 
 from .colors import ColorsType, neo4j_colors
@@ -16,13 +15,29 @@ from .options import Layout, Renderer, RenderOptions
 from .relationship import Relationship
 
 
-class VisualizationGraph(BaseModel):
+class VisualizationGraph:
     """
     A graph to visualize.
     """
 
-    nodes: list[Node] = Field(description="The nodes in the graph")
-    relationships: list[Relationship] = Field(description="The relationships in the graph")
+    #: "The nodes in the graph"
+    nodes: list[Node]
+    #: "The relationships in the graph"
+    relationships: list[Relationship]
+
+    def __init__(self, nodes: list[Node], relationships: list[Relationship]) -> None:
+        """ "
+        Create a new `VisualizationGraph`.
+
+        Parameters
+        ----------
+        nodes:
+            The nodes in the graph.
+        relationships:
+            The relationships in the graph.
+        """
+        self.nodes = nodes
+        self.relationships = relationships
 
     def render(
         self,
