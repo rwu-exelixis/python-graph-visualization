@@ -50,6 +50,7 @@ We can't guarantee that we'll accept pull requests and may ask you to make some 
 Occasionally, we might also have logistical, commercial, or legal reasons why we can't accept your work but we'll try to find an alternative way for you to contribute in that case.
 Remember that many community members have become regular contributors and some are now even Neo employees!
 
+
 ## Building the project locally
 
 To build the Python packages, run inside the `python-wrapper` folder:
@@ -67,9 +68,13 @@ yarn build    # Build JavaScript resources to be used by Python code
 
 This will build the app and copy the relevant files to the python wrapper
 
+
 ## Specifically for this project
 
-Setting up the Python development environment:
+In this section, we will provide some more specific information about how to work with this particular project.
+
+
+### Python development environment
 
  * Install Python 3.9+
  * [Install pip](https://pip.pypa.io/en/stable/installation/)
@@ -78,6 +83,28 @@ Setting up the Python development environment:
    pip install -e .
    pip install ".[dev]"
    ```
+
+### Testing
+
+To run unit tests, execute:
+
+```sh
+pytest python-wrapper/tests
+```
+
+Additionally, there are integration tests that require an external data source.
+These require additional setup and configuration, such as environment variables specifying connection details.
+To run tests requiring a Neo4j DB instance with GDS installed, execute:
+
+```sh
+pytest python-wrapper/tests --include-neo4j-and-gds
+```
+
+To run tests requiring a Snowflake connection, execute:
+
+```sh
+pytest python-wrapper/tests --include-snowflake
+```
 
 
 ### Project structure
