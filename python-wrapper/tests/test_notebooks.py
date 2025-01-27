@@ -120,18 +120,20 @@ def test_neo4j(gds: Any) -> None:
     run_notebooks(filter_func)
 
 
-# def test_snowflake() -> None:
-#     snowflake_notebooks = ["snowflake-nvl-example.ipynb"]
-#
-#     def filter_func(notebook: str) -> bool:
-#         return notebook in snowflake_notebooks
-#
-#     run_notebooks(filter_func)
-#
-# def test_simple() -> None:
-#     simple_notebooks = ["simple-nvl-example.ipynb"]
-#
-#     def filter_func(notebook: str) -> bool:
-#         return notebook in simple_notebooks
-#
-#     run_notebooks(filter_func)
+@pytest.mark.requires_snowflake
+def test_snowflake() -> None:
+    snowflake_notebooks = ["snowpark-nvl-example.ipynb"]
+
+    def filter_func(notebook: str) -> bool:
+        return notebook in snowflake_notebooks
+
+    run_notebooks(filter_func)
+
+
+def test_simple() -> None:
+    simple_notebooks = ["simple-nvl-example.ipynb"]
+
+    def filter_func(notebook: str) -> bool:
+        return notebook in simple_notebooks
+
+    run_notebooks(filter_func)
