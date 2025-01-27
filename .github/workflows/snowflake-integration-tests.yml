@@ -5,7 +5,8 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
-  # Skip on this check PR to reduce number of AuraDS instances created
+  # Skip on this check PR to minimize the load against Snowflake (and keep PR checks fast)
+
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
