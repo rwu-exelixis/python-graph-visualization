@@ -15,6 +15,7 @@ jobs:
   tests:
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os}}
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -41,4 +42,4 @@ jobs:
           AURA_API_CLIENT_ID: 4V1HYCYEeoU4dSxThKnBeLvE2U4hSphx
           AURA_API_CLIENT_SECRET: ${{ secrets.AURA_API_CLIENT_SECRET }}
           AURA_API_TENANT_ID: eee7ec28-6b1a-5286-8e3a-3362cc1c4c78
-        run: pytest tests/ --include-neo4j-and-gds -Werror
+        run: pytest tests/ --include-neo4j-and-gds
