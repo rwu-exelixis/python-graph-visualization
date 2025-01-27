@@ -47,6 +47,7 @@ def gds() -> Generator[Any, None, None]:
             database="neo4j",
         )
 
-        os.environ["NEO4J_URI"] = None
+        # Clear Neo4j_URI after test (rerun should create a new instance)
+        os.environ["NEO4J_URI"] = ""
 
         api.delete_instance(id)
