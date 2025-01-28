@@ -48,7 +48,7 @@ dev = [
     "ipykernel==6.29.5",
     "palettable==3.3.3",
     "pytest-mock==3.14.0",
-    "nbconvert==7.16.5",
+    "nbconvert==7.16.6",
     "streamlit==1.41.1",
 ]
 docs = [
