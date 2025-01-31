@@ -10,7 +10,7 @@ In this section we will cover how to import data from `Pandas DataFrames <https:
 Pandas DataFrames
 -----------------
 
-The ``neo4j-viz`` library provides a convenience method for importing data from Pandas ``DataFrame``s.
+The ``neo4j-viz`` library provides a convenience method for importing data from Pandas DataFrames.
 It requires and additional dependency to be installed, which you can do by running:
 
 .. code-block:: bash
@@ -18,16 +18,16 @@ It requires and additional dependency to be installed, which you can do by runni
     pip install neo4j-viz[pandas]
 
 Once you have installed the additional dependency, you can use the :doc:`from_gds <./api-reference/from_pandas>` method
-to import pandas ``DataFrame``s.
+to import pandas DataFrames.
 
 The ``from_dfs`` method takes two mandatory positional parameters:
 
-* A Pandas ``DataFrame``, or iterable (eg. list) of ``DataFrame``s representing the nodes of the graph.
-  The rows of the ``DataFrame``(s) should represent the individual nodes, and the columns should represent the node
+* A Pandas ``DataFrame``, or iterable (eg. list) of DataFrames representing the nodes of the graph.
+  The rows of the DataFrame(s) should represent the individual nodes, and the columns should represent the node
   IDs and properties. The columns map directly to fields on :doc:`Nodes <./api-reference/node>`, and as such
   should follow the same naming conventions.
-* A Pandas ``DataFrame``, or iterable (eg. list) of ``DataFrame``s representing the relationships of the graph.
-  The rows of the ``DataFrame``(s) should represent the individual relationships, and the columns should represent the
+* A Pandas ``DataFrame``, or iterable (eg. list) of DataFrames representing the relationships of the graph.
+  The rows of the DataFrame(s) should represent the individual relationships, and the columns should represent the
   relationship IDs and properties. The columns map directly to fields on
   :doc:`Relationships <./api-reference/relationship>`, and as such should follow the same naming conventions.
 
@@ -41,8 +41,8 @@ This can be useful if node sizes vary a lot, or are all very small or very big.
 Example
 ~~~~~~~
 
-In this small example, we import a tiny toy graph representing a social network from two Pandas ``DataFrame``s.
-As we can see the column names of the ``DataFrame``s map directly to the fields of :doc:`Nodes <./api-reference/node>`
+In this small example, we import a tiny toy graph representing a social network from two Pandas DataFrames.
+As we can see the column names of the DataFrames map directly to the fields of :doc:`Nodes <./api-reference/node>`
 and :d
 
 .. code-block:: python
