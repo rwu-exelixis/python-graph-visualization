@@ -43,7 +43,7 @@ Example
 
 In this small example, we import a tiny toy graph representing a social network from two Pandas DataFrames.
 As we can see the column names of the DataFrames map directly to the fields of :doc:`Nodes <./api-reference/node>`
-and :d
+and :doc:`Relationships <./api-reference/relationship>`.
 
 .. code-block:: python
     from pandas import DataFrame
