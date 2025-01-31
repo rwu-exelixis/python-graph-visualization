@@ -1,5 +1,5 @@
-Importing from external sources
-===============================
+Integration with other libraries
+================================
 
 In addition to creating graphs from scratch, with ``neo4j-viz`` as is shown in the
 :doc:`Getting started section <./getting-started>`, you can also import data directly from external sources.
@@ -80,7 +80,7 @@ It requires and additional dependency to be installed, which you can do by runni
 Once you have installed the additional dependency, you can use the :doc:`from_gds <./api-reference/from_gds>` method
 to import projections from the GDS library.
 
-The ``from_dfs`` method takes two mandatory positional parameters:
+The ``from_gds`` method takes two mandatory positional parameters:
 
 * An initialized ``GraphDataScience`` object for the connection to the GDS instance, and
 * A ``Graph`` representing the projection that one wants to import.

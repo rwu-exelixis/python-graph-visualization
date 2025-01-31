@@ -19,6 +19,6 @@ Notably, there are convenience methods for importing data from `Pandas DataFrame
 
    installation.rst
    getting-started.nblink
-   importing.rst
+   integration.rst
    api-reference/index.rst
    tutorials/index.rst
