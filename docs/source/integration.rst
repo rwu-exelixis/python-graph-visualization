@@ -46,6 +46,7 @@ As we can see the column names of the DataFrames map directly to the fields of :
 and :doc:`Relationships <./api-reference/relationship>`.
 
 .. code-block:: python
+
     from pandas import DataFrame
     from neo4j_viz.pandas import from_dfs
 
