@@ -33,8 +33,11 @@ The ``from_dfs`` method takes two mandatory positional parameters:
 
 ``from_dfs`` also takes an optional property, ``node_radius_min_max``, can be used (and is used by default) to scale
 the node sizes for the visualization.
-It is a tuple of two floats, representing the radii (sizes) in pixels of the smallest and largest nodes respectively in
+It is a tuple of two numbers, representing the radii (sizes) in pixels of the smallest and largest nodes respectively in
 the visualization.
+The node sizes will be scaled such that the smallest node will have the size of the first value, and the largest node
+will have the size of the second value.
+The other nodes will be scaled linearly between these two values according to their relative size.
 This can be useful if node sizes vary a lot, or are all very small or very big.
 
 
@@ -95,8 +98,11 @@ For example, these properties could be used to color the nodes, or give captions
 
 The last optional property, ``node_radius_min_max``, can be used (and is used by default) to scale the node sizes for the
 visualization.
-It is a tuple of two floats, representing the radii (sizes) in pixels of the smallest and largest nodes respectively in
+It is a tuple of two numbers, representing the radii (sizes) in pixels of the smallest and largest nodes respectively in
 the visualization.
+The node sizes will be scaled such that the smallest node will have the size of the first value, and the largest node
+will have the size of the second value.
+The other nodes will be scaled linearly between these two values according to their relative size.
 This can be useful if node sizes vary a lot, or are all very small or very big.
 
 
