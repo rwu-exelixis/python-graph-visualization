@@ -15,8 +15,8 @@ Optional dependencies
 In addition, there are a few optional dependencies that you can install to enable additional features of the library.
 
 
-Pandas `from_dfs` importer
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pandas DataFrames ``from_dfs`` importer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To install the additional dependencies required for the :doc:`from_dfs importer <./api-reference/from_pandas>` you can run:
 
@@ -25,8 +25,8 @@ To install the additional dependencies required for the :doc:`from_dfs importer 
     pip install neo4j-viz[pandas]
 
 
-Neo4j Graph Data Science `from_gds` importer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Neo4j Graph Data Science ``from_gds`` importer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To install the additional dependencies required for the :doc:`from_gds importer <./api-reference/from_gds>` you can run:
 
