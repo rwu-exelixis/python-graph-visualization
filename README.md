@@ -21,6 +21,7 @@ Proper documentation is forthcoming.
 > [!WARNING]
 > This package is still in development and the API is subject to change.
 
+![Example Graph](examples/example_cora_graph.png)
 
 
 ## Some notable features
@@ -47,9 +48,6 @@ Proper documentation is forthcoming.
   * Toggle whether nodes should be pinned or not
 
 Please note that this list is by no means exhaustive.
-
-
-![Example Graph](examples/example_cora_graph.png)
 
 
 ## Getting started
