@@ -18,7 +18,7 @@ The package wraps the [Neo4j Visualization JavaScript library (NVL)](https://neo
 
 Proper documentation is forthcoming.
 
-**WARNING:**
+[!WARNING] 
 This package is still in development and the API is subject to change.
 
 
