@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-API Reference
+API reference
 =====================================================
 
-This is an API reference for the `neo4j-viz` library.
+This is an API reference for the ``neo4j-viz`` library.
 
 
 .. toctree::

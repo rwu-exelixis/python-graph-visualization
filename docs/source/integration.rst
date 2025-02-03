@@ -24,17 +24,20 @@ The ``from_dfs`` method takes two mandatory positional parameters:
 
 * A Pandas ``DataFrame``, or iterable (eg. list) of DataFrames representing the nodes of the graph.
   The rows of the DataFrame(s) should represent the individual nodes, and the columns should represent the node
-  IDs and properties. The columns map directly to fields on :doc:`Nodes <./api-reference/node>`, and as such
+  IDs and properties. The columns map directly to fields of :doc:`Node <./api-reference/node>`, and as such
   should follow the same naming conventions.
 * A Pandas ``DataFrame``, or iterable (eg. list) of DataFrames representing the relationships of the graph.
   The rows of the DataFrame(s) should represent the individual relationships, and the columns should represent the
-  relationship IDs and properties. The columns map directly to fields on
-  :doc:`Relationships <./api-reference/relationship>`, and as such should follow the same naming conventions.
+  relationship IDs and properties. The columns map directly to fields of
+  :doc:`Relationship <./api-reference/relationship>`, and as such should follow the same naming conventions.
 
-``from_dfs`` also takes an optional property, ``node_radius_min_max``, can be used (and is used by default) to scale
-the node sizes for the visualization.
-It is a tuple of two floats, representing the radii (sizes) in pixels of the smallest and largest nodes respectively in
+``from_dfs`` also takes an optional property, ``node_radius_min_max``, that can be used (and is used by default) to
+scale the node sizes for the visualization.
+It is a tuple of two numbers, representing the radii (sizes) in pixels of the smallest and largest nodes respectively in
 the visualization.
+The node sizes will be scaled such that the smallest node will have the size of the first value, and the largest node
+will have the size of the second value.
+The other nodes will be scaled linearly between these two values according to their relative size.
 This can be useful if node sizes vary a lot, or are all very small or very big.
 
 
@@ -43,9 +46,10 @@ Example
 
 In this small example, we import a tiny toy graph representing a social network from two Pandas DataFrames.
 As we can see the column names of the DataFrames map directly to the fields of :doc:`Nodes <./api-reference/node>`
-and :d
+and :doc:`Relationships <./api-reference/relationship>`.
 
 .. code-block:: python
+
     from pandas import DataFrame
     from neo4j_viz.pandas import from_dfs
 
@@ -85,17 +89,20 @@ The ``from_gds`` method takes two mandatory positional parameters:
 * An initialized ``GraphDataScience`` object for the connection to the GDS instance, and
 * A ``Graph`` representing the projection that one wants to import.
 
-We can also provide an optional ``size_property`` parameter, which should refer to a node property of the projection, and
-will be used to determine the size of the nodes in the visualization.
+We can also provide an optional ``size_property`` parameter, which should refer to a node property of the projection,
+and will be used to determine the size of the nodes in the visualization.
 
 The ``additional_node_properties`` parameter is also optional, and should be a list of additional node properties of the
 projection that you want to include in the visualization.
 For example, these properties could be used to color the nodes, or give captions to them in the visualization.
 
-The last optional property, ``node_radius_min_max``, can be used (and is used by default) to scale the node sizes for the
-visualization.
-It is a tuple of two floats, representing the radii (sizes) in pixels of the smallest and largest nodes respectively in
+The last optional property, ``node_radius_min_max``, can be used (and is used by default) to scale the node sizes for
 the visualization.
+It is a tuple of two numbers, representing the radii (sizes) in pixels of the smallest and largest nodes respectively in
+the visualization.
+The node sizes will be scaled such that the smallest node will have the size of the first value, and the largest node
+will have the size of the second value.
+The other nodes will be scaled linearly between these two values according to their relative size.
 This can be useful if node sizes vary a lot, or are all very small or very big.
 
 
