@@ -29,6 +29,7 @@ You can provide these either as a percentage of the available space (eg. ``"80%"
 (eg. ``"800px"``).
 
 Further you can change the layout of the graph using the ``layout`` parameter, which can be set to one of the following values:
+
 * ``Layout.FORCE_DIRECTED`` - Nodes are arranged using the Force-Directed algorithm, which simulates physical forces
 * ``Layout.HIERARCHICAL`` - Arranges nodes by the directionality of their relationships, creating a tree-like structure
 * ``Layout.COORDINATE`` - Arranges nodes based on coordinates defined in `x` and `y` properties on each node.
