@@ -8,8 +8,7 @@
 [![Community forum](https://img.shields.io/website?down_color=lightgrey&down_message=offline&label=Forums&logo=discourse&up_color=green&up_message=online&url=https%3A%2F%2Fcommunity.neo4j.com%2F)](https://community.neo4j.com)
 [![License](https://img.shields.io/pypi/l/neo4j-viz)](https://pypi.org/project/neo4j-viz/)
 
-`neo4j-viz` is a Python package for creating interactive graph visualizations.
-It focuses on convenience to visualize graphs from Neo4j Graph Data Science (GDS) projections.
+`neo4j-viz` is a Python package for creating interactive graph visualizations based on data from Neo4j products.
 
 The output is of type `IPython.display.HTML` and can be viewed directly in a Jupyter Notebook, Streamlit.
 Alternatively, you can export the output to a file and view it in a web browser.
