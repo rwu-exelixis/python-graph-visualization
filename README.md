@@ -3,7 +3,7 @@
 [![Latest version](https://img.shields.io/pypi/v/neo4j-viz)](https://pypi.org/project/neo4j-viz/)
 [![PyPI downloads month](https://img.shields.io/pypi/dm/neo4j-viz)](https://pypi.org/project/neo4j-viz/)
 ![Python versions](https://img.shields.io/pypi/pyversions/neo4j-viz)
-[![Documentation](https://img.shields.io/badge/Documentation-latest-blue)](https://development.neo4j.dev/docs/nvl-python/preview/)
+[![Documentation](https://img.shields.io/badge/Documentation-latest-blue)](https://neo4j.com/docs/nvl-python/preview/)
 [![Discord](https://img.shields.io/discord/787399249741479977?label=Chat&logo=discord)](https://discord.gg/neo4j)
 [![Community forum](https://img.shields.io/website?down_color=lightgrey&down_message=offline&label=Forums&logo=discourse&up_color=green&up_message=online&url=https%3A%2F%2Fcommunity.neo4j.com%2F)](https://community.neo4j.com)
 [![License](https://img.shields.io/pypi/l/neo4j-viz)](https://pypi.org/project/neo4j-viz/)
