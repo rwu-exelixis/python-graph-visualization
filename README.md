@@ -51,9 +51,65 @@ Please note that this list is by no means exhaustive.
 
 ## Getting started
 
-```
+
+### Installation
+
+Simply install with pip:
+
+```sh
 pip install neo4j-viz
 ```
+
+
+### Basic usage
+
+We will use a small toy graph representing the purchase history of a few people and products.
+
+We start by instantiating the [Nodes](https://neo4j.com/docs/nvl-python/preview/api-reference/node.html) and
+[Relationships](https://neo4j.com/docs/nvl-python/preview/api-reference/relationship.html) we want in our graph.
+The only mandatory fields for a node are the "id", and "source" and "target" for a relationship.
+But the other fields can optionally be used to customize the appearance of the nodes and relationships in the
+visualization.
+
+Lastly we create a
+[VisualizationGraph](https://neo4j.com/docs/nvl-python/preview/api-reference/visualization-graph.html) object with the
+nodes and relationships we created, and call its `render` method to display the graph.
+
+```python
+from neo4j_viz import Node, Relationship, VisualizationGraph
+
+nodes = [
+    Node(id=0, size=10, caption="Person"),
+    Node(id=1, size=10, caption="Product"),
+    Node(id=2, size=20, caption="Product"),
+    Node(id=3, size=10, caption="Person"),
+    Node(id=4, size=10, caption="Product"),
+]
+relationships = [
+    Relationship(
+        source=0,
+        target=1,
+        caption="BUYS",
+    ),
+    Relationship(
+        source=0,
+        target=2,
+        caption="BUYS",
+    ),
+    Relationship(
+        source=3,
+        target=2,
+        caption="BUYS",
+    ),
+]
+
+VG = VisualizationGraph(nodes=nodes, relationships=relationships)
+
+VG.render()
+```
+
+This will return a `IPython.display.HTML` object that can be rendered in a Jupyter Notebook or streamlit application.
+
 
 ### Examples
 
