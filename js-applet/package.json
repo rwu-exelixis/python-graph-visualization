@@ -1,6 +1,6 @@
 {
   "name": "nvl-python-wrapper",
-  "version": "0.3.6",
+  "version": "0.3.6-800b1623",
   "scripts": {
     "build": "webpack",
     "postbuild": "cp dist/base.js ../python-wrapper/src/neo4j_viz/resources/nvl_entrypoint"
