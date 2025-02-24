@@ -15,3 +15,4 @@ if [ "${SKIP_NOTEBOOKS:-false}" == "true" ]; then
 fi
 
 python "${GIT_ROOT}/scripts/clean_notebooks.py" -i "${GIT_ROOT}/examples/" -o inplace
+python "${GIT_ROOT}/scripts/clean_notebooks.py" -i "${GIT_ROOT}/docs/extra/" -o inplace
