@@ -31,7 +31,7 @@ classifiers = [
 ]
 keywords = ["graph", "visualization", "neo4j"]
 dependencies = [
-    "ipython >=8, <9",
+    "ipython >=7, <10",
     "pydantic >=2 , <3",
     "pydantic-extra-types >=2, <3",
     "enum-tools==0.12.0"
