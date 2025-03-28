@@ -73,7 +73,7 @@ def _map_node(node: neo4j.graph.Node, size_property: Optional[str], caption_prop
             else:
                 caption = next(iter(labels))
         else:
-            caption = node.get(caption)
+            caption = str(node.get(caption_property))
 
     return Node(id=node.element_id, caption=caption, labels=labels, size=size, **{k: v for k, v in node.items()})
 
@@ -86,7 +86,7 @@ def _map_relationship(rel: neo4j.graph.Relationship, caption_property: Optional[
         if caption_property == "type":
             caption = rel.type
         else:
-            caption = rel.get(caption)
+            caption = str(rel.get(caption_property))
     else:
         caption = None
 
