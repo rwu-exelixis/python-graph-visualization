@@ -72,6 +72,9 @@ notebook = [
 
 [project.urls]
 Homepage = "https://neo4j.com/"
+Repository = "https://github.com/neo4j/python-graph-visualization"
+Issues = "https://github.com/neo4j/python-graph-visualization/issues"
+Documentation = "https://neo4j.com/docs/nvl-python/preview"
 
 [tool.setuptools]
 include-package-data = true
