@@ -21,6 +21,9 @@ Proper documentation is forthcoming.
 > This package is still in development and the API is subject to change.
 
 
+![Example Graph](https://github.com/neo4j/python-graph-visualization/blob/main/examples/example_cora_graph.png)
+
+
 ## Some notable features
 
 * Easy to import graphs represented as:
