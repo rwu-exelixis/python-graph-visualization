@@ -8,7 +8,6 @@ from pytest_mock import MockerFixture
 from neo4j_viz import Node
 
 
-@pytest.mark.skipif(sys.version_info >= (3, 13), reason="requires python 3.12 or lower")
 @pytest.mark.requires_neo4j_and_gds
 def test_from_gds_integration(gds: Any) -> None:
     from neo4j_viz.gds import from_gds
@@ -50,7 +49,6 @@ def test_from_gds_integration(gds: Any) -> None:
         ]
 
 
-@pytest.mark.skipif(sys.version_info >= (3, 13), reason="requires python 3.12 or lower")
 def test_from_gds_mocked(mocker: MockerFixture) -> None:
     from graphdatascience import Graph, GraphDataScience
 

@@ -25,6 +25,7 @@ Proper documentation is forthcoming.
 
 * Easy to import graphs represented as:
   * projections in the Neo4j Graph Data Science (GDS) library
+  * graphs from Neo4j query results
   * pandas DataFrames
 * Node features:
   * Sizing
