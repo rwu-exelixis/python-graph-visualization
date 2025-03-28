@@ -25,7 +25,7 @@ To install the additional dependencies required for the :doc:`from_dfs importer 
     pip install neo4j-viz[pandas]
 
 Neo4j ``from_neo4j`` importer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To install the additional dependencies required for the :doc:`from_neo4j importer <./api-reference/from_neo4j>` you can run:
 

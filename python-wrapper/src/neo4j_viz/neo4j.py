@@ -28,9 +28,9 @@ def from_neo4j(
     size_property : str, optional
         Property to use for node size, by default None.
     node_caption : str, optional
-        Property to use for node caption, by default the node labels will be used.
+        Property to use as the node caption, by default the node labels will be used.
     relationship_caption : str, optional
-       Property to use for relationship caption, by the relationships type will be used.
+        Property to use as the relationship caption, by default the relationship type will be used.
     node_radius_min_max : tuple[float, float], optional
         Minimum and maximum node radius, by default (3, 60).
         To avoid tiny or huge nodes in the visualization, the node sizes are scaled to fit in the given range.
@@ -41,7 +41,7 @@ def from_neo4j(
     elif isinstance(result, neo4j.graph.Graph):
         graph = result
     else:
-        raise ValueError("Invalid input type expected `neo4j.Graph` or `neo4j.Result`")
+        raise ValueError(f"Invalid input type `{type(result)}`. Expected `neo4j.Graph` or `neo4j.Result`")
 
     nodes = [_map_node(node, size_property, caption_property=node_caption) for node in graph.nodes]
     relationships = []
@@ -67,11 +67,10 @@ def _map_node(node: neo4j.graph.Node, size_property: Optional[str], caption_prop
     labels = sorted([label for label in node.labels])
     if caption_property:
         if caption_property == "labels":
-            labels = labels
-            if len(labels) != 1:
+            if len(labels) > 0:
                 caption = ":".join([label for label in labels])
             else:
-                caption = next(iter(labels))
+                caption = None
         else:
             caption = str(node.get(caption_property))
 
