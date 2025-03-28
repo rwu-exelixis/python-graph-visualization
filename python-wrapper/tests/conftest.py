@@ -31,32 +31,39 @@ def pytest_collection_modifyitems(config: Any, items: Any) -> None:
 
 
 @pytest.fixture(scope="package")
-def gds() -> Generator[Any, None, None]:
-    from gds_helper import aura_api, connect_to_plugin_gds, create_aurads_instance
+def aura_ds_instance() -> Generator[Any, None, None]:
+    if os.environ.get("AURA_API_CLIENT_ID", None) is None:
+        yield None
+        return
+
+    from gds_helper import aura_api, create_aurads_instance
+
+    api = aura_api()
+    id, dbms_connection_info = create_aurads_instance(api)
+
+    # setting as environment variables to run notebooks with this connection
+    os.environ["NEO4J_URI"] = dbms_connection_info.uri
+    os.environ["NEO4J_USER"] = dbms_connection_info.username
+    os.environ["NEO4J_PASSWORD"] = dbms_connection_info.password
+    yield dbms_connection_info
+
+    # Clear Neo4j_URI after test (rerun should create a new instance)
+    os.environ["NEO4J_URI"] = ""
+    api.delete_instance(id)
+
+
+@pytest.fixture(scope="package")
+def gds(aura_ds_instance: Any) -> Generator[Any, None, None]:
+    from gds_helper import connect_to_plugin_gds
     from graphdatascience import GraphDataScience
 
-    use_cloud_setup = os.environ.get("AURA_API_CLIENT_ID", None)
-
-    if use_cloud_setup:
-        api = aura_api()
-        id, dbms_connection_info = create_aurads_instance(api)
-
-        # setting as environment variables to run notebooks with this connection
-        os.environ["NEO4J_URI"] = dbms_connection_info.uri
-        os.environ["NEO4J_USER"] = dbms_connection_info.username
-        os.environ["NEO4J_PASSWORD"] = dbms_connection_info.password
-
+    if aura_ds_instance:
         yield GraphDataScience(
-            endpoint=dbms_connection_info.uri,
-            auth=(dbms_connection_info.username, dbms_connection_info.password),
+            endpoint=aura_ds_instance.uri,
+            auth=(aura_ds_instance.username, aura_ds_instance.password),
             aura_ds=True,
             database="neo4j",
         )
-
-        # Clear Neo4j_URI after test (rerun should create a new instance)
-        os.environ["NEO4J_URI"] = ""
-
-        api.delete_instance(id)
     else:
         NEO4J_URI = os.environ.get("NEO4J_URI", "neo4j://localhost:7687")
         gds = connect_to_plugin_gds(NEO4J_URI)
@@ -65,12 +72,24 @@ def gds() -> Generator[Any, None, None]:
 
 
 @pytest.fixture(scope="package")
-def neo4j_session() -> Generator[Any, None, None]:
+def neo4j_driver(aura_ds_instance: Any) -> Generator[Any, None, None]:
     import neo4j
 
-    NEO4J_URI = os.environ.get("NEO4J_URI", "neo4j://localhost:7687")
+    if aura_ds_instance:
+        driver = neo4j.GraphDatabase.driver(
+            aura_ds_instance.uri, auth=(aura_ds_instance.username, aura_ds_instance.password)
+        )
+    else:
+        NEO4J_URI = os.environ.get("NEO4J_URI", "neo4j://localhost:7687")
+        driver = neo4j.GraphDatabase.driver(NEO4J_URI)
 
-    with neo4j.GraphDatabase.driver(NEO4J_URI) as driver:
-        driver.verify_connectivity()
-        with driver.session() as session:
-            yield session
+    driver.verify_connectivity()
+    yield driver
+
+    driver.close()
+
+
+@pytest.fixture(scope="package")
+def neo4j_session(neo4j_driver: Any) -> Generator[Any, None, None]:
+    with neo4j_driver.session() as session:
+        yield session
