@@ -1,7 +1,6 @@
 import os
 from typing import Any, Generator
 
-import neo4j
 import pytest
 
 
@@ -66,7 +65,9 @@ def gds() -> Generator[Any, None, None]:
 
 
 @pytest.fixture(scope="package")
-def neo4j_session() -> Generator[neo4j.Session, None, None]:
+def neo4j_session() -> Generator[Any, None, None]:
+    import neo4j
+
     NEO4J_URI = os.environ.get("NEO4J_URI", "neo4j://localhost:7687")
 
     with neo4j.GraphDatabase.driver(NEO4J_URI) as driver:
