@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     defaults:
       run:
@@ -40,27 +40,8 @@ jobs:
           cache-dependency-path: pyproject.toml
       - run: pip install ".[dev]"
       - run: pip install ".[pandas]"
+      - run: pip install ".[neo4j]"
       - run: pip install ".[gds]"
-
-      - name: Run tests
-        run: pytest tests/
-
-  tests-313:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: python-wrapper
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.13
-          cache: 'pip'
-          cache-dependency-path: pyproject.toml
-      - run: pip install ".[dev]"
-      - run: pip install ".[pandas]"
-      # skip gds for now as it is not available for python 3.13
 
       - name: Run tests
         run: pytest tests/
