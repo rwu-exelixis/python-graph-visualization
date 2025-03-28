@@ -33,7 +33,7 @@ def test_from_neo4j_graph(neo4j_session: Session) -> None:
     assert sorted(VG.nodes, key=lambda x: x.name) == expected_nodes  # type: ignore[attr-defined]
 
     assert len(VG.relationships) == 2
-    vg_rels = sorted([(e.source, e.target, e.caption) for e in VG.relationships], key=lambda x: x[2])
+    vg_rels = sorted([(e.source, e.target, e.caption) for e in VG.relationships], key=lambda x: x[2] if x[2] else "foo")
     assert vg_rels == [
         (node_ids[0], node_ids[1], "KNOWS"),
         (node_ids[1], node_ids[0], "RELATED"),
@@ -58,7 +58,7 @@ def test_from_neo4j_result(neo4j_session: Session) -> None:
     assert sorted(VG.nodes, key=lambda x: x.name) == expected_nodes  # type: ignore[attr-defined]
 
     assert len(VG.relationships) == 2
-    vg_rels = sorted([(e.source, e.target, e.caption) for e in VG.relationships], key=lambda x: x[2])
+    vg_rels = sorted([(e.source, e.target, e.caption) for e in VG.relationships], key=lambda x: x[2] if x[2] else "foo")
     assert vg_rels == [
         (node_ids[0], node_ids[1], "KNOWS"),
         (node_ids[1], node_ids[0], "RELATED"),
@@ -82,7 +82,7 @@ def test_from_neo4j_graph_full(neo4j_session: Session) -> None:
     assert sorted(VG.nodes, key=lambda x: x.name) == expected_nodes  # type: ignore[attr-defined]
 
     assert len(VG.relationships) == 2
-    vg_rels = sorted([(e.source, e.target, e.caption) for e in VG.relationships], key=lambda x: x[2])
+    vg_rels = sorted([(e.source, e.target, e.caption) for e in VG.relationships], key=lambda x: x[2] if x[2] else "foo")
     assert vg_rels == [
         (node_ids[1], node_ids[0], "2015"),
         (node_ids[0], node_ids[1], "2025"),
