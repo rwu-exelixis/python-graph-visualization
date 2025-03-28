@@ -141,3 +141,65 @@ We use the "pagerank" property to determine the size of the nodes, and the "comp
 
 Please see the :doc:`Visualizing Neo4j Graph Data Science (GDS) Graphs tutorial <./tutorials/gds-nvl-example>` for a
 more extensive example.
+
+
+Neo4j Database
+---------------
+
+The ``neo4j-viz`` library provides a convenience method for importing data from Neo4j.
+It requires and additional dependency to be installed, which you can do by running:
+
+.. code-block:: bash
+
+    pip install neo4j-viz[neo4j]
+
+Once you have installed the additional dependency, you can use the :doc:`from_neo4j <./api-reference/from_neo4j>` method
+to import query results from Neo4j.
+
+The ``from_neo4j`` method takes one mandatory positional parameters:
+
+* A ``result`` representing the query result either in form of `neo4j.graph.Graph` or `neo4j.Result`.
+
+The ``node_caption`` parameter is also optional, and indicates the value to use for the caption of each node in the visualization.
+
+We can also provide an optional ``size_property`` parameter, which should refer to a node property of the projection,
+and will be used to determine the size of the nodes in the visualization.
+
+The last optional property, ``node_radius_min_max``, can be used (and is used by default) to scale the node sizes for
+the visualization.
+It is a tuple of two numbers, representing the radii (sizes) in pixels of the smallest and largest nodes respectively in
+the visualization.
+The node sizes will be scaled such that the smallest node will have the size of the first value, and the largest node
+will have the size of the second value.
+The other nodes will be scaled linearly between these two values according to their relative size.
+This can be useful if node sizes vary a lot, or are all very small or very big.
+
+
+Example
+~~~~~~~
+
+In this small example, we import a graph from a Neo4j query result.
+
+.. code-block:: python
+
+    from neo4j import GraphDataScience
+    from neo4j_viz.gds import from_gds
+
+    # Modify this to match your Neo4j instance's URI and credentials
+    URI = "neo4j://localhost:7687"
+    auth = ("neo4j", "password")
+
+    with GraphDatabase.driver(URI, auth=auth) as driver:
+        driver.verify_connectivity()
+
+        result = driver.execute_query(
+            "MATCH (n)-[r]->(m) RETURN n,r,m",
+            database_="neo4j",
+            result_transformer_=Result.graph,
+        )
+
+    VG = from_neo4j(result)
+
+
+Please see the :doc:`Visualizing Neo4j Graphs tutorial <./tutorials/neo4j-nvl-example>` for a
+more extensive example.
