@@ -94,16 +94,26 @@ pytest python-wrapper/tests
 
 Additionally, there are integration tests that require an external data source.
 These require additional setup and configuration, such as environment variables specifying connection details.
-To run tests requiring a Neo4j DB instance with GDS installed, execute:
 
+
+For a local Neo4j instance with GDS installed, execute:
 ```sh
-pytest python-wrapper/tests --include-neo4j-and-gds
+cd test-envs/neo4j-gds
+docker compose up -d
+```
+
+To run tests requiring a Neo4j DB instance with GDS installed, execute:
+```sh
+export NEO4J_URI=localhost:7687 # or credentials for Aura API
+cd python-wrapper/
+pytest tests --include-neo4j-and-gds
 ```
 
 To run tests requiring a Snowflake connection, execute:
 
 ```sh
-pytest python-wrapper/tests --include-snowflake
+cd python-wrapper/
+pytest tests/ --include-snowflake
 ```
 
 

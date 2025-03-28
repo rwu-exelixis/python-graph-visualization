@@ -35,13 +35,9 @@ def gds() -> Generator[Any, None, None]:
     from gds_helper import aura_api, connect_to_plugin_gds, create_aurads_instance
     from graphdatascience import GraphDataScience
 
-    NEO4J_URI = os.environ.get("NEO4J_URI")
+    use_cloud_setup = os.environ.get("AURA_API_CLIENT_ID", None)
 
-    if NEO4J_URI:
-        gds = connect_to_plugin_gds(NEO4J_URI)
-        yield gds
-        gds.close()
-    else:
+    if use_cloud_setup:
         api = aura_api()
         id, dbms_connection_info = create_aurads_instance(api)
 
@@ -61,3 +57,20 @@ def gds() -> Generator[Any, None, None]:
         os.environ["NEO4J_URI"] = ""
 
         api.delete_instance(id)
+    else:
+        NEO4J_URI = os.environ.get("NEO4J_URI", "neo4j://localhost:7687")
+        gds = connect_to_plugin_gds(NEO4J_URI)
+        yield gds
+        gds.close()
+
+
+@pytest.fixture(scope="package")
+def neo4j_session() -> Generator[Any, None, None]:
+    import neo4j
+
+    NEO4J_URI = os.environ.get("NEO4J_URI", "neo4j://localhost:7687")
+
+    with neo4j.GraphDatabase.driver(NEO4J_URI) as driver:
+        driver.verify_connectivity()
+        with driver.session() as session:
+            yield session
