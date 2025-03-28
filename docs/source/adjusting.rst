@@ -51,7 +51,7 @@ In this case, all nodes with the same caption will get the same color.
 
 If there are fewer colors that unique values for the node ``property`` provided, the colors will be reused in a cycle.
 To avoid that, you could use another palette or extend one with additional colors. Please refer to the
-:doc:`Visualizing Neo4j Graph Data Science (GDS) Graphs tutorial <./tutorials/gds-nvl-example>` for an example on how
+:doc:`Visualizing Neo4j Graph Data Science (GDS) Graphs tutorial <./tutorials/gds-example>` for an example on how
 to do the latter.
 
 If some nodes already have a ``color`` set, you can choose whether or not to override it with the ``override``

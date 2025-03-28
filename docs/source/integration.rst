@@ -67,7 +67,7 @@ and :doc:`Relationships <./api-reference/relationship>`.
     VG = from_dfs(nodes, relationships)
 
 For another example of the ``from_dfs`` importer in action, see the
-:doc:`Visualizing Snowflake Tables tutorial <./tutorials/snowpark-nvl-example>`.
+:doc:`Visualizing Snowflake Tables tutorial <./tutorials/snowpark-example>`.
 
 
 Neo4j Graph Data Science (GDS) library
@@ -139,7 +139,7 @@ We use the "pagerank" property to determine the size of the nodes, and the "comp
     VG.color_nodes("componentId")
 
 
-Please see the :doc:`Visualizing Neo4j Graph Data Science (GDS) Graphs tutorial <./tutorials/gds-nvl-example>` for a
+Please see the :doc:`Visualizing Neo4j Graph Data Science (GDS) Graphs tutorial <./tutorials/gds-example>` for a
 more extensive example.
 
 
@@ -201,5 +201,5 @@ In this small example, we import a graph from a Neo4j query result.
     VG = from_neo4j(result)
 
 
-Please see the :doc:`Visualizing Neo4j Graphs tutorial <./tutorials/neo4j-nvl-example>` for a
+Please see the :doc:`Visualizing Neo4j Graphs tutorial <./tutorials/neo4j-example>` for a
 more extensive example.

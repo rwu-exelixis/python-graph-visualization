@@ -1,0 +1,6 @@
+{
+  "path": "../../../examples/gds-example.ipynb",
+  "extra-media": [
+    "../../../examples/example_cora_graph.png"
+  ]
+}
