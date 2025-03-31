@@ -15,8 +15,6 @@ Alternatively, you can export the output to a file and view it in a web browser.
 
 The package wraps the [Neo4j Visualization JavaScript library (NVL)](https://neo4j.com/docs/nvl/current/).
 
-Proper documentation is forthcoming.
-
 > [!WARNING]
 > This package is still in development and the API is subject to change.
 
@@ -110,6 +108,8 @@ VG.render()
 ```
 
 This will return a `IPython.display.HTML` object that can be rendered in a Jupyter Notebook or streamlit application.
+
+Please refer to the [documentation](https://neo4j.com/docs/nvl-python/preview/) for more details on the API and usage.
 
 
 ### Examples
