@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Optional, Union
+from collections.abc import Iterable
+from typing import Any, Optional, Union
 
 import neo4j.graph
 from neo4j import Result
@@ -20,6 +21,9 @@ def from_neo4j(
     """
     Create a VisualizationGraph from a Neo4j Graph or Neo4j Result object.
 
+    All node and relationship properties will be included in the visualization graph.
+    If the property names are conflicting with those of `Node` and `Relationship` objects, they will be prefixed
+    with `__`.
 
     Parameters
     ----------
@@ -59,12 +63,13 @@ def from_neo4j(
 
 
 def _map_node(node: neo4j.graph.Node, size_property: Optional[str], caption_property: Optional[str]) -> Node:
+    labels = sorted([label for label in node.labels])
+
     if size_property:
         size = node.get(size_property)
     else:
         size = None
 
-    labels = sorted([label for label in node.labels])
     if caption_property:
         if caption_property == "labels":
             if len(labels) > 0:
@@ -74,7 +79,13 @@ def _map_node(node: neo4j.graph.Node, size_property: Optional[str], caption_prop
         else:
             caption = str(node.get(caption_property))
 
-    return Node(id=node.element_id, caption=caption, labels=labels, size=size, **{k: v for k, v in node.items()})
+    base_node_props = dict(id=node.element_id, caption=caption, labels=labels, size=size)
+
+    protected_props = base_node_props.keys()
+    additional_node_props = {k: v for k, v in node.items()}
+    additional_node_props = _rename_protected_props(additional_node_props, protected_props)
+
+    return Node(**base_node_props, **additional_node_props)
 
 
 def _map_relationship(rel: neo4j.graph.Relationship, caption_property: Optional[str]) -> Optional[Relationship]:
@@ -89,11 +100,32 @@ def _map_relationship(rel: neo4j.graph.Relationship, caption_property: Optional[
     else:
         caption = None
 
-    return Relationship(
+    base_rel_props = dict(
         id=rel.element_id,
         source=rel.start_node.element_id,
         target=rel.end_node.element_id,
-        type_=rel.type,
+        _type=rel.type,
         caption=caption,
-        **{k: v for k, v in rel.items()},
     )
+
+    protected_props = base_rel_props.keys()
+    additional_rel_props = {k: v for k, v in rel.items()}
+    additional_rel_props = _rename_protected_props(additional_rel_props, protected_props)
+
+    return Relationship(
+        **base_rel_props,
+        **additional_rel_props,
+    )
+
+
+def _rename_protected_props(
+    additional_props: dict[str, Any],
+    protected_props: Iterable[str],
+) -> dict[str, Union[str, int, float]]:
+    for prop in protected_props:
+        if prop not in additional_props:
+            continue
+
+        additional_props[f"__{prop}"] = additional_props.pop(prop)
+
+    return additional_props
