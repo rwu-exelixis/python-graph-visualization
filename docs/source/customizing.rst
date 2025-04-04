@@ -37,8 +37,18 @@ the first positional argument.
 By default the Neo4j color palette that works for both light and dark mode will be used.
 If you want to use a different color palette, you can pass a dictionary or iterable of colors as the ``colors``
 parameter.
-You can for example use the color palettes from the `palettable library <https://jiffyclub.github.io/palettable/>`_ as in
-the following example:
+A color value can for example be either strings like "blue", or hexadecimal color codes like "#FF0000", or even a tuple of RGB values like (255, 0, 255).
+Here is an example of providing a list of custom colors to the ``color_nodes`` method:
+
+.. code-block:: python
+
+    # VG is a VisualizationGraph object
+    VG.color_nodes("caption", ["red", "#7fffd4", (255, 255, 255, 0.5), "hsl(270, 60%, 70%)"])
+
+The full set of allowed values for colors are listed `here <https://docs.pydantic.dev/2.0/usage/types/extra_types/color_types/>`_.
+
+Instead of defining your own colors, you could also for example use the color palettes from the `palettable library <https://jiffyclub.github.io/palettable/>`_ as in
+this snippet:
 
 .. code-block:: python
 

@@ -37,7 +37,7 @@ class Node(BaseModel, extra="allow"):
     )
     #: The size of the node as radius in pixel
     size: Optional[RealNumber] = Field(None, ge=0, description="The size of the node as radius in pixel")
-    #: The color of the node
+    #: The color of the node. Allowed input is for example "#FF0000", "red" or (255, 0, 0)
     color: Optional[ColorType] = Field(None, description="The color of the node")
     #: Whether the node is pinned in the visualization
     pinned: Optional[bool] = Field(None, description="Whether the node is pinned in the visualization")
