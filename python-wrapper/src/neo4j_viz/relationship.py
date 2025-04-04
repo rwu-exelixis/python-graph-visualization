@@ -41,7 +41,7 @@ class Relationship(BaseModel, extra="allow"):
     caption_size: Optional[Union[int, float]] = Field(
         None, gt=0.0, serialization_alias="captionSize", description="The size of the caption text"
     )
-    #: The color of the relationship
+    #: The color of the relationship. Allowed input is for example "#FF0000", "red" or (255, 0, 0)
     color: Optional[ColorType] = Field(None, description="The color of the relationship")
 
     @field_serializer("color")

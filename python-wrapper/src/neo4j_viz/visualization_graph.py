@@ -205,6 +205,7 @@ class VisualizationGraph:
         colors:
             The colors to use for the nodes. If a dictionary is given, it should map from property to color.
             If an iterable is given, the colors are used in order.
+            Allowed color values are for example “#FF0000”, “red” or (255, 0, 0) (full list: https://docs.pydantic.dev/2.0/usage/types/extra_types/color_types/).
             The default colors are the Neo4j graph colors.
         override:
             Whether to override existing colors of the nodes, if they have any.
