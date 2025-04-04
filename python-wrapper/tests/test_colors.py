@@ -2,7 +2,7 @@ import pytest
 from pydantic_extra_types.color import Color
 
 from neo4j_viz import Node, VisualizationGraph
-from neo4j_viz.colors import neo4j_colors
+from neo4j_viz.colors import NEO4J_COLORS_CONTINUOUS, NEO4J_COLORS_DISCRETE, PropertyType
 
 
 @pytest.mark.parametrize("override", [True, False])
@@ -99,10 +99,55 @@ def test_color_nodes_default() -> None:
 
     VG.color_nodes("caption")
 
-    assert VG.nodes[0].color == Color(neo4j_colors[0])
-    assert VG.nodes[1].color == Color(neo4j_colors[1])
-    assert VG.nodes[2].color == Color(neo4j_colors[1])
-    assert VG.nodes[3].color == Color(neo4j_colors[2])
+    assert VG.nodes[0].color == Color(NEO4J_COLORS_DISCRETE[0])
+    assert VG.nodes[1].color == Color(NEO4J_COLORS_DISCRETE[1])
+    assert VG.nodes[2].color == Color(NEO4J_COLORS_DISCRETE[1])
+    assert VG.nodes[3].color == Color(NEO4J_COLORS_DISCRETE[2])
+
+
+def test_color_nodes_continuous_default() -> None:
+    nodes = [
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", rank=10),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", rank=20),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", rank=30),
+    ]
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    VG.color_nodes("rank", property_type=PropertyType.CONTINUOUS)
+
+    assert VG.nodes[0].color == Color(NEO4J_COLORS_CONTINUOUS[0])
+    assert VG.nodes[1].color == Color(NEO4J_COLORS_CONTINUOUS[128])
+    assert VG.nodes[2].color == Color(NEO4J_COLORS_CONTINUOUS[255])
+
+
+def test_color_nodes_continuous_custom() -> None:
+    nodes = [
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", rank=10),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", rank=18),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", rank=30),
+    ]
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    colors = [(0, 0, 0), (85, 85, 85), (170, 170, 170), (255, 255, 255)]
+    VG.color_nodes("rank", colors=colors, property_type=PropertyType.CONTINUOUS)
+
+    assert VG.nodes[0].color == Color("black")
+    assert VG.nodes[1].color == Color((85, 85, 85))
+    assert VG.nodes[2].color == Color("white")
+
+
+def test_color_nodes_continuous_forbidden() -> None:
+    nodes = [
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", rank=10),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", rank=30),
+    ]
+
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    with pytest.raises(
+        ValueError, match="For continuous properties, `colors` must be a list of colors representing a range"
+    ):
+        VG.color_nodes("rank", {10: "#000000", 30: "#00FF00"}, property_type=PropertyType.CONTINUOUS)  # type: ignore[arg-type]
 
 
 def test_color_nodes_lists() -> None:
@@ -114,7 +159,6 @@ def test_color_nodes_lists() -> None:
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:2", caption="Both again", labels=["Person", "Product"]),
         Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:3", caption="Both reorder", labels=["Product", "Person"]),
     ]
-
     VG = VisualizationGraph(nodes=nodes, relationships=[])
 
     VG.color_nodes("labels", ["#000000", "#00FF00", "#FF0000", "#0000FF"])
