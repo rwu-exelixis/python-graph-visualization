@@ -11,6 +11,7 @@ Pandas DataFrames
 -----------------
 
 The ``neo4j-viz`` library provides a convenience method for importing data from Pandas DataFrames.
+These DataFrames can be created from many sources, such as CSV files or :doc:`Snowflake tables<./tutorials/snowpark-example>`.
 It requires and additional dependency to be installed, which you can do by running:
 
 .. code-block:: bash
