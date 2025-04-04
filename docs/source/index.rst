@@ -26,6 +26,6 @@ If you have a suggestion on how we can improve the library or want to report a p
    getting-started.nblink
    integration.rst
    rendering.rst
-   adjusting.rst
+   customizing.rst
    api-reference/index.rst
    tutorials/index.rst

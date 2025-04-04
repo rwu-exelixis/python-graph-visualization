@@ -1,5 +1,5 @@
-Adjusting the visualization
-===========================
+Customizing the visualization
+=============================
 
 Once created, a :doc:`VisualizationGraph object <./api-reference/visualization-graph>` can be modified in various ways
 to adjust what the visualization looks like the next time you render it.
