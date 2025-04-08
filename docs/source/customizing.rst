@@ -14,6 +14,11 @@ If you have not yet created a ``VisualizationGraph`` object, please refer to one
 * :doc:`Integration with other libraries <./integration>` for importing data from a Pandas DataFrame or Neo4j GDS
   projection.
 
+.. contents:: On this page:
+   :depth: 1
+   :local:
+   :backlinks: none
+
 
 Coloring nodes
 --------------
