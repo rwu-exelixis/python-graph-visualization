@@ -7,6 +7,12 @@ In this section we will cover how to import data from `Pandas DataFrames <https:
 `Neo4j Graph Data Science <https://neo4j.com/docs/graph-data-science/current/>`_.
 
 
+.. contents:: On this page:
+   :depth: 1
+   :local:
+   :backlinks: none
+
+
 Pandas DataFrames
 -----------------
 
