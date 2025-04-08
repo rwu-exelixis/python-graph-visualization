@@ -103,3 +103,86 @@ def test_color_nodes_default() -> None:
     assert VG.nodes[1].color == Color(neo4j_colors[1])
     assert VG.nodes[2].color == Color(neo4j_colors[1])
     assert VG.nodes[3].color == Color(neo4j_colors[2])
+
+
+def test_color_nodes_lists() -> None:
+    nodes = [
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person", labels=["Person"]),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product", labels=["Product"]),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", caption="Product", labels=["Product"]),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:1", caption="Both", labels=["Person", "Product"]),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:2", caption="Both again", labels=["Person", "Product"]),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:3", caption="Both reorder", labels=["Product", "Person"]),
+    ]
+
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    VG.color_nodes("labels", ["#000000", "#00FF00", "#FF0000", "#0000FF"])
+
+    assert VG.nodes[0].color == Color("#000000")
+    assert VG.nodes[1].color == Color("#00ff00")
+    assert VG.nodes[2].color == Color("#00ff00")
+    assert VG.nodes[3].color == Color("#ff0000")
+    assert VG.nodes[4].color == Color("#ff0000")
+    assert VG.nodes[5].color == Color("#0000ff")
+
+
+def test_color_nodes_sets() -> None:
+    nodes = [
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person", labels={"Person"}),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product", labels={"Product"}),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", caption="Product", labels={"Product"}),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:1", caption="Both", labels={"Person", "Product"}),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:2", caption="Both again", labels={"Person", "Product"}),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:3", caption="Both reorder", labels={"Product", "Person"}),
+    ]
+
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    VG.color_nodes("labels", ["#000000", "#00FF00", "#FF0000", "#0000FF"])
+
+    assert VG.nodes[0].color == Color("#000000")
+    assert VG.nodes[1].color == Color("#00ff00")
+    assert VG.nodes[2].color == Color("#00ff00")
+    assert VG.nodes[3].color == Color("#ff0000")
+    assert VG.nodes[4].color == Color("#ff0000")
+    assert VG.nodes[4].color == Color("#ff0000")
+
+
+def test_color_nodes_dicts() -> None:
+    nodes = [
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person", config={"age": 18}),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:6", caption="Product", config={"price": 100}),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:11", caption="Product", config={"price": 100}),
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:1", caption="Product", config={"price": 1}),
+    ]
+
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    VG.color_nodes("config", ["#000000", "#00FF00", "#FF0000", "#0000FF"])
+
+    assert VG.nodes[0].color == Color("#000000")
+    assert VG.nodes[1].color == Color("#00ff00")
+    assert VG.nodes[2].color == Color("#00ff00")
+    assert VG.nodes[3].color == Color("#ff0000")
+
+
+def test_color_nodes_unhashable() -> None:
+    nodes = [
+        Node(
+            id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
+            caption="Person",
+            config={"movies": ["Star Wars", "Star Trek"]},
+        ),
+    ]
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+
+    with pytest.raises(ValueError, match="Unable to color nodes by unhashable property type '<class 'dict'>'"):
+        VG.color_nodes("config", ["#000000"])
+
+    nodes = [
+        Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person", list_of_lists=[[1, 2], [3, 4]]),
+    ]
+    VG = VisualizationGraph(nodes=nodes, relationships=[])
+    with pytest.raises(ValueError, match="Unable to color nodes by unhashable property type '<class 'list'>'"):
+        VG.color_nodes("list_of_lists", ["#000000"])
