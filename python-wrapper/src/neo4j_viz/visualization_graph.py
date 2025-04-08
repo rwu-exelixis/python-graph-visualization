@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from collections.abc import Iterable
-from typing import Optional
+from typing import Any, Hashable, Optional
 
 from IPython.display import HTML
 from pydantic_extra_types.color import Color, ColorType
@@ -201,7 +201,8 @@ class VisualizationGraph:
         Parameters
         ----------
         property:
-            The property of the nodes to use for coloring.
+            The property of the nodes to use for coloring. The type of this property must be hashable, or be a
+            list, set or dict containing only hashable types.
         colors:
             The colors to use for the nodes. If a dictionary is given, it should map from property to color.
             If an iterable is given, the colors are used in order.
@@ -238,7 +239,11 @@ class VisualizationGraph:
         prop_to_color = {}
         colors_iter = iter(colors)
         for node in self.nodes:
-            prop = getattr(node, property)
+            raw_prop = getattr(node, property)
+            try:
+                prop = self._make_hashable(raw_prop)
+            except ValueError:
+                raise ValueError(f"Unable to color nodes by unhashable property type '{type(raw_prop)}'")
 
             if prop not in prop_to_color:
                 next_color = next(colors_iter, None)
@@ -263,3 +268,22 @@ class VisualizationGraph:
                 f"Ran out of colors for property '{property}'. {len(prop_to_color)} colors were needed, but only "
                 f"{len(set(prop_to_color.values()))} were given, so reused colors"
             )
+
+    @staticmethod
+    def _make_hashable(raw_prop: Any) -> Hashable:
+        prop = raw_prop
+        if isinstance(raw_prop, list):
+            prop = tuple(raw_prop)
+        elif isinstance(raw_prop, set):
+            prop = frozenset(raw_prop)
+        elif isinstance(raw_prop, dict):
+            prop = tuple(sorted(raw_prop.items()))
+
+        try:
+            hash(prop)
+        except TypeError:
+            raise ValueError(f"Unable to convert property '{raw_prop}' of type {type(raw_prop)} to a hashable type")
+
+        assert isinstance(prop, Hashable)
+
+        return prop
