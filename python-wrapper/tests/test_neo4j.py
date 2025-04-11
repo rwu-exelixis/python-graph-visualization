@@ -19,7 +19,7 @@ def graph_setup(neo4j_session: Session) -> Generator[None, None, None]:
 
 
 @pytest.mark.requires_neo4j_and_gds
-def test_from_neo4j_graph(neo4j_session: Session) -> None:
+def test_from_neo4j_graph_basic(neo4j_session: Session) -> None:
     graph = neo4j_session.run("MATCH (a:_CI_A|_CI_B)-[r]->(b) RETURN a, b, r ORDER BY a").graph()
 
     VG = from_neo4j(graph)
@@ -31,27 +31,31 @@ def test_from_neo4j_graph(neo4j_session: Session) -> None:
         Node(
             id=node_ids[0],
             caption="_CI_A",
-            labels=["_CI_A"],
-            name="Alice",
-            height=20,
-            __id=42,
-            _id=1337,
-            __caption="hello",
+            properties=dict(
+                labels=["_CI_A"],
+                name="Alice",
+                height=20,
+                id=42,
+                _id=1337,
+                caption="hello",
+            ),
         ),
         Node(
             id=node_ids[1],
             caption="_CI_A:_CI_B",
-            labels=["_CI_A", "_CI_B"],
-            name="Bob",
-            height=10,
-            __id=84,
-            __size=11,
-            __labels=[1, 2],
+            size=11,
+            properties=dict(
+                labels=["_CI_A", "_CI_B"],
+                name="Bob",
+                height=10,
+                id=84,
+                __labels=[1, 2],
+            ),
         ),
     ]
 
     assert len(VG.nodes) == 2
-    assert sorted(VG.nodes, key=lambda x: x.name) == expected_nodes  # type: ignore[attr-defined]
+    assert sorted(VG.nodes, key=lambda x: x.properties["name"]) == expected_nodes
 
     assert len(VG.relationships) == 2
     vg_rels = sorted([(e.source, e.target, e.caption) for e in VG.relationships], key=lambda x: x[2] if x[2] else "foo")
@@ -76,27 +80,31 @@ def test_from_neo4j_result(neo4j_session: Session) -> None:
         Node(
             id=node_ids[0],
             caption="_CI_A",
-            labels=["_CI_A"],
-            name="Alice",
-            height=20,
-            __id=42,
-            _id=1337,
-            __caption="hello",
+            properties=dict(
+                labels=["_CI_A"],
+                name="Alice",
+                height=20,
+                id=42,
+                _id=1337,
+                caption="hello",
+            ),
         ),
         Node(
             id=node_ids[1],
             caption="_CI_A:_CI_B",
-            labels=["_CI_A", "_CI_B"],
-            name="Bob",
-            height=10,
-            __id=84,
-            __size=11,
-            __labels=[1, 2],
+            size=11,
+            properties=dict(
+                labels=["_CI_A", "_CI_B"],
+                name="Bob",
+                height=10,
+                id=84,
+                __labels=[1, 2],
+            ),
         ),
     ]
 
     assert len(VG.nodes) == 2
-    assert sorted(VG.nodes, key=lambda x: x.name) == expected_nodes  # type: ignore[attr-defined]
+    assert sorted(VG.nodes, key=lambda x: x.properties["name"]) == expected_nodes
 
     assert len(VG.relationships) == 2
     vg_rels = sorted([(e.source, e.target, e.caption) for e in VG.relationships], key=lambda x: x[2] if x[2] else "foo")
@@ -119,29 +127,33 @@ def test_from_neo4j_graph_full(neo4j_session: Session) -> None:
         Node(
             id=node_ids[0],
             caption="Alice",
-            labels=["_CI_A"],
-            name="Alice",
-            height=20,
             size=60.0,
-            __id=42,
-            _id=1337,
-            __caption="hello",
+            properties=dict(
+                labels=["_CI_A"],
+                name="Alice",
+                height=20,
+                id=42,
+                _id=1337,
+                caption="hello",
+            ),
         ),
         Node(
             id=node_ids[1],
             caption="Bob",
-            labels=["_CI_A", "_CI_B"],
-            name="Bob",
-            height=10,
             size=3.0,
-            __id=84,
-            __size=11,
-            __labels=[1, 2],
+            properties=dict(
+                labels=["_CI_A", "_CI_B"],
+                name="Bob",
+                size=11,
+                height=10,
+                id=84,
+                __labels=[1, 2],
+            ),
         ),
     ]
 
     assert len(VG.nodes) == 2
-    assert sorted(VG.nodes, key=lambda x: x.name) == expected_nodes  # type: ignore[attr-defined]
+    assert sorted(VG.nodes, key=lambda x: x.properties["name"]) == expected_nodes
 
     assert len(VG.relationships) == 2
     vg_rels = sorted([(e.source, e.target, e.caption) for e in VG.relationships], key=lambda x: x[2] if x[2] else "foo")

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 import neo4j.graph
 from neo4j import Result
@@ -22,8 +21,8 @@ def from_neo4j(
     Create a VisualizationGraph from a Neo4j Graph or Neo4j Result object.
 
     All node and relationship properties will be included in the visualization graph.
-    If the property names are conflicting with those of `Node` and `Relationship` objects, they will be prefixed
-    with `__`.
+    If the properties are named as the fields of the `Node` or `Relationship` classes, they will be included as
+    top level fields of the respective objects. Otherwise, they will be included in the `properties` dictionary.
 
     Parameters
     ----------
@@ -63,69 +62,64 @@ def from_neo4j(
 
 
 def _map_node(node: neo4j.graph.Node, size_property: Optional[str], caption_property: Optional[str]) -> Node:
-    labels = sorted([label for label in node.labels])
+    top_level_fields = {"id": node.element_id}
 
     if size_property:
-        size = node.get(size_property)
-    else:
-        size = None
+        top_level_fields["size"] = node.get(size_property)
 
+    labels = sorted([label for label in node.labels])
     if caption_property:
         if caption_property == "labels":
             if len(labels) > 0:
-                caption = ":".join([label for label in labels])
-            else:
-                caption = None
+                top_level_fields["caption"] = ":".join([label for label in labels])
         else:
-            caption = str(node.get(caption_property))
+            top_level_fields["caption"] = str(node.get(caption_property))
 
-    base_node_props = dict(id=node.element_id, caption=caption, labels=labels, size=size)
+    properties = {}
+    for prop, value in node.items():
+        if prop not in Node.model_fields.keys():
+            properties[prop] = value
+            continue
 
-    protected_props = base_node_props.keys()
-    additional_node_props = {k: v for k, v in node.items()}
-    additional_node_props = _rename_protected_props(additional_node_props, protected_props)
+        if prop in top_level_fields:
+            properties[prop] = value
+            continue
 
-    return Node(**base_node_props, **additional_node_props)
+        top_level_fields[prop] = value
+
+    if "labels" in properties:
+        properties["__labels"] = properties["labels"]
+    properties["labels"] = labels
+
+    return Node(**top_level_fields, properties=properties)
 
 
 def _map_relationship(rel: neo4j.graph.Relationship, caption_property: Optional[str]) -> Optional[Relationship]:
     if rel.start_node is None or rel.end_node is None:
         return None
 
+    top_level_fields = {"id": rel.element_id, "source": rel.start_node.element_id, "target": rel.end_node.element_id}
+
     if caption_property:
         if caption_property == "type":
-            caption = rel.type
+            top_level_fields["caption"] = rel.type
         else:
-            caption = str(rel.get(caption_property))
-    else:
-        caption = None
+            top_level_fields["caption"] = str(rel.get(caption_property))
 
-    base_rel_props = dict(
-        id=rel.element_id,
-        source=rel.start_node.element_id,
-        target=rel.end_node.element_id,
-        _type=rel.type,
-        caption=caption,
-    )
-
-    protected_props = base_rel_props.keys()
-    additional_rel_props = {k: v for k, v in rel.items()}
-    additional_rel_props = _rename_protected_props(additional_rel_props, protected_props)
-
-    return Relationship(
-        **base_rel_props,
-        **additional_rel_props,
-    )
-
-
-def _rename_protected_props(
-    additional_props: dict[str, Any],
-    protected_props: Iterable[str],
-) -> dict[str, Union[str, int, float]]:
-    for prop in protected_props:
-        if prop not in additional_props:
+    properties = {}
+    for prop, value in rel.items():
+        if prop not in Relationship.model_fields.keys():
+            properties[prop] = value
             continue
 
-        additional_props[f"__{prop}"] = additional_props.pop(prop)
+        if prop in top_level_fields:
+            properties[prop] = value
+            continue
 
-    return additional_props
+        top_level_fields[prop] = value
+
+    if "type" in properties:
+        properties["__type"] = properties["type"]
+    properties["type"] = rel.type
+
+    return Relationship(**top_level_fields, properties=properties)
