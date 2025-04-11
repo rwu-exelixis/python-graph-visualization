@@ -7,7 +7,7 @@ from typing import Any, Hashable, Optional
 from IPython.display import HTML
 from pydantic_extra_types.color import Color, ColorType
 
-from .colors import ColorsType, neo4j_colors
+from .colors import NEO4J_COLORS_CONTINUOUS, NEO4J_COLORS_DISCRETE, ColorsType, PropertyType
 from .node import Node, NodeIdType
 from .node_size import RealNumber, verify_radii
 from .nvl import NVL
@@ -168,21 +168,7 @@ class VisualizationGraph:
         if node_radius_min_max is not None:
             verify_radii(node_radius_min_max)
 
-            unscaled_min_size = min(all_sizes.values())
-            unscaled_max_size = max(all_sizes.values())
-            unscaled_size_range = float(unscaled_max_size - unscaled_min_size)
-
-            new_min_size, new_max_size = node_radius_min_max
-            new_size_range = new_max_size - new_min_size
-
-            if abs(unscaled_size_range) < 1e-6:
-                default_node_size = new_min_size + new_size_range / 2.0
-                final_sizes = {id: default_node_size for id in all_sizes}
-            else:
-                final_sizes = {
-                    id: new_min_size + new_size_range * ((nz - unscaled_min_size) / unscaled_size_range)
-                    for id, nz in all_sizes.items()
-                }
+            final_sizes = self._normalize_values(all_sizes, node_radius_min_max)
         else:
             final_sizes = all_sizes
 
@@ -194,25 +180,80 @@ class VisualizationGraph:
 
             node.size = size
 
-    def color_nodes(self, property: str, colors: Optional[ColorsType] = None, override: bool = False) -> None:
+    @staticmethod
+    def _normalize_values(
+        node_map: dict[NodeIdType, RealNumber], min_max: tuple[float, float] = (0, 1)
+    ) -> dict[NodeIdType, RealNumber]:
+        unscaled_min_size = min(node_map.values())
+        unscaled_max_size = max(node_map.values())
+        unscaled_size_range = float(unscaled_max_size - unscaled_min_size)
+
+        new_min_size, new_max_size = min_max
+        new_size_range = new_max_size - new_min_size
+
+        if abs(unscaled_size_range) < 1e-6:
+            default_node_size = new_min_size + new_size_range / 2.0
+            new_map = {id: default_node_size for id in node_map}
+        else:
+            new_map = {
+                id: new_min_size + new_size_range * ((nz - unscaled_min_size) / unscaled_size_range)
+                for id, nz in node_map.items()
+            }
+
+        return new_map
+
+    def color_nodes(
+        self,
+        property: str,
+        colors: Optional[ColorsType] = None,
+        property_type: PropertyType = PropertyType.DISCRETE,
+        override: bool = False,
+    ) -> None:
         """
         Color the nodes in the graph based on a property.
+
+        It's possible to color the nodes based on a discrete or continuous property. In the discrete case, a new color
+        from the `colors` provided is assigned to each unique value of the node property.
+        In the continuous case, the `colors` should be a list of colors representing a range that are used to
+        create a gradient of colors based on the values of the node property.
 
         Parameters
         ----------
         property:
-            The property of the nodes to use for coloring. The type of this property must be hashable, or be a
+            The property of the nodes to base the coloring on. The type of this property must be hashable, or be a
             list, set or dict containing only hashable types.
         colors:
-            The colors to use for the nodes. If a dictionary is given, it should map from property to color.
-            If an iterable is given, the colors are used in order.
+            The colors to use for the nodes.
+            If `property_type` is `PropertyType.DISCRETE`, the colors can be a dictionary mapping from property value
+            to color, or an iterable of colors in which case the colors are used in order.
+            If `property_type` is `PropertyType.CONTINUOUS`, the colors must be a list of colors representing a range.
             Allowed color values are for example “#FF0000”, “red” or (255, 0, 0) (full list: https://docs.pydantic.dev/2.0/usage/types/extra_types/color_types/).
             The default colors are the Neo4j graph colors.
+        property_type:
+            The type of the property, either `PropertyType.DISCRETE` or `PropertyType.CONTINUOUS`. It determines whether
+            colors are assigned based on unique property values or a gradient of the values of the property.
         override:
             Whether to override existing colors of the nodes, if they have any.
         """
-        if colors is None:
-            colors = neo4j_colors
+        if property_type == PropertyType.DISCRETE:
+            if colors is None:
+                colors = NEO4J_COLORS_DISCRETE
+        else:
+            node_map = {node.id: getattr(node, property) for node in self.nodes if getattr(node, property) is not None}
+            normalized_map = self._normalize_values(node_map)
+
+            if colors is None:
+                colors = NEO4J_COLORS_CONTINUOUS
+
+            if not isinstance(colors, list):
+                raise ValueError("For continuous properties, `colors` must be a list of colors representing a range")
+
+            num_colors = len(colors)
+            colors = {
+                getattr(node, property): colors[round(normalized_map[node.id] * (num_colors - 1))]
+                for node in self.nodes
+                if getattr(node, property) is not None
+            }
 
         if isinstance(colors, dict):
             self._color_nodes_dict(property, colors, override)

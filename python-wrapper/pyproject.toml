@@ -50,6 +50,7 @@ dev = [
     "pytest-mock==3.14.0",
     "nbconvert==7.16.6",
     "streamlit==1.42.0",
+    "matplotlib==3.9.4",
 ]
 docs = [
     "sphinx==8.1.3",
