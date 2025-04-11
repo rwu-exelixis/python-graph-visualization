@@ -36,19 +36,34 @@ The ``color_nodes`` method
 
 By calling the :meth:`neo4j_viz.VisualizationGraph.color_nodes` method, you can color nodes based on a
 node property (field).
-This method will give a distinct color (if possible) to each unique value of the node ``property`` that you provide as
-the first positional argument.
+It's possible to color the nodes based on a discrete or continuous property.
+In the discrete case, a new color from the ``colors`` provided is assigned to each unique value of the node property.
+In the continuous case, the ``colors`` should be a list of colors representing a range that are used to create a gradient of colors based on the values of the node property.
 
 By default the Neo4j color palette that works for both light and dark mode will be used.
 If you want to use a different color palette, you can pass a dictionary or iterable of colors as the ``colors``
 parameter.
 A color value can for example be either strings like "blue", or hexadecimal color codes like "#FF0000", or even a tuple of RGB values like (255, 0, 255).
-Here is an example of providing a list of custom colors to the ``color_nodes`` method:
+
+If some nodes already have a ``color`` set, you can choose whether or not to override it with the ``override``
+parameter.
+
+
+By discrete node property (field)
+*********************************
+
+To not use the default colors, we can provide a list of custom colors based on the discrete node property (field) "caption" to the ``color_nodes`` method:
 
 .. code-block:: python
 
+    from neo4j_viz.colors import PropertyType
+
     # VG is a VisualizationGraph object
-    VG.color_nodes("caption", ["red", "#7fffd4", (255, 255, 255, 0.5), "hsl(270, 60%, 70%)"])
+    VG.color_nodes(
+        "caption",
+        ["red", "#7fffd4", (255, 255, 255, 0.5), "hsl(270, 60%, 70%)"],
+        property_type=PropertyType.DISCRETE
+    )
 
 The full set of allowed values for colors are listed `here <https://docs.pydantic.dev/2.0/usage/types/extra_types/color_types/>`_.
 
@@ -60,7 +75,7 @@ this snippet:
     from palettable.wesanderson import Moonrise1_5
 
     # VG is a VisualizationGraph object
-    VG.color_nodes("caption", Moonrise1_5.colors)
+    VG.color_nodes("caption", Moonrise1_5.colors)  # PropertyType.DISCRETE is default
 
 In this case, all nodes with the same caption will get the same color.
 
@@ -69,12 +84,31 @@ To avoid that, you could use another palette or extend one with additional color
 :doc:`Visualizing Neo4j Graph Data Science (GDS) Graphs tutorial <./tutorials/gds-example>` for an example on how
 to do the latter.
 
-If some nodes already have a ``color`` set, you can choose whether or not to override it with the ``override``
-parameter.
+
+By continuous node property (field)
+***********************************
+
+To not use the default colors, we can provide a list of custom colors representing a range to the ``color_nodes`` method:
+
+.. code-block:: python
+
+    from neo4j_viz.colors import PropertyType
+
+    # VG is a VisualizationGraph object
+    VG.color_nodes(
+        "centrality_score",
+        [(255, 0, 0), (191, 64, 0), (128, 128, 0), (64, 191, 0), (0, 255, 0)]  # From red to green
+        property_type=PropertyType.CONTINUOUS
+    )
+
+In this case, the nodes will be colored based on the value of the "centrality_score" property, with the lowest values being colored red and the highest values being colored green.
+Since we only provided five colors in the range, the granularity of the gradient will be limited to five steps.
+
+`palettable` and `matplotlib` are great libraries to use to create custom color gradients.
 
 
 Sizing nodes
---------------
+------------
 
 Nodes can be given a size directly by providing them with a size property, upon creation.
 This can for example be done by passing a size as an integer to the ``size`` parameter of the
