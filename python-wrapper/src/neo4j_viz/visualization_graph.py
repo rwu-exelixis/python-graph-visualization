@@ -204,6 +204,7 @@ class VisualizationGraph:
 
     def color_nodes(
         self,
+        *,
         field: Optional[str] = None,
         property: Optional[str] = None,
         colors: Optional[ColorsType] = None,

@@ -38,6 +38,7 @@ def from_gds(
     All `additional_node_properties` will be included in the visualization graph.
     If the properties are named as the fields of the `Node` class, they will be included as top level fields of the
     created `Node` objects. Otherwise, they will be included in the `properties` dictionary.
+    Additionally, a new "labels" node property will be added.
 
     Parameters
     ----------

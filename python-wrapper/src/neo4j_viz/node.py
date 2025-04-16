@@ -14,7 +14,8 @@ NodeIdType = Union[str, int]
 class Node(BaseModel, extra="allow"):
     """
     A node in a graph to visualize.
-    All options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_nodes)
+
+    For more info on each field, see the NVL library docs: https://neo4j.com/docs/nvl/current/base-library/#_nodes
     """
 
     #: Unique identifier for the node
@@ -45,8 +46,8 @@ class Node(BaseModel, extra="allow"):
     x: Optional[RealNumber] = Field(None, description="The x-coordinate of the node")
     #: The y-coordinate of the node
     y: Optional[RealNumber] = Field(None, description="The y-coordinate of the node")
-    #: The properties of the node
-    properties: dict[str, Any] = Field(default_factory=dict, description="The properties of the node")
+    #: Additional properties of the node that do not directly impact the visualization
+    properties: dict[str, Any] = Field(default_factory=dict, description="Additional properties of the node that do not directly impact the visualization")
 
     @field_serializer("color")
     def serialize_color(self, color: Color) -> str:

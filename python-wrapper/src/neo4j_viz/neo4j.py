@@ -23,6 +23,7 @@ def from_neo4j(
     All node and relationship properties will be included in the visualization graph.
     If the properties are named as the fields of the `Node` or `Relationship` classes, they will be included as
     top level fields of the respective objects. Otherwise, they will be included in the `properties` dictionary.
+    Additionally, a "labels" property will be added for nodes and a "type" property for relationships.
 
     Parameters
     ----------

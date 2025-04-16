@@ -12,7 +12,8 @@ from .options import CaptionAlignment
 class Relationship(BaseModel, extra="allow"):
     """
     A relationship in a graph to visualize.
-    All options available in the NVL library (see https://neo4j.com/docs/nvl/current/base-library/#_relationships)
+
+    For more info on each field, see the NVL library docs: https://neo4j.com/docs/nvl/current/base-library/#_relationships
     """
 
     #: Unique identifier for the relationship
@@ -43,8 +44,8 @@ class Relationship(BaseModel, extra="allow"):
     )
     #: The color of the relationship. Allowed input is for example "#FF0000", "red" or (255, 0, 0)
     color: Optional[ColorType] = Field(None, description="The color of the relationship")
-    #: The properties of the relationship
-    properties: dict[str, Any] = Field(default_factory=dict, description="The properties of the relationship")
+    #: Additional properties of the relationship that do not directly impact the visualization
+    properties: dict[str, Any] = Field(default_factory=dict, description="Additional properties of the relationship that do not directly impact the visualization")
 
     @field_serializer("color")
     def serialize_color(self, color: Color) -> str:

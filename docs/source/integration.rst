@@ -3,8 +3,9 @@ Integration with other libraries
 
 In addition to creating graphs from scratch, with ``neo4j-viz`` as is shown in the
 :doc:`Getting started section <./getting-started>`, you can also import data directly from external sources.
-In this section we will cover how to import data from `Pandas DataFrames <https://pandas.pydata.org/>`_ and
-`Neo4j Graph Data Science <https://neo4j.com/docs/graph-data-science/current/>`_.
+In this section we will cover how to import data from `Pandas DataFrames <https://pandas.pydata.org/>`_,
+`Neo4j Graph Data Science <https://neo4j.com/docs/graph-data-science/current/>`_ and
+`Neo4j Database <https://neo4j.com/docs/python-manual/current/>`_.
 
 
 .. contents:: On this page:
@@ -31,12 +32,18 @@ The ``from_dfs`` method takes two mandatory positional parameters:
 
 * A Pandas ``DataFrame``, or iterable (eg. list) of DataFrames representing the nodes of the graph.
   The rows of the DataFrame(s) should represent the individual nodes, and the columns should represent the node
-  IDs and properties. The columns map directly to fields of :doc:`Node <./api-reference/node>`, and as such
-  should follow the same naming conventions.
+  IDs and attributes.
+  If a column shares the name with a field of :doc:`Node <./api-reference/node>`, the values it contains will be set
+  on corresponding nodes under that field name.
+  Otherwise, the column name will be a key in each node's `properties` dictionary, that maps to the node's corresponding
+  value in the column.
 * A Pandas ``DataFrame``, or iterable (eg. list) of DataFrames representing the relationships of the graph.
   The rows of the DataFrame(s) should represent the individual relationships, and the columns should represent the
-  relationship IDs and properties. The columns map directly to fields of
-  :doc:`Relationship <./api-reference/relationship>`, and as such should follow the same naming conventions.
+  relationship IDs and attributes.
+  If a column shares the name with a field of :doc:`Relationship <./api-reference/relationship>`, the values it contains
+  will be set on corresponding relationships under that field name.
+  Otherwise, the column name will be a key in each node's `properties` dictionary, that maps to the node's corresponding
+  value in the column.
 
 ``from_dfs`` also takes an optional property, ``node_radius_min_max``, that can be used (and is used by default) to
 scale the node sizes for the visualization.
@@ -46,6 +53,10 @@ The node sizes will be scaled such that the smallest node will have the size of 
 will have the size of the second value.
 The other nodes will be scaled linearly between these two values according to their relative size.
 This can be useful if node sizes vary a lot, or are all very small or very big.
+
+There is also an option to rename columns that will map to key pairs in `Node.properties`.
+This can be done by providing a map from column names to the desired property names as the optional `rename_properties`
+argument.
 
 
 Example
@@ -97,11 +108,12 @@ The ``from_gds`` method takes two mandatory positional parameters:
 * A ``Graph`` representing the projection that one wants to import.
 
 We can also provide an optional ``size_property`` parameter, which should refer to a node property of the projection,
-and will be used to determine the size of the nodes in the visualization.
+and will be used to determine the sizes of the nodes in the visualization.
 
 The ``additional_node_properties`` parameter is also optional, and should be a list of additional node properties of the
 projection that you want to include in the visualization.
-For example, these properties could be used to color the nodes, or give captions to them in the visualization.
+For example, these properties could be used to color the nodes, or give captions to them in the visualization, or simply
+included in the nodes' `Node.properties` maps without directly impacting the visualization.
 
 The last optional property, ``node_radius_min_max``, can be used (and is used by default) to scale the node sizes for
 the visualization.
@@ -143,7 +155,7 @@ We use the "pagerank" property to determine the size of the nodes, and the "comp
 
     # Color the nodes by the `componentId` property, so that the nodes are
     # colored by the connected component they belong to
-    VG.color_nodes("componentId")
+    VG.color_nodes(property="componentId")
 
 
 Please see the :doc:`Visualizing Neo4j Graph Data Science (GDS) Graphs tutorial <./tutorials/gds-example>` for a
@@ -167,10 +179,10 @@ The ``from_neo4j`` method takes one mandatory positional parameters:
 
 * A ``result`` representing the query result either in form of `neo4j.graph.Graph` or `neo4j.Result`.
 
-The ``node_caption`` parameter is also optional, and indicates the value to use for the caption of each node in the visualization.
+The ``node_caption`` parameter is also optional, and indicates the node property to use for the caption of each node in the visualization.
 
-We can also provide an optional ``size_property`` parameter, which should refer to a node property of the projection,
-and will be used to determine the size of the nodes in the visualization.
+We can also provide an optional ``size_property`` parameter, which should refer to a node property,
+and will be used to determine the sizes of the nodes in the visualization.
 
 The last optional property, ``node_radius_min_max``, can be used (and is used by default) to scale the node sizes for
 the visualization.
