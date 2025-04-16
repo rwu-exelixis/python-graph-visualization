@@ -13,7 +13,10 @@ DFS_TYPE = Union[DataFrame, Iterable[DataFrame]]
 
 
 def from_dfs(
-    node_dfs: DFS_TYPE, rel_dfs: DFS_TYPE, node_radius_min_max: Optional[tuple[float, float]] = (3, 60)
+    node_dfs: DFS_TYPE,
+    rel_dfs: DFS_TYPE,
+    node_radius_min_max: Optional[tuple[float, float]] = (3, 60),
+    rename_properties: Optional[dict[str, str]] = None,
 ) -> VisualizationGraph:
     """
     Create a VisualizationGraph from pandas DataFrames representing a graph.
@@ -31,6 +34,8 @@ def from_dfs(
     node_radius_min_max : tuple[float, float], optional
         Minimum and maximum node radius.
         To avoid tiny or huge nodes in the visualization, the node sizes are scaled to fit in the given range.
+    rename_properties : dict[str, str], optional
+        An optional map for renaming certain column names when they are converted to properties.
     """
     if isinstance(node_dfs, DataFrame):
         node_dfs_iter: Iterable[DataFrame] = [node_dfs]
@@ -48,6 +53,8 @@ def from_dfs(
                 if key in Node.model_fields.keys():
                     top_level[key] = value
                 else:
+                    if rename_properties and key in rename_properties:
+                        key = rename_properties[key]
                     properties[key] = value
 
             nodes.append(Node(**top_level, properties=properties))
@@ -66,6 +73,8 @@ def from_dfs(
                 if key in Relationship.model_fields.keys():
                     top_level[key] = value
                 else:
+                    if rename_properties and key in rename_properties:
+                        key = rename_properties[key]
                     properties[key] = value
 
             relationships.append(Relationship(**top_level, properties=properties))

@@ -17,6 +17,7 @@ def test_from_gds_integration(gds: Any) -> None:
             "labels": [["A"], ["C"], ["A", "B"]],
             "score": [1337, 42, 3.14],
             "component": [1, 4, 2],
+            "size": [0.1, 0.2, 0.3],
         }
     )
     rels = pd.DataFrame(
@@ -29,18 +30,24 @@ def test_from_gds_integration(gds: Any) -> None:
 
     with gds.graph.construct("flo", nodes, rels) as G:
         VG = from_gds(
-            gds, G, size_property="score", additional_node_properties=["component"], node_radius_min_max=(3.14, 1337)
+            gds,
+            G,
+            size_property="score",
+            additional_node_properties=["component", "size"],
+            node_radius_min_max=(3.14, 1337),
         )
 
         assert len(VG.nodes) == 3
         assert sorted(VG.nodes, key=lambda x: x.id) == [
-            Node(id=0, labels=["A"], size=float(1337), component=float(1)),
-            Node(id=1, labels=["C"], size=float(42), component=float(4)),
-            Node(id=2, labels=["A", "B"], size=float(3.14), component=float(2)),
+            Node(id=0, size=float(1337), properties=dict(labels=["A"], component=float(1), size=0.1)),
+            Node(id=1, size=float(42), properties=dict(labels=["C"], component=float(4), size=0.2)),
+            Node(id=2, size=float(3.14), properties=dict(labels=["A", "B"], component=float(2), size=0.3)),
         ]
 
         assert len(VG.relationships) == 3
-        vg_rels = sorted([(e.source, e.target, e.relationshipType) for e in VG.relationships], key=lambda x: x[0])  # type: ignore[attr-defined]
+        vg_rels = sorted(
+            [(e.source, e.target, e.properties["relationshipType"]) for e in VG.relationships], key=lambda x: x[0]
+        )
         assert vg_rels == [
             (0, 1, "REL"),
             (1, 2, "REL2"),
@@ -111,13 +118,15 @@ def test_from_gds_mocked(mocker: MockerFixture) -> None:
 
     assert len(VG.nodes) == 3
     assert sorted(VG.nodes, key=lambda x: x.id) == [
-        Node(id=0, labels=["A"], size=float(1337), component=float(1)),
-        Node(id=1, labels=["C"], size=float(42), component=float(4)),
-        Node(id=2, labels=["A", "B"], size=float(3.14), component=float(2)),
+        Node(id=0, size=float(1337), properties=dict(labels=["A"], component=float(1))),
+        Node(id=1, size=float(42), properties=dict(labels=["C"], component=float(4))),
+        Node(id=2, size=float(3.14), properties=dict(labels=["A", "B"], component=float(2))),
     ]
 
     assert len(VG.relationships) == 3
-    vg_rels = sorted([(e.source, e.target, e.relationshipType) for e in VG.relationships], key=lambda x: x[0])  # type: ignore[attr-defined]
+    vg_rels = sorted(
+        [(e.source, e.target, e.properties["relationshipType"]) for e in VG.relationships], key=lambda x: x[0]
+    )
     assert vg_rels == [
         (0, 1, "REL"),
         (1, 2, "REL2"),
