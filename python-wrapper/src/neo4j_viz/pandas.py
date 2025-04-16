@@ -16,7 +16,11 @@ def from_dfs(
     node_dfs: DFS_TYPE, rel_dfs: DFS_TYPE, node_radius_min_max: Optional[tuple[float, float]] = (3, 60)
 ) -> VisualizationGraph:
     """
-    Create a VisualizationGraph from two pandas DataFrames.
+    Create a VisualizationGraph from pandas DataFrames representing a graph.
+
+    All columns will be included in the visualization graph.
+    If the columns are named as the fields of the `Node` or `Relationship` classes, they will be included as
+    top level fields of the respective objects. Otherwise, they will be included in the `properties` dictionary.
 
     Parameters
     ----------
@@ -38,8 +42,15 @@ def from_dfs(
     for node_df in node_dfs_iter:
         has_size &= "size" in node_df.columns
         for _, row in node_df.iterrows():
-            node = Node(**row.to_dict())
-            nodes.append(node)
+            top_level = {}
+            properties = {}
+            for key, value in row.to_dict().items():
+                if key in Node.model_fields.keys():
+                    top_level[key] = value
+                else:
+                    properties[key] = value
+
+            nodes.append(Node(**top_level, properties=properties))
 
     if isinstance(rel_dfs, DataFrame):
         rel_dfs_iter: Iterable[DataFrame] = [rel_dfs]
@@ -49,8 +60,15 @@ def from_dfs(
     relationships = []
     for rel_df in rel_dfs_iter:
         for _, row in rel_df.iterrows():
-            rel = Relationship(**row.to_dict())
-            relationships.append(rel)
+            top_level = {}
+            properties = {}
+            for key, value in row.to_dict().items():
+                if key in Relationship.model_fields.keys():
+                    top_level[key] = value
+                else:
+                    properties[key] = value
+
+            relationships.append(Relationship(**top_level, properties=properties))
 
     VG = VisualizationGraph(nodes=nodes, relationships=relationships)
 
