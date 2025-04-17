@@ -36,8 +36,9 @@ The ``color_nodes`` method
 
 By calling the :meth:`neo4j_viz.VisualizationGraph.color_nodes` method, you can color nodes based on a
 node field or property (members of the `Node.properties` map).
-It's possible to color the nodes based on a discrete or continuous color space. In the discrete case, a new
-color from the `colors` provided is assigned to each unique value of the node field/property.
+
+It's possible to color the nodes based on a discrete or continuous color space (see :doc:`ColorSpace <./api-reference/colors>`).
+In the discrete case, a new color from the `colors` provided is assigned to each unique value of the node field/property.
 In the continuous case, the `colors` should be a list of colors representing a range that are used to
 create a gradient of colors based on the values of the node field/property.
 
@@ -50,8 +51,8 @@ If some nodes already have a ``color`` set, you can choose whether or not to ove
 parameter.
 
 
-By discrete node property (field)
-*********************************
+By discrete color space
+***********************
 
 To not use the default colors, we can provide a list of custom colors based on the discrete node field "caption" to the ``color_nodes`` method:
 
@@ -86,8 +87,8 @@ To avoid that, you could use a larger palette or extend one with additional colo
 to do the latter.
 
 
-By continuous node property (field)
-***********************************
+By continuous color space
+*************************
 
 To not use the default colors, we can provide a list of custom colors representing a range to the ``color_nodes`` method:
 

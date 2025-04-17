@@ -2,14 +2,29 @@ from collections.abc import Iterable
 from enum import Enum
 from typing import Any, Union
 
+import enum_tools
 from pydantic_extra_types.color import ColorType
 
 ColorsType = Union[dict[Any, ColorType], Iterable[ColorType]]
 
 
+@enum_tools.documentation.document_enum
 class ColorSpace(Enum):
+    """
+    Describes the type of color space used by a color palette.
+    """
+
     DISCRETE = "discrete"
+    """
+    This category describes a color palette that is a collection of different colors that are not necessarily related to
+    each other. Discrete color spaces are suitable for categorical data, where each unique category is represented by a
+    different color.
+    """
     CONTINUOUS = "continuous"
+    """
+    This category describes a color palette that is a range/gradient of colors between two or more colors. Continuous
+    color spaces are suitable for continuous data (typically floats), where values can change smoothly.
+    """
 
 
 # Comes from https://neo4j.design/40a8cff71/p/5639c0-color/t/page-5639c0-79109681-33
