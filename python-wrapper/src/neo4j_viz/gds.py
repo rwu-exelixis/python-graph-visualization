@@ -6,7 +6,7 @@ from typing import Optional
 import pandas as pd
 from graphdatascience import Graph, GraphDataScience
 
-from .pandas import from_dfs
+from .pandas import _from_dfs
 from .visualization_graph import VisualizationGraph
 
 
@@ -97,4 +97,4 @@ def from_gds(
     rel_df = _rel_df(gds, G)
     rel_df.rename(columns={"sourceNodeId": "source", "targetNodeId": "target"}, inplace=True)
 
-    return from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max, rename_properties={"__size": "size"})
+    return _from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max, rename_properties={"__size": "size"})

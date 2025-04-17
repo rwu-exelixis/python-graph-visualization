@@ -12,31 +12,12 @@ from .visualization_graph import VisualizationGraph
 DFS_TYPE = Union[DataFrame, Iterable[DataFrame]]
 
 
-def from_dfs(
+def _from_dfs(
     node_dfs: DFS_TYPE,
     rel_dfs: DFS_TYPE,
     node_radius_min_max: Optional[tuple[float, float]] = (3, 60),
     rename_properties: Optional[dict[str, str]] = None,
 ) -> VisualizationGraph:
-    """
-    Create a VisualizationGraph from pandas DataFrames representing a graph.
-
-    All columns will be included in the visualization graph.
-    If the columns are named as the fields of the `Node` or `Relationship` classes, they will be included as
-    top level fields of the respective objects. Otherwise, they will be included in the `properties` dictionary.
-
-    Parameters
-    ----------
-    node_dfs: Union[DataFrame, Iterable[DataFrame]]
-        DataFrame or iterable of DataFrames containing node data.
-    rel_dfs: Union[DataFrame, Iterable[DataFrame]]
-        DataFrame or iterable of DataFrames containing relationship data.
-    node_radius_min_max : tuple[float, float], optional
-        Minimum and maximum node radius.
-        To avoid tiny or huge nodes in the visualization, the node sizes are scaled to fit in the given range.
-    rename_properties : dict[str, str], optional
-        An optional map for renaming certain column names when they are converted to properties.
-    """
     if isinstance(node_dfs, DataFrame):
         node_dfs_iter: Iterable[DataFrame] = [node_dfs]
     else:
@@ -85,3 +66,29 @@ def from_dfs(
         VG.resize_nodes(node_radius_min_max=node_radius_min_max)
 
     return VG
+
+
+def from_dfs(
+    node_dfs: DFS_TYPE,
+    rel_dfs: DFS_TYPE,
+    node_radius_min_max: Optional[tuple[float, float]] = (3, 60),
+) -> VisualizationGraph:
+    """
+    Create a VisualizationGraph from pandas DataFrames representing a graph.
+
+    All columns will be included in the visualization graph.
+    If the columns are named as the fields of the `Node` or `Relationship` classes, they will be included as
+    top level fields of the respective objects. Otherwise, they will be included in the `properties` dictionary.
+
+    Parameters
+    ----------
+    node_dfs: Union[DataFrame, Iterable[DataFrame]]
+        DataFrame or iterable of DataFrames containing node data.
+    rel_dfs: Union[DataFrame, Iterable[DataFrame]]
+        DataFrame or iterable of DataFrames containing relationship data.
+    node_radius_min_max : tuple[float, float], optional
+        Minimum and maximum node radius.
+        To avoid tiny or huge nodes in the visualization, the node sizes are scaled to fit in the given range.
+    """
+
+    return _from_dfs(node_dfs, rel_dfs, node_radius_min_max)

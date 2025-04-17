@@ -45,7 +45,10 @@ class Relationship(BaseModel, extra="allow"):
     #: The color of the relationship. Allowed input is for example "#FF0000", "red" or (255, 0, 0)
     color: Optional[ColorType] = Field(None, description="The color of the relationship")
     #: Additional properties of the relationship that do not directly impact the visualization
-    properties: dict[str, Any] = Field(default_factory=dict, description="Additional properties of the relationship that do not directly impact the visualization")
+    properties: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Additional properties of the relationship that do not directly impact the visualization",
+    )
 
     @field_serializer("color")
     def serialize_color(self, color: Color) -> str:

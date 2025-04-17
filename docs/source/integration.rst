@@ -54,10 +54,6 @@ will have the size of the second value.
 The other nodes will be scaled linearly between these two values according to their relative size.
 This can be useful if node sizes vary a lot, or are all very small or very big.
 
-There is also an option to rename columns that will map to key pairs in `Node.properties`.
-This can be done by providing a map from column names to the desired property names as the optional `rename_properties`
-argument.
-
 
 Example
 ~~~~~~~
