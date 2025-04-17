@@ -97,7 +97,7 @@ def test_color_nodes_default() -> None:
     ]
     VG = VisualizationGraph(nodes=nodes, relationships=[])
 
-    VG.color_nodes("caption")
+    VG.color_nodes(field="caption")
 
     assert VG.nodes[0].color == Color(NEO4J_COLORS_DISCRETE[0])
     assert VG.nodes[1].color == Color(NEO4J_COLORS_DISCRETE[1])

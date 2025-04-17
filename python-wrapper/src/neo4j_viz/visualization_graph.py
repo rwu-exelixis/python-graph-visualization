@@ -350,7 +350,7 @@ class VisualizationGraph:
         try:
             hash(prop)
         except TypeError:
-            raise ValueError(f"Unable to convert property '{raw_prop}' of type {type(raw_prop)} to a hashable type")
+            raise ValueError(f"Unable to convert '{raw_prop}' of type {type(raw_prop)} to a hashable type")
 
         assert isinstance(prop, Hashable)
 

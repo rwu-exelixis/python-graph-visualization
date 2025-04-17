@@ -25,7 +25,7 @@ def create_visualization_graph() -> VisualizationGraph:
     nodes_df.drop(columns="features", inplace=True)
 
     VG = from_dfs(nodes_df, rels_df)
-    VG.color_nodes("subject")
+    VG.color_nodes(property="subject")
 
     return VG
 
