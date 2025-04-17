@@ -6,7 +6,7 @@ from typing import Optional
 import pandas as pd
 from graphdatascience import Graph, GraphDataScience
 
-from .pandas import from_dfs
+from .pandas import _from_dfs
 from .visualization_graph import VisualizationGraph
 
 
@@ -34,6 +34,11 @@ def from_gds(
 ) -> VisualizationGraph:
     """
     Create a VisualizationGraph from a GraphDataScience object and a Graph object.
+
+    All `additional_node_properties` will be included in the visualization graph.
+    If the properties are named as the fields of the `Node` class, they will be included as top level fields of the
+    created `Node` objects. Otherwise, they will be included in the `properties` dictionary.
+    Additionally, a new "labels" node property will be added, containing the node labels of the node.
 
     Parameters
     ----------
@@ -75,9 +80,13 @@ def from_gds(
 
     node_props_df = pd.concat(node_dfs.values(), ignore_index=True, axis=0).drop_duplicates()
     if size_property is not None:
+        if "size" in actual_node_properties and size_property != "size":
+            node_props_df.rename(columns={"size": "__size"}, inplace=True)
         node_props_df.rename(columns={size_property: "size"}, inplace=True)
 
     for lbl, df in node_dfs.items():
+        if "labels" in actual_node_properties:
+            df.rename(columns={"labels": "__labels"}, inplace=True)
         df["labels"] = lbl
 
     node_lbls_df = pd.concat([df[["id", "labels"]] for df in node_dfs.values()], ignore_index=True, axis=0)
@@ -88,4 +97,4 @@ def from_gds(
     rel_df = _rel_df(gds, G)
     rel_df.rename(columns={"sourceNodeId": "source", "targetNodeId": "target"}, inplace=True)
 
-    return from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max)
+    return _from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max, rename_properties={"__size": "size"})

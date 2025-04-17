@@ -69,7 +69,9 @@ def test_unsupported_field_type() -> None:
         ValueError, match="A field of a node object is not supported: Object of type set is not JSON serializable"
     ):
         nodes = [
-            Node(id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person", unsupported=set([1, 2, 3])),
+            Node(
+                id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person", properties={"unsupported": {1, 2, 3}}
+            ),
         ]
         VG = VisualizationGraph(nodes=nodes, relationships=[])
         VG.render()
@@ -83,7 +85,7 @@ def test_unsupported_field_type() -> None:
                 source="4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
                 target="4:d09f48a4-5fca-421d-921d-a30a896c604d:6",
                 caption="BUYS",
-                unsupported=set([1, 2, 3]),
+                properties={"unsupported": {1, 2, 3}},
             ),
         ]
         VG = VisualizationGraph(nodes=[], relationships=relationships)

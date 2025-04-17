@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import warnings
 from collections.abc import Iterable
-from typing import Any, Hashable, Optional
+from typing import Any, Callable, Hashable, Optional
 
 from IPython.display import HTML
 from pydantic_extra_types.color import Color, ColorType
 
-from .colors import NEO4J_COLORS_CONTINUOUS, NEO4J_COLORS_DISCRETE, ColorsType, PropertyType
+from .colors import NEO4J_COLORS_CONTINUOUS, NEO4J_COLORS_DISCRETE, ColorSpace, ColorsType
 from .node import Node, NodeIdType
 from .node_size import RealNumber, verify_radii
 from .nvl import NVL
@@ -204,42 +204,65 @@ class VisualizationGraph:
 
     def color_nodes(
         self,
-        property: str,
+        *,
+        field: Optional[str] = None,
+        property: Optional[str] = None,
         colors: Optional[ColorsType] = None,
-        property_type: PropertyType = PropertyType.DISCRETE,
+        color_space: ColorSpace = ColorSpace.DISCRETE,
         override: bool = False,
     ) -> None:
         """
-        Color the nodes in the graph based on a property.
+        Color the nodes in the graph based on either a node field, or a node property.
 
-        It's possible to color the nodes based on a discrete or continuous property. In the discrete case, a new color
-        from the `colors` provided is assigned to each unique value of the node property.
+        It's possible to color the nodes based on a discrete or continuous color space. In the discrete case, a new
+        color from the `colors` provided is assigned to each unique value of the node field/property.
         In the continuous case, the `colors` should be a list of colors representing a range that are used to
-        create a gradient of colors based on the values of the node property.
+        create a gradient of colors based on the values of the node field/property.
 
         Parameters
         ----------
+        field:
+            The field of the nodes to base the coloring on. The type of this field must be hashable, or be a
+            list, set or dict containing only hashable types. Must be None if `property` is provided.
         property:
             The property of the nodes to base the coloring on. The type of this property must be hashable, or be a
-            list, set or dict containing only hashable types.
+            list, set or dict containing only hashable types. Must be None if `field` is provided.
         colors:
             The colors to use for the nodes.
-            If `property_type` is `PropertyType.DISCRETE`, the colors can be a dictionary mapping from property value
+            If `color_space` is `ColorSpace.DISCRETE`, the colors can be a dictionary mapping from field/property value
             to color, or an iterable of colors in which case the colors are used in order.
-            If `property_type` is `PropertyType.CONTINUOUS`, the colors must be a list of colors representing a range.
+            If `color_space` is `ColorSpace.CONTINUOUS`, the colors must be a list of colors representing a range.
             Allowed color values are for example “#FF0000”, “red” or (255, 0, 0) (full list: https://docs.pydantic.dev/2.0/usage/types/extra_types/color_types/).
             The default colors are the Neo4j graph colors.
-        property_type:
-            The type of the property, either `PropertyType.DISCRETE` or `PropertyType.CONTINUOUS`. It determines whether
-            colors are assigned based on unique property values or a gradient of the values of the property.
+        color_space:
+            The type of space of the provided `colors`. Either `ColorSpace.DISCRETE` or `ColorSpace.CONTINUOUS`. It determines whether
+            colors are assigned based on unique field/property values or a gradient of the values of the field/property.
         override:
             Whether to override existing colors of the nodes, if they have any.
         """
-        if property_type == PropertyType.DISCRETE:
+        if not ((field is None) ^ (property is None)):
+            raise ValueError(
+                f"Exactly one of the arguments `field` (received '{field}') and `property` (received '{property}') must be provided"
+            )
+
+        if field is None:
+            assert property is not None
+            attribute = property
+
+            def node_to_attr(node: Node) -> Any:
+                return node.properties.get(attribute)
+        else:
+            assert field is not None
+            attribute = field
+
+            def node_to_attr(node: Node) -> Any:
+                return getattr(node, attribute)
+
+        if color_space == ColorSpace.DISCRETE:
             if colors is None:
                 colors = NEO4J_COLORS_DISCRETE
         else:
-            node_map = {node.id: getattr(node, property) for node in self.nodes if getattr(node, property) is not None}
+            node_map = {node.id: node_to_attr(node) for node in self.nodes if node_to_attr(node) is not None}
             normalized_map = self._normalize_values(node_map)
 
             if colors is None:
@@ -250,19 +273,21 @@ class VisualizationGraph:
 
             num_colors = len(colors)
             colors = {
-                getattr(node, property): colors[round(normalized_map[node.id] * (num_colors - 1))]
+                node_to_attr(node): colors[round(normalized_map[node.id] * (num_colors - 1))]
                 for node in self.nodes
-                if getattr(node, property) is not None
+                if node_to_attr(node) is not None
             }
 
         if isinstance(colors, dict):
-            self._color_nodes_dict(property, colors, override)
+            self._color_nodes_dict(colors, override, node_to_attr)
         else:
-            self._color_nodes_iter(property, colors, override)
+            self._color_nodes_iter(attribute, colors, override, node_to_attr)
 
-    def _color_nodes_dict(self, property: str, colors: dict[str, ColorType], override: bool) -> None:
+    def _color_nodes_dict(
+        self, colors: dict[str, ColorType], override: bool, node_to_attr: Callable[[Node], Any]
+    ) -> None:
         for node in self.nodes:
-            color = colors.get(getattr(node, property))
+            color = colors.get(node_to_attr(node))
 
             if color is None:
                 continue
@@ -275,12 +300,14 @@ class VisualizationGraph:
             else:
                 node.color = color
 
-    def _color_nodes_iter(self, property: str, colors: Iterable[ColorType], override: bool) -> None:
+    def _color_nodes_iter(
+        self, attribute: str, colors: Iterable[ColorType], override: bool, node_to_attr: Callable[[Node], Any]
+    ) -> None:
         exhausted_colors = False
         prop_to_color = {}
         colors_iter = iter(colors)
         for node in self.nodes:
-            raw_prop = getattr(node, property)
+            raw_prop = node_to_attr(node)
             try:
                 prop = self._make_hashable(raw_prop)
             except ValueError:
@@ -306,7 +333,7 @@ class VisualizationGraph:
 
         if exhausted_colors:
             warnings.warn(
-                f"Ran out of colors for property '{property}'. {len(prop_to_color)} colors were needed, but only "
+                f"Ran out of colors for property '{attribute}'. {len(prop_to_color)} colors were needed, but only "
                 f"{len(set(prop_to_color.values()))} were given, so reused colors"
             )
 
@@ -323,7 +350,7 @@ class VisualizationGraph:
         try:
             hash(prop)
         except TypeError:
-            raise ValueError(f"Unable to convert property '{raw_prop}' of type {type(raw_prop)} to a hashable type")
+            raise ValueError(f"Unable to convert '{raw_prop}' of type {type(raw_prop)} to a hashable type")
 
         assert isinstance(prop, Hashable)
 
