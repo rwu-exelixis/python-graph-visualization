@@ -60,7 +60,7 @@ class NVL:
         full_code = self.library_code + js_code
         html_output = f"""
         <div id="{container_id}" style="width: {width}; height: {height}; position: relative;">
-            <div id="tooltip" style="width: 20%; max-height: 90%; position: absolute; z-index: 2147483647; right: 0; bottom: 0; background: white; display: none; border: solid; border-color: #BBBEC3; border-width: 0.5px; padding: 0.6rem; border-radius: 8px; margin-bottom: 1rem; margin-right: 0.5rem; filter: drop-shadow(0 4px 8px rgba(26,27,29,0.12)); font: PublicSans; font-color: #4D5157; font-size: 14px"></div>
+            <div id="tooltip" style="width: 20%; max-height: 90%; position: absolute; z-index: 2147483647; right: 0; bottom: 0; background: white; display: none; border: solid; border-color: #BBBEC3; border-width: 0.5px; padding: 0.6rem; border-radius: 8px; margin-bottom: 1rem; margin-right: 0.5rem; filter: drop-shadow(0 4px 8px rgba(26,27,29,0.12)); font-family: PublicSans; color: #4D5157; font-size: 14px"></div>
         </div>
         <script>
             {full_code}
