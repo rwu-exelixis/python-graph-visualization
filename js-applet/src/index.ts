@@ -15,7 +15,7 @@ class PyNVL {
 
   constructor(
     frame: HTMLElement,
-    tooltip: HTMLElement,
+    tooltip: HTMLElement | null = null,
     nvlNodes: Node[] = [],
     nvlRels: Relationship[] = [],
     options: NvlOptions = {},
@@ -26,27 +26,30 @@ class PyNVL {
     this.zoomInteraction = new ZoomInteraction(this.nvl)
     this.panInteraction = new PanInteraction(this.nvl)
     this.dragNodeInteraction = new DragNodeInteraction(this.nvl)
-    this.hoverInteraction = new HoverInteraction(this.nvl)
 
-    this.hoverInteraction.updateCallback('onHover', (element) => {
-      if (element === undefined) {
-        tooltip.textContent = "";
-        if (tooltip.style.display === "block") {
-          tooltip.style.display = "none";
+    if (tooltip !== null) {
+      this.hoverInteraction = new HoverInteraction(this.nvl)
+
+      this.hoverInteraction.updateCallback('onHover', (element) => {
+        if (element === undefined) {
+          tooltip.textContent = "";
+          if (tooltip.style.display === "block") {
+            tooltip.style.display = "none";
+          }
+        } else if ("from" in element) {
+          const rel = element as Relationship
+          if (tooltip.style.display === "none") {
+            tooltip.style.display = "block";
+          }
+          tooltip.setHTMLUnsafe(`<b>Source ID:</b> ${rel.from} </br><b>Target ID:</b> ${rel.to}`)
+        } else if ("id" in element) {
+          if (tooltip.style.display === "none") {
+            tooltip.style.display = "block";
+          }
+          tooltip.setHTMLUnsafe(`<b>ID:</b> ${element.id}`)
         }
-      } else if ("from" in element) {
-        const rel = element as Relationship
-        if (tooltip.style.display === "none") {
-          tooltip.style.display = "block";
-        }
-        tooltip.setHTMLUnsafe(`<b>Source ID:</b> ${rel.from} </br><b>Target ID:</b> ${rel.to}`)
-      } else if ("id" in element) {
-        if (tooltip.style.display === "none") {
-          tooltip.style.display = "block";
-        }
-        tooltip.setHTMLUnsafe(`<b>ID:</b> ${element.id}`)
-      }
-    })
+      })
+    }
 
     if (options.layout === FreeLayoutType) {
       this.nvl.setNodePositions(nvlNodes, false)

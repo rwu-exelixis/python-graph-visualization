@@ -33,9 +33,11 @@ The package wraps the [Neo4j Visualization JavaScript library (NVL)](https://neo
   * Colors
   * Captions
   * Pinning
+  * On hover tooltip
 * Relationship features:
   * Colors
   * Captions
+  * On hover tooltip
 * Graph features:
   * Zooming
   * Panning

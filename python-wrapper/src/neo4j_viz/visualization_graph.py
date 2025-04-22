@@ -51,6 +51,7 @@ class VisualizationGraph:
         max_zoom: float = 10,
         allow_dynamic_min_zoom: bool = True,
         max_allowed_nodes: int = 10_000,
+        show_hover_tooltip: bool = True,
     ) -> HTML:
         """
         Render the graph.
@@ -77,6 +78,8 @@ class VisualizationGraph:
             Whether to allow dynamic minimum zoom level.
         max_allowed_nodes:
             The maximum allowed number of nodes to render.
+        show_hover_tooltip:
+            Whether to show an info tooltip when hovering over nodes and relationships.
         """
 
         num_nodes = len(self.nodes)
@@ -106,6 +109,7 @@ class VisualizationGraph:
             render_options,
             width,
             height,
+            show_hover_tooltip,
         )
 
     def toggle_nodes_pinned(self, pinned: dict[NodeIdType, bool]) -> None:
