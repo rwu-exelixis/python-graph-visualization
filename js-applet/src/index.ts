@@ -11,6 +11,8 @@ class PyNVL {
 
   dragNodeInteraction: DragNodeInteraction
 
+  hoverInteraction: HoverInteraction
+
   constructor(
     frame: HTMLElement,
     tooltip: HTMLElement,
@@ -24,12 +26,11 @@ class PyNVL {
     this.zoomInteraction = new ZoomInteraction(this.nvl)
     this.panInteraction = new PanInteraction(this.nvl)
     this.dragNodeInteraction = new DragNodeInteraction(this.nvl)
+    this.hoverInteraction = new HoverInteraction(this.nvl)
 
-    const hoverInteraction = new HoverInteraction(this.nvl)
-
-    hoverInteraction.updateCallback('onHover', (element, hitElements, event) => {
+    this.hoverInteraction.updateCallback('onHover', (element) => {
       if (element === undefined) {
-        tooltip.setHTMLUnsafe("")
+        tooltip.textContent = "";
         if (tooltip.style.display === "block") {
           tooltip.style.display = "none";
         }
@@ -38,12 +39,12 @@ class PyNVL {
         if (tooltip.style.display === "none") {
           tooltip.style.display = "block";
         }
-        tooltip.setHTMLUnsafe("<b>Source ID:</b> " + rel.from + "</br><b>Target ID:</b> " + rel.to)
+        tooltip.setHTMLUnsafe(`<b>Source ID:</b> ${rel.from} </br><b>Target ID:</b> ${rel.to}`)
       } else if ("id" in element) {
         if (tooltip.style.display === "none") {
           tooltip.style.display = "block";
         }
-        tooltip.setHTMLUnsafe("<b>ID:</b> " + element.id)
+        tooltip.setHTMLUnsafe(`<b>ID:</b> ${element.id}`)
       }
     })
 
