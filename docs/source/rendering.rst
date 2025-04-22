@@ -45,6 +45,9 @@ It defaults to 10.000, because rendering a large number of nodes can be slow and
 However, you can increase this value if you are confident that your environment can handle the scale.
 In this case you might also want to pass ``Renderer.WEB_GL`` as the ``renderer`` to improve performance.
 
+By default a tooltip will be shown when hovering over a node or relationship.
+But you can disable this by passing ``show_hover_tooltip=False``.
+
 
 Examples
 --------
