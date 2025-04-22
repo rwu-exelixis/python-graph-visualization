@@ -90,7 +90,13 @@ def _get_snippet(q: str, idx: int, context: int = 15) -> str:
     return q[start:end].replace("\n", " ")
 
 
-def from_gql_create(query: str) -> VisualizationGraph:
+def from_gql_create(
+    query: str,
+    size_property: Optional[str] = None,
+    node_caption: Optional[str] = "labels",
+    relationship_caption: Optional[str] = "type",
+    node_radius_min_max: Optional[tuple[float, float]] = (3, 60),
+) -> VisualizationGraph:
     """
     Parse a GQL CREATE query and return a VisualizationGraph object representing the graph it creates.
 
@@ -107,6 +113,15 @@ def from_gql_create(query: str) -> VisualizationGraph:
     ----------
     query : str
         The GQL CREATE query to parse
+    size_property : str, optional
+        Property to use for node size, by default None.
+    node_caption : str, optional
+        Property to use as the node caption, by default the node labels will be used.
+    relationship_caption : str, optional
+        Property to use as the relationship caption, by default the relationship type will be used.
+    node_radius_min_max : tuple[float, float], optional
+        Minimum and maximum node radius, by default (3, 60).
+        To avoid tiny or huge nodes in the visualization, the node sizes are scaled to fit in the given range.
     """
 
     query = query.strip()
@@ -295,4 +310,28 @@ def from_gql_create(query: str) -> VisualizationGraph:
                 snippet = part[:30]
                 raise ValueError(f"Invalid element in CREATE near: `{snippet}`.")
 
-    return VisualizationGraph(nodes=nodes, relationships=relationships)
+    if size_property is not None:
+        for node in nodes:
+            node.size = node.properties.get(size_property)
+
+    if node_caption is not None:
+        for node in nodes:
+            if node_caption == "labels":
+                if len(node.properties["labels"]) > 0:
+                    node.caption = ":".join([label for label in node.properties["labels"]])
+            else:
+                node.caption = str(node.properties.get(node_caption))
+
+    if relationship_caption is not None:
+        for rel in relationships:
+            if relationship_caption == "type":
+                rel.caption = rel.properties["type"]
+            else:
+                rel.caption = str(rel.properties.get(relationship_caption))
+
+    VG = VisualizationGraph(nodes=nodes, relationships=relationships)
+
+    if (node_radius_min_max is not None) and (size_property is not None):
+        VG.resize_nodes(node_radius_min_max=node_radius_min_max)
+
+    return VG

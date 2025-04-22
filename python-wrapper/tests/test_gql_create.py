@@ -5,7 +5,7 @@ import pytest
 from neo4j_viz.gql_create import from_gql_create
 
 
-def test_from_gql_create() -> None:
+def test_from_gql_create_syntax() -> None:
     query = """
             CREATE
               (a:User {name: 'Alice', age: 23, labels: ['Happy'], "id": 42}),
@@ -47,7 +47,7 @@ def test_from_gql_create() -> None:
         {"top_level": {}, "properties": {"name": "Fawad", "age": 78, "labels": ["Person", "User"]}},
     ]
 
-    VG = from_gql_create(query)
+    VG = from_gql_create(query, node_caption=None, relationship_caption=None)
 
     assert len(VG.nodes) == len(expected_node_dicts)
     for i, exp_node in enumerate(expected_node_dicts):
@@ -78,6 +78,81 @@ def test_from_gql_create() -> None:
             == exp_rel["top_level"]
         )
         assert created_rel.properties == exp_rel["properties"]
+
+
+def test_from_gql_create_captions() -> None:
+    query = """
+            CREATE
+              (a:User {name: 'Alice', age: 23}),
+              (b:User:person {name: "Bridget", age: 34, "caption": "Bridget"}),
+              (a)-[:LINK {weight: 0.5}]->(b);
+            """
+    expected_node_dicts: list[dict[str, dict[str, Any]]] = [
+        {
+            "top_level": {"caption": "User"},
+            "properties": {"name": "Alice", "age": 23, "labels": ["User"]},
+        },
+        {
+            "top_level": {"caption": "User:person"},
+            "properties": {"name": "Bridget", "age": 34, "labels": ["User", "person"]},
+        },
+    ]
+
+    VG = from_gql_create(query)
+
+    assert len(VG.nodes) == len(expected_node_dicts)
+    for i, exp_node in enumerate(expected_node_dicts):
+        created_node = VG.nodes[i]
+
+        assert created_node.model_dump(exclude_none=True, exclude={"properties", "id"}) == exp_node["top_level"]
+        assert created_node.properties == exp_node["properties"]
+
+    expected_relationships_dicts: list[dict[str, Any]] = [
+        {
+            "source_idx": 0,
+            "target_idx": 1,
+            "top_level": {"caption": "LINK"},
+            "properties": {"weight": 0.5, "type": "LINK"},
+        },
+    ]
+
+    assert len(VG.relationships) == len(expected_relationships_dicts)
+    for i, exp_rel in enumerate(expected_relationships_dicts):
+        created_rel = VG.relationships[i]
+        assert created_rel.source == VG.nodes[exp_rel["source_idx"]].id
+        assert created_rel.target == VG.nodes[exp_rel["target_idx"]].id
+        assert (
+            created_rel.model_dump(exclude_none=True, exclude={"properties", "id", "source", "target"})
+            == exp_rel["top_level"]
+        )
+        assert created_rel.properties == exp_rel["properties"]
+
+
+def test_from_gql_create_sizes() -> None:
+    query = """
+            CREATE
+              (a:User {name: 'Alice', age: 23}),
+              (b:User:person {name: "Bridget", age: 34, "caption": "Bridget"});
+            """
+    expected_node_dicts: list[dict[str, dict[str, Any]]] = [
+        {
+            "top_level": {"size": 3.0},
+            "properties": {"name": "Alice", "age": 23, "labels": ["User"]},
+        },
+        {
+            "top_level": {"caption": "Bridget", "size": 60.0},
+            "properties": {"name": "Bridget", "age": 34, "labels": ["User", "person"]},
+        },
+    ]
+
+    VG = from_gql_create(query, size_property="age", node_caption=None, relationship_caption=None)
+
+    assert len(VG.nodes) == len(expected_node_dicts)
+    for i, exp_node in enumerate(expected_node_dicts):
+        created_node = VG.nodes[i]
+
+        assert created_node.model_dump(exclude_none=True, exclude={"properties", "id"}) == exp_node["top_level"]
+        assert created_node.properties == exp_node["properties"]
 
 
 def test_unbalanced_parentheses_snippet() -> None:
