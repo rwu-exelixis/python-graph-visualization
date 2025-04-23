@@ -54,20 +54,19 @@ def test_node_with_float_size() -> None:
     }
 
 
-def test_node_with_additional_fields() -> None:
+def test_node_with_properties() -> None:
     node = Node(
         id="1",
-        componentId=2,
+        properties=dict(componentId=2),
     )
 
     assert node.to_dict() == {
         "id": "1",
-        "componentId": 2,
-        "properties": {},
+        "properties": {"componentId": 2},
     }
 
 
-@pytest.mark.parametrize("alias", ["id", "nodeId", "node_id"])
+@pytest.mark.parametrize("alias", ["id", "nodeId", "node_id", "NODEID", "nodeid"])
 def test_id_aliases(alias: str) -> None:
     node = Node(**{alias: 1})
 
@@ -80,3 +79,17 @@ def test_id_aliases(alias: str) -> None:
 def test_node_validation() -> None:
     with pytest.raises(ValueError, match="Input should be a valid integer, unable to parse string as an integer"):
         Node(id="1", x="not a number")
+
+
+def test_node_casing() -> None:
+    node = Node(
+        ID="4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
+        caption="Person",
+        captionAlign=CaptionAlignment.TOP,
+        CAPTION_SIZE=1,
+    )
+
+    assert node.id == "4:d09f48a4-5fca-421d-921d-a30a896c604d:0"
+    assert node.caption == "Person"
+    assert node.caption_align == CaptionAlignment.TOP
+    assert node.caption_size == 1
