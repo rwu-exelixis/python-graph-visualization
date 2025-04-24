@@ -1,4 +1,4 @@
-Thank you for your contribution to the Graph Data Science Client project.
+Thank you for your contribution to the Graph Visualization for Python project by Neo4j.
 
 <!-- Please include a summary of the change, such as, which issue was fixed or feature was added.
 If relevant, link to the corresponding issue.
