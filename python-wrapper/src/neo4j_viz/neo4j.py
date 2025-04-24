@@ -56,7 +56,7 @@ def from_neo4j(
 
     VG = VisualizationGraph(nodes, relationships)
 
-    if node_radius_min_max and size_property is not None:
+    if (node_radius_min_max is not None) and (size_property is not None):
         VG.resize_nodes(node_radius_min_max=node_radius_min_max)
 
     return VG
