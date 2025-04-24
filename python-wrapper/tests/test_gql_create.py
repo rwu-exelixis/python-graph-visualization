@@ -15,8 +15,10 @@ def test_from_gql_create_syntax() -> None:
               (a)-[:LINK {weight: 0.5}]->(b),
               (e:User {age: 67, my_map: {key: 'value', key2: 3.14, key3: [1, 2, 3], key4: {a: 1, b: null}}}),
               (:User {age: 42, pets: ['cat', false, 'dog']}),
+              (),
               (f:User&Person
                  {name: 'Fawad', age: 78}),
+              ({age: 29}),
               (a)-[:LINK {weight: 4}]->(wizardMan),
               (e)-[:LINK]->(d),
               (e)-[:OTHER_LINK {weight: -2, type: 1, source: 1337, caption: "Balloon"}]->(f);
@@ -44,7 +46,9 @@ def test_from_gql_create_syntax() -> None:
             },
         },
         {"top_level": {}, "properties": {"age": 42, "pets": ["cat", False, "dog"], "labels": ["User"]}},
+        {"top_level": {}, "properties": {"labels": []}},
         {"top_level": {}, "properties": {"name": "Fawad", "age": 78, "labels": ["Person", "User"]}},
+        {"top_level": {}, "properties": {"age": 29, "labels": []}},
     ]
 
     VG = from_gql_create(query, node_caption=None, relationship_caption=None)
@@ -62,7 +66,7 @@ def test_from_gql_create_syntax() -> None:
         {"source_idx": 4, "target_idx": 3, "top_level": {}, "properties": {"type": "LINK"}},
         {
             "source_idx": 4,
-            "target_idx": 6,
+            "target_idx": 7,
             "top_level": {"caption": "Balloon"},
             "properties": {"weight": -2, "type": "OTHER_LINK", "__type": 1, "source": 1337},
         },

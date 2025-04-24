@@ -210,7 +210,6 @@ def from_gql_create(
     """
 
     query = query.strip()
-    # Case-insensitive check that 'CREATE' is the first non-whitespace token
     if not re.match(r"(?i)^create\b", query):
         raise ValueError("Query must begin with 'CREATE' (case insensitive).")
 
@@ -253,7 +252,7 @@ def from_gql_create(
         snippet = _get_snippet(query, len(query) - 1)
         raise ValueError(f"Unbalanced square brackets near: `{snippet}`.")
 
-    node_pattern = re.compile(r"^\(([^)]+)\)$")
+    node_pattern = re.compile(r"^\(([^)]*)\)$")  # Changed here
     rel_pattern = re.compile(r"^\(([^)]+)\)-\s*\[\s*:(\w+)\s*(\{[^}]*\})?\s*\]->\(([^)]+)\)$")
 
     node_top_level_keys = set(Node.model_fields.keys())
@@ -283,12 +282,10 @@ def from_gql_create(
                 left_node = rel_m.group(1).strip()
                 rel_type = rel_m.group(2).replace(":", "").strip()
                 right_node = rel_m.group(4).strip()
-
                 left_alias, _, _ = _parse_labels_and_props(query, left_node, empty_set)
                 if not left_alias or left_alias not in alias_to_id:
                     snippet = _get_snippet(query, query.index(left_node))
                     raise ValueError(f"Relationship references unknown node alias: '{left_alias}' near: `{snippet}`.")
-
                 right_alias, _, _ = _parse_labels_and_props(query, right_node, empty_set)
                 if not right_alias or right_alias not in alias_to_id:
                     snippet = _get_snippet(query, query.index(right_node))
@@ -303,11 +300,9 @@ def from_gql_create(
                 else:
                     top_level = {}
                     props = {}
-
                 if "type" in props:
                     props["__type"] = props["type"]
                 props["type"] = rel_type
-
                 relationships.append(
                     Relationship(
                         id=rel_id,
@@ -324,7 +319,6 @@ def from_gql_create(
     if size_property is not None:
         for node in nodes:
             node.size = node.properties.get(size_property)
-
     if node_caption is not None:
         for node in nodes:
             if node_caption == "labels":
@@ -332,7 +326,6 @@ def from_gql_create(
                     node.caption = ":".join([label for label in node.properties["labels"]])
             else:
                 node.caption = str(node.properties.get(node_caption))
-
     if relationship_caption is not None:
         for rel in relationships:
             if relationship_caption == "type":
@@ -341,7 +334,6 @@ def from_gql_create(
                 rel.caption = str(rel.properties.get(relationship_caption))
 
     VG = VisualizationGraph(nodes=nodes, relationships=relationships)
-
     if (node_radius_min_max is not None) and (size_property is not None):
         VG.resize_nodes(node_radius_min_max=node_radius_min_max)
 
