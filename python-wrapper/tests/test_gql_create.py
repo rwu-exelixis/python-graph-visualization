@@ -21,7 +21,8 @@ def test_from_gql_create_syntax() -> None:
               ({age: 29}),
               (a)-[:LINK {weight: 4}]->(wizardMan),
               (e)-[:LINK]->(d),
-              (e)-[:OTHER_LINK {weight: -2, type: 1, source: 1337, caption: "Balloon"}]->(f);
+              (e)-[:OTHER_LINK {weight: -2, type: 1, source: 1337, caption: "Balloon"}]->(f),
+              ()-[:LINK]->({name: 'Florentin'});
             """
     expected_node_dicts: list[dict[str, dict[str, Any]]] = [
         {
@@ -49,6 +50,8 @@ def test_from_gql_create_syntax() -> None:
         {"top_level": {}, "properties": {"labels": []}},
         {"top_level": {}, "properties": {"name": "Fawad", "age": 78, "labels": ["Person", "User"]}},
         {"top_level": {}, "properties": {"age": 29, "labels": []}},
+        {"top_level": {}, "properties": {"labels": []}},
+        {"top_level": {}, "properties": {"name": "Florentin", "labels": []}},
     ]
 
     VG = from_gql_create(query, node_caption=None, relationship_caption=None)
@@ -70,6 +73,7 @@ def test_from_gql_create_syntax() -> None:
             "top_level": {"caption": "Balloon"},
             "properties": {"weight": -2, "type": "OTHER_LINK", "__type": 1, "source": 1337},
         },
+        {"source_idx": 9, "target_idx": 10, "top_level": {}, "properties": {"type": "LINK"}},
     ]
 
     assert len(VG.relationships) == len(expected_relationships_dicts)

@@ -193,7 +193,6 @@ def from_gql_create(
     It also does not handle all possible GQL syntax, but it should work for most common cases.
     For more complex cases, we recommend using a Neo4j database and the `from_neo4j` method.
 
-
     Parameters
     ----------
     query : str
@@ -212,11 +211,6 @@ def from_gql_create(
     query = query.strip()
     if not re.match(r"(?i)^create\b", query):
         raise ValueError("Query must begin with 'CREATE' (case insensitive).")
-
-    nodes = []
-    relationships = []
-    alias_to_id = {}
-    anonymous_count = 0
 
     query = re.sub(r"(?i)^create\s*", "", query, count=1).rstrip(";").strip()
     parts = []
@@ -252,8 +246,8 @@ def from_gql_create(
         snippet = _get_snippet(query, len(query) - 1)
         raise ValueError(f"Unbalanced square brackets near: `{snippet}`.")
 
-    node_pattern = re.compile(r"^\(([^)]*)\)$")  # Changed here
-    rel_pattern = re.compile(r"^\(([^)]+)\)-\s*\[\s*:(\w+)\s*(\{[^}]*\})?\s*\]->\(([^)]+)\)$")
+    node_pattern = re.compile(r"^\(([^)]*)\)$")
+    rel_pattern = re.compile(r"^\(([^)]*)\)-\s*\[\s*:(\w+)\s*(\{[^}]*\})?\s*\]->\(([^)]*)\)$")
 
     node_top_level_keys = set(Node.model_fields.keys())
     node_top_level_keys.remove("id")
@@ -263,7 +257,10 @@ def from_gql_create(
     rel_top_level_keys.remove("source")
     rel_top_level_keys.remove("target")
 
-    empty_set: set[str] = set()
+    nodes = []
+    relationships = []
+    alias_to_id = {}
+    anonymous_count = 0
 
     for part in parts:
         node_m = node_pattern.match(part)
@@ -276,45 +273,64 @@ def from_gql_create(
             if alias not in alias_to_id:
                 alias_to_id[alias] = str(uuid.uuid4())
             nodes.append(Node(id=alias_to_id[alias], **top_level, properties=props))
-        else:
-            rel_m = rel_pattern.match(part)
-            if rel_m:
-                left_node = rel_m.group(1).strip()
-                rel_type = rel_m.group(2).replace(":", "").strip()
-                right_node = rel_m.group(4).strip()
-                left_alias, _, _ = _parse_labels_and_props(query, left_node, empty_set)
-                if not left_alias or left_alias not in alias_to_id:
-                    snippet = _get_snippet(query, query.index(left_node))
-                    raise ValueError(f"Relationship references unknown node alias: '{left_alias}' near: `{snippet}`.")
-                right_alias, _, _ = _parse_labels_and_props(query, right_node, empty_set)
-                if not right_alias or right_alias not in alias_to_id:
-                    snippet = _get_snippet(query, query.index(right_node))
-                    raise ValueError(f"Relationship references unknown node alias: '{right_alias}' near: `{snippet}`.")
 
-                rel_id = str(uuid.uuid4())
-                rel_props_str = rel_m.group(3) or ""
-                if rel_props_str:
-                    inner_str = rel_props_str.strip("{}").strip()
-                    prop_start = query.index(inner_str, query.index(inner_str))
-                    top_level, props = _parse_prop_str(query, inner_str, prop_start, rel_top_level_keys)
-                else:
-                    top_level = {}
-                    props = {}
-                if "type" in props:
-                    props["__type"] = props["type"]
-                props["type"] = rel_type
-                relationships.append(
-                    Relationship(
-                        id=rel_id,
-                        source=alias_to_id[left_alias],
-                        target=alias_to_id[right_alias],
-                        **top_level,
-                        properties=props,
-                    )
-                )
+            continue
+
+        rel_m = rel_pattern.match(part)
+        if rel_m:
+            left_node = rel_m.group(1).strip()
+            right_node = rel_m.group(4).strip()
+
+            # Parse left node pattern
+            left_alias, left_top_level, left_props = _parse_labels_and_props(query, left_node, node_top_level_keys)
+            if not left_alias:
+                left_alias = f"_anon_{anonymous_count}"
+                anonymous_count += 1
+                if left_alias not in alias_to_id:
+                    alias_to_id[left_alias] = str(uuid.uuid4())
+                nodes.append(Node(id=alias_to_id[left_alias], **left_top_level, properties=left_props))
+            elif left_alias not in alias_to_id:
+                snippet = _get_snippet(query, query.index(left_node))
+                raise ValueError(f"Relationship references unknown node alias: '{left_alias}' near: `{snippet}`.")
+
+            # Parse right node pattern
+            right_alias, right_top_level, right_props = _parse_labels_and_props(query, right_node, node_top_level_keys)
+            if not right_alias:
+                right_alias = f"_anon_{anonymous_count}"
+                anonymous_count += 1
+                if right_alias not in alias_to_id:
+                    alias_to_id[right_alias] = str(uuid.uuid4())
+                nodes.append(Node(id=alias_to_id[right_alias], **right_top_level, properties=right_props))
+            elif right_alias not in alias_to_id:
+                snippet = _get_snippet(query, query.index(right_node))
+                raise ValueError(f"Relationship references unknown node alias: '{right_alias}' near: `{snippet}`.")
+
+            rel_id = str(uuid.uuid4())
+            rel_type = rel_m.group(2).replace(":", "").strip()
+            rel_props_str = rel_m.group(3) or ""
+            if rel_props_str:
+                inner_str = rel_props_str.strip("{}").strip()
+                prop_start = query.index(inner_str, query.index(inner_str))
+                top_level, props = _parse_prop_str(query, inner_str, prop_start, rel_top_level_keys)
             else:
-                snippet = part[:30]
-                raise ValueError(f"Invalid element in CREATE near: `{snippet}`.")
+                top_level = {}
+                props = {}
+            if "type" in props:
+                props["__type"] = props["type"]
+            props["type"] = rel_type
+            relationships.append(
+                Relationship(
+                    id=rel_id,
+                    source=alias_to_id[left_alias],
+                    target=alias_to_id[right_alias],
+                    **top_level,
+                    properties=props,
+                )
+            )
+            continue
+
+        snippet = part[:30]
+        raise ValueError(f"Invalid element in CREATE near: `{snippet}`.")
 
     if size_property is not None:
         for node in nodes:
