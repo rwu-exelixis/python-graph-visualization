@@ -2,6 +2,14 @@ import { FreeLayoutType, NVL } from '@neo4j-nvl/base'
 import type { Node, NvlOptions, Relationship } from '@neo4j-nvl/base'
 import { DragNodeInteraction, PanInteraction, ZoomInteraction, HoverInteraction } from '@neo4j-nvl/interaction-handlers'
 
+interface PyNode extends Node {
+  properties: Object;
+}
+
+interface PyRel extends Relationship {
+  properties: Object;
+}
+
 class PyNVL {
   nvl: NVL
 
@@ -30,23 +38,34 @@ class PyNVL {
     if (tooltip !== null) {
       this.hoverInteraction = new HoverInteraction(this.nvl)
 
-      this.hoverInteraction.updateCallback('onHover', (element) => {
+      this.hoverInteraction.updateCallback('onHover', (element: PyNode | PyRel) => {
         if (element === undefined) {
           tooltip.textContent = "";
           if (tooltip.style.display === "block") {
             tooltip.style.display = "none";
           }
         } else if ("from" in element) {
-          const rel = element as Relationship
+          const rel = element as PyRel
+
+          let hoverInfo: string = (`<b>Source ID:</b> ${rel.from} </br><b>Target ID:</b> ${rel.to}`)
+          for (const [key, value] of Object.entries(element.properties)) {
+            hoverInfo += `</br><b>${key}:</b> ${value}`
+          }
+          tooltip.setHTMLUnsafe(hoverInfo)
+
           if (tooltip.style.display === "none") {
             tooltip.style.display = "block";
           }
-          tooltip.setHTMLUnsafe(`<b>Source ID:</b> ${rel.from} </br><b>Target ID:</b> ${rel.to}`)
         } else if ("id" in element) {
+          let hoverInfo: string = `<b>ID:</b> ${element.id}`
+          for (const [key, value] of Object.entries(element.properties)) {
+            hoverInfo += `</br><b>${key}:</b> ${value}`
+          }
+          tooltip.setHTMLUnsafe(hoverInfo)
+
           if (tooltip.style.display === "none") {
             tooltip.style.display = "block";
           }
-          tooltip.setHTMLUnsafe(`<b>ID:</b> ${element.id}`)
         }
       })
     }
