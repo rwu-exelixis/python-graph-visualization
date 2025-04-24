@@ -36,6 +36,7 @@ def _parse_value(value_str: str) -> Any:
             else:
                 if ch == in_string:
                     in_string = None
+
         if inner[start_idx:]:
             segment = inner[start_idx:].strip()
             if ":" not in segment:
@@ -67,6 +68,7 @@ def _parse_value(value_str: str) -> Any:
             else:
                 if ch == in_string:
                     in_string = None
+
         if inner[start_idx:]:
             items.append(_parse_value(inner[start_idx:]))
 
@@ -242,6 +244,7 @@ def from_gql_create(
             current = []
         else:
             current.append(char)
+
     parts.append("".join(current).strip())
     if paren_level != 0:
         snippet = _get_snippet(query, len(query) - 1)

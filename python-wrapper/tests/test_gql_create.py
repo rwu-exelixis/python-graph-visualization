@@ -173,6 +173,12 @@ def test_node_property_syntax_error_snippet1() -> None:
         from_gql_create(query)
 
 
+def test_node_property_paren_imbalance() -> None:
+    query = "CREATE (a:User {a: [1, b: 2, c: (3, 4)})"
+    with pytest.raises(ValueError, match=r"Unbalanced square brackets near: `: 2, c: \(3, 4\)}"):
+        from_gql_create(query)
+
+
 def test_node_property_syntax_error_snippet2() -> None:
     query = "CREATE (a:User {x:5,, y:4})"
     with pytest.raises(ValueError, match=r"Property syntax error near: `.*x:5,, y.*"):
