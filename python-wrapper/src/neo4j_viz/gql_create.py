@@ -10,7 +10,7 @@ def _parse_value(value_str: str) -> Any:
     if not value_str:
         return None
 
-    # Parse object
+    # Parse map
     if value_str.startswith("{") and value_str.endswith("}"):
         inner = value_str[1:-1].strip()
         result = {}
@@ -43,6 +43,7 @@ def _parse_value(value_str: str) -> Any:
             k, v = segment.split(":", 1)
             k = k.strip().strip("'\"")
             result[k] = _parse_value(v)
+
         return result
 
     # Parse list
@@ -68,6 +69,7 @@ def _parse_value(value_str: str) -> Any:
                     in_string = None
         if inner[start_idx:]:
             items.append(_parse_value(inner[start_idx:]))
+
         return items
 
     # Parse boolean, float, int, or string
@@ -81,12 +83,91 @@ def _parse_value(value_str: str) -> Any:
         return False
     if value_str.lower() == "null":
         return None
+
     return value_str.strip("'\"")
+
+
+def _parse_prop_str(
+    query: str, prop_str: str, prop_start: int, top_level_keys: set[str]
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    top_level: dict[str, Any] = {}
+    props: dict[str, Any] = {}
+    depth = 0
+    in_string = None
+    start_idx = 0
+    for i, ch in enumerate(prop_str):
+        if in_string is None:
+            if ch in ["'", '"']:
+                in_string = ch
+            elif ch in ["{", "["]:
+                depth += 1
+            elif ch in ["}", "]"]:
+                depth -= 1
+            elif ch == "," and depth == 0:
+                pair = prop_str[start_idx:i].strip()
+                if ":" not in pair:
+                    snippet = _get_snippet(query, prop_start + start_idx)
+                    raise ValueError(f"Property syntax error near: `{snippet}`.")
+                k, v = pair.split(":", 1)
+                k = k.strip().strip("'\"")
+
+                if k in top_level_keys:
+                    top_level[k] = _parse_value(v)
+                else:
+                    props[k] = _parse_value(v)
+
+                start_idx = i + 1
+        else:
+            if ch == in_string:
+                in_string = None
+
+    if prop_str[start_idx:]:
+        pair = prop_str[start_idx:].strip()
+        if ":" not in pair:
+            snippet = _get_snippet(query, prop_start + start_idx)
+            raise ValueError(f"Property syntax error near: `{snippet}`.")
+        k, v = pair.split(":", 1)
+        k = k.strip().strip("'\"")
+
+        if k in top_level_keys:
+            top_level[k] = _parse_value(v)
+        else:
+            props[k] = _parse_value(v)
+
+    return top_level, props
+
+
+def _parse_labels_and_props(
+    query: str, s: str, top_level_keys: set[str]
+) -> tuple[Optional[str], dict[str, Any], dict[str, Any]]:
+    prop_match = re.search(r"\{(.*)\}", s)
+    prop_str = ""
+    if prop_match:
+        prop_str = prop_match.group(1)
+        prop_start = query.index(prop_str, query.index(s))
+        s = s[: prop_match.start()].strip()
+    alias_labels = re.split(r"[:&]", s)
+    raw_alias = alias_labels[0].strip()
+    final_alias = raw_alias if raw_alias else None
+
+    if prop_str:
+        top_level, props = _parse_prop_str(query, prop_str, prop_start, top_level_keys)
+    else:
+        top_level = {}
+        props = {}
+
+    label_list = [lbl.strip() for lbl in alias_labels[1:]]
+    if "labels" in props:
+        props["__labels"] = props["labels"]
+    props["labels"] = sorted(label_list)
+
+    return final_alias, top_level, props
 
 
 def _get_snippet(q: str, idx: int, context: int = 15) -> str:
     start = max(0, idx - context)
     end = min(len(q), idx + context)
+
     return q[start:end].replace("\n", " ")
 
 
@@ -108,6 +189,8 @@ def from_gql_create(
     Please note that this function is not a full GQL parser, it only handles CREATE queries that do not contain
     other clauses like MATCH, WHERE, RETURN, etc, or any Cypher function calls.
     It also does not handle all possible GQL syntax, but it should work for most common cases.
+    For more complex cases, we recommend using a Neo4j database and the `from_neo4j` method.
+
 
     Parameters
     ----------
@@ -128,81 +211,6 @@ def from_gql_create(
     # Case-insensitive check that 'CREATE' is the first non-whitespace token
     if not re.match(r"(?i)^create\b", query):
         raise ValueError("Query must begin with 'CREATE' (case insensitive).")
-
-    def parse_prop_str(
-        prop_str: str, prop_start: int, top_level_keys: set[str]
-    ) -> tuple[dict[str, Any], dict[str, Any]]:
-        top_level: dict[str, Any] = {}
-        props: dict[str, Any] = {}
-        depth = 0
-        in_string = None
-        start_idx = 0
-        for i, ch in enumerate(prop_str):
-            if in_string is None:
-                if ch in ["'", '"']:
-                    in_string = ch
-                elif ch in ["{", "["]:
-                    depth += 1
-                elif ch in ["}", "]"]:
-                    depth -= 1
-                elif ch == "," and depth == 0:
-                    pair = prop_str[start_idx:i].strip()
-                    if ":" not in pair:
-                        snippet = _get_snippet(query, prop_start + start_idx)
-                        raise ValueError(f"Property syntax error near: `{snippet}`.")
-                    k, v = pair.split(":", 1)
-                    k = k.strip().strip("'\"")
-
-                    if k in top_level_keys:
-                        top_level[k] = _parse_value(v)
-                    else:
-                        props[k] = _parse_value(v)
-
-                    start_idx = i + 1
-            else:
-                if ch == in_string:
-                    in_string = None
-
-        if prop_str[start_idx:]:
-            pair = prop_str[start_idx:].strip()
-            if ":" not in pair:
-                snippet = _get_snippet(query, prop_start + start_idx)
-                raise ValueError(f"Property syntax error near: `{snippet}`.")
-            k, v = pair.split(":", 1)
-            k = k.strip().strip("'\"")
-
-            if k in top_level_keys:
-                top_level[k] = _parse_value(v)
-            else:
-                props[k] = _parse_value(v)
-
-        return top_level, props
-
-    def parse_labels_and_props(
-        s: str, top_level_keys: set[str]
-    ) -> tuple[Optional[str], dict[str, Any], dict[str, Any]]:
-        prop_match = re.search(r"\{(.*)\}", s)
-        prop_str = ""
-        if prop_match:
-            prop_str = prop_match.group(1)
-            prop_start = query.index(prop_str, query.index(s))
-            s = s[: prop_match.start()].strip()
-        alias_labels = re.split(r"[:&]", s)
-        raw_alias = alias_labels[0].strip()
-        final_alias = raw_alias if raw_alias else None
-
-        if prop_str:
-            top_level, props = parse_prop_str(prop_str, prop_start, top_level_keys)
-        else:
-            top_level = {}
-            props = {}
-
-        label_list = [lbl.strip() for lbl in alias_labels[1:]]
-        if "labels" in props:
-            props["__labels"] = props["labels"]
-        props["labels"] = sorted(label_list)
-
-        return final_alias, top_level, props
 
     nodes = []
     relationships = []
@@ -259,7 +267,7 @@ def from_gql_create(
         node_m = node_pattern.match(part)
         if node_m:
             alias_labels_props = node_m.group(1).strip()
-            alias, top_level, props = parse_labels_and_props(alias_labels_props, node_top_level_keys)
+            alias, top_level, props = _parse_labels_and_props(query, alias_labels_props, node_top_level_keys)
             if not alias:
                 alias = f"_anon_{anonymous_count}"
                 anonymous_count += 1
@@ -273,12 +281,12 @@ def from_gql_create(
                 rel_type = rel_m.group(2).replace(":", "").strip()
                 right_node = rel_m.group(4).strip()
 
-                left_alias, _, _ = parse_labels_and_props(left_node, empty_set)
+                left_alias, _, _ = _parse_labels_and_props(query, left_node, empty_set)
                 if not left_alias or left_alias not in alias_to_id:
                     snippet = _get_snippet(query, query.index(left_node))
                     raise ValueError(f"Relationship references unknown node alias: '{left_alias}' near: `{snippet}`.")
 
-                right_alias, _, _ = parse_labels_and_props(right_node, empty_set)
+                right_alias, _, _ = _parse_labels_and_props(query, right_node, empty_set)
                 if not right_alias or right_alias not in alias_to_id:
                     snippet = _get_snippet(query, query.index(right_node))
                     raise ValueError(f"Relationship references unknown node alias: '{right_alias}' near: `{snippet}`.")
@@ -288,7 +296,7 @@ def from_gql_create(
                 if rel_props_str:
                     inner_str = rel_props_str.strip("{}").strip()
                     prop_start = query.index(inner_str, query.index(inner_str))
-                    top_level, props = parse_prop_str(inner_str, prop_start, rel_top_level_keys)
+                    top_level, props = _parse_prop_str(query, inner_str, prop_start, rel_top_level_keys)
                 else:
                     top_level = {}
                     props = {}
