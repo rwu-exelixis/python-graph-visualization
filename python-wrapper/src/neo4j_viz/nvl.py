@@ -56,8 +56,14 @@ class NVL:
             hover_element = "null"
             hover_div = ""
 
+        # Using a different varname for every instance, so that a notebook
+        # can use several instances without unwanted interactions.
+        # The first part of the UUID should be "unique enough" in this context.
+        nvl_varname = "graph_" + container_id.split("-")[0]
+        download_name = nvl_varname + ".png"
+
         js_code = f"""
-        var myNvl = new NVLBase.NVL(
+        var {nvl_varname} = new NVLBase.NVL(
             document.getElementById('{container_id}'),
             {hover_element},
             {nodes_json},
@@ -66,7 +72,23 @@ class NVL:
         );
         """
         full_code = self.library_code + js_code
+
+        # Although a `<style>` element within the `HTML` block would work,
+        # it is not standard to use it outside of a `<head>` element.
+        # For this reason, the style for the buttons is inlined here.
+        # The combination of `onmouseover` and `onmouseout` replaces the
+        # `button:hover` descriptor.
+        button_style = """
+            style="background-color: #0a6190; color: #fff; margin: 0 0 1rem 0; padding: .85em 1em; border: 1px solid transparent; border-radius: 5px; text-align: center; font-family: 'Public Sans', 'Helvetica Neue', helvetica, roboto, arial, sans-serif; font-weight: 500; font-size: 14px"
+            onmouseover="this.style.backgroundColor='#014063'"
+            onmouseout="this.style.backgroundColor='#0a6190'"
+        """
+
         html_output = f"""
+        <button type="button" {button_style} onclick="{nvl_varname}.nvl.saveToFile({{ filename: '{download_name}' }})">Save screenshot</button>
+        <button type="button" {button_style} onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() + 0.1)">Zoom in</button>
+        <button type="button" {button_style} onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() - 0.1)">Zoom out</button> 
+        
         <div id="{container_id}" style="width: {width}; height: {height}; position: relative;">
             {hover_div}
         </div>
