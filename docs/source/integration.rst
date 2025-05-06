@@ -183,7 +183,7 @@ In this small example, we import a graph from a Neo4j query result.
 
 .. code-block:: python
 
-    from neo4j import GraphDataScience
+    from neo4j import GraphDatabase, RoutingControl, Result
     from neo4j_viz.gds import from_gds
 
     # Modify this to match your Neo4j instance's URI and credentials
@@ -196,6 +196,7 @@ In this small example, we import a graph from a Neo4j query result.
         result = driver.execute_query(
             "MATCH (n)-[r]->(m) RETURN n,r,m",
             database_="neo4j",
+            routing_=RoutingControl.READ,
             result_transformer_=Result.graph,
         )
 
