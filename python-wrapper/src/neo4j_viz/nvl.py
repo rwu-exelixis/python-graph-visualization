@@ -74,21 +74,33 @@ class NVL:
         full_code = self.library_code + js_code
 
         # Although a `<style>` element within the `HTML` block would work,
-        # it is not standard to use it outside of a `<head>` element.
+        # it is not standard to use it outside a `<head>` element.
         # For this reason, the style for the buttons is inlined here.
         # The combination of `onmouseover` and `onmouseout` replaces the
         # `button:hover` descriptor.
         button_style = """
-            style="background-color: #0a6190; color: #fff; margin: 0 0 1rem 0; padding: .85em 1em; border: 1px solid transparent; border-radius: 5px; text-align: center; font-family: 'Public Sans', 'Helvetica Neue', helvetica, roboto, arial, sans-serif; font-weight: 500; font-size: 14px"
+            background-color: #0a6190;
+            color: #fff;
+            padding: .85rem 1rem;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            text-align: center;
+            font-family: 'Public Sans', 'Helvetica Neue', helvetica, roboto, arial, sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+        """
+        button_attrs = f"""
+            style="{button_style}"
             onmouseover="this.style.backgroundColor='#014063'"
             onmouseout="this.style.backgroundColor='#0a6190'"
         """
 
         html_output = f"""
-        <button type="button" {button_style} onclick="{nvl_varname}.nvl.saveToFile({{ filename: '{download_name}' }})">Save screenshot</button>
-        <button type="button" {button_style} onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() + 0.1)">Zoom in</button>
-        <button type="button" {button_style} onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() - 0.1)">Zoom out</button> 
-        
+        <div style="position: absolute; z-index: 2147483647; left: 0; top: 0; padding: 1rem">
+            <button type="button" {button_attrs} onclick="{nvl_varname}.nvl.saveToFile({{ filename: '{download_name}' }})">Save screenshot</button>
+            <button type="button" {button_attrs} onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() + 0.1)">Zoom in</button>
+            <button type="button" {button_attrs} onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() - 0.1)">Zoom out</button> 
+        </div>
         <div id="{container_id}" style="width: {width}; height: {height}; position: relative;">
             {hover_div}
         </div>
