@@ -88,7 +88,12 @@ include = [
 namespaces = false # only scan directories with __init__.py files (true by default)
 
 [tool.setuptools.package-data]
-neo4j_viz = ["resources/nvl_entrypoint/base.js", "py.typed"]
+neo4j_viz = [
+    "resources/nvl_entrypoint/base.js",
+    "resources/nvl_entrypoint/styles.css",
+    "resources/icons/*.svg",
+    "py.typed"
+]
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
