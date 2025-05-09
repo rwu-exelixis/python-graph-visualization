@@ -1,4 +1,5 @@
 import os
+import re
 
 from graphdatascience import GraphDataScience
 from graphdatascience.semantic_version.semantic_version import SemanticVersion
@@ -7,7 +8,22 @@ from graphdatascience.session.aura_api import AuraApi
 from graphdatascience.session.aura_api_responses import InstanceCreateDetails
 from graphdatascience.version import __version__
 
-GDS_VERSION = SemanticVersion.from_string(__version__)
+
+def parse_version(version: str) -> SemanticVersion:
+    server_version_match = re.search(r"(\d+\.)?(\d+\.)?(\*|\d+)", version)
+    if not server_version_match:
+        raise ValueError(f"{version} is not a valid semantic version")
+
+    groups = [int(g.replace(".", "")) for g in server_version_match.groups() if g]
+
+    major = groups[0] if len(groups) > 0 else 0
+    minor = groups[1] if len(groups) > 1 else 0
+    patch = groups[2] if len(groups) > 2 else 0
+
+    return SemanticVersion(major=major, minor=minor, patch=patch)
+
+
+GDS_VERSION = parse_version(__version__)
 
 
 def connect_to_plugin_gds(uri: str) -> GraphDataScience:
