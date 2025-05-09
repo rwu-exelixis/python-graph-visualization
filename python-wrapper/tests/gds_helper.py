@@ -1,9 +1,13 @@
 import os
 
 from graphdatascience import GraphDataScience
+from graphdatascience.semantic_version.semantic_version import SemanticVersion
 from graphdatascience.session import DbmsConnectionInfo, SessionMemory
 from graphdatascience.session.aura_api import AuraApi
 from graphdatascience.session.aura_api_responses import InstanceCreateDetails
+from graphdatascience.version import __version__
+
+GDS_VERSION = SemanticVersion.from_string(__version__)
 
 
 def connect_to_plugin_gds(uri: str) -> GraphDataScience:
@@ -15,11 +19,18 @@ def connect_to_plugin_gds(uri: str) -> GraphDataScience:
 
 
 def aura_api() -> AuraApi:
-    return AuraApi(
-        client_id=os.environ["AURA_API_CLIENT_ID"],
-        client_secret=os.environ["AURA_API_CLIENT_SECRET"],
-        tenant_id=os.environ.get("AURA_API_TENANT_ID"),
-    )
+    if GDS_VERSION >= SemanticVersion(1, 15, 0):
+        return AuraApi(
+            client_id=os.environ["AURA_API_CLIENT_ID"],
+            client_secret=os.environ["AURA_API_CLIENT_SECRET"],
+            project_id=os.environ.get("AURA_API_TENANT_ID"),
+        )
+    else:
+        return AuraApi(
+            client_id=os.environ["AURA_API_CLIENT_ID"],
+            client_secret=os.environ["AURA_API_CLIENT_SECRET"],
+            tenant_id=os.environ.get("AURA_API_TENANT_ID"),  # type: ignore
+        )
 
 
 def create_aurads_instance(api: AuraApi) -> tuple[str, DbmsConnectionInfo]:
