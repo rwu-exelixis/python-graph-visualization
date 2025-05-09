@@ -18,7 +18,12 @@ def create_visualization_graph() -> VisualizationGraph:
     cora_rels_path = f"{script_dir_path}/datasets/cora/cora_rels.parquet.gzip"
 
     nodes_df = read_parquet(cora_nodes_path)
+    nodes_df = nodes_df.rename(columns={"nodeId": "id"})
+
     rels_df = read_parquet(cora_rels_path)
+    rels_df = rels_df.rename(
+        columns={"sourceNodeId": "source", "targetNodeId": "target"}
+    )
 
     # Drop the features column since it's not needed for visualization
     # Also numpy arrays are not supported by the visualization library
