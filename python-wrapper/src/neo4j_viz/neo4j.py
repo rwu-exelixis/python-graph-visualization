@@ -47,10 +47,15 @@ def from_neo4j(
     else:
         raise ValueError(f"Invalid input type `{type(result)}`. Expected `neo4j.Graph` or `neo4j.Result`")
 
-    nodes = [_map_node(node, size_property, caption_property=node_caption) for node in graph.nodes]
+    all_node_field_aliases = Node.all_validation_aliases()
+    all_rel_field_aliases = Relationship.all_validation_aliases()
+
+    nodes = [
+        _map_node(node, all_node_field_aliases, size_property, caption_property=node_caption) for node in graph.nodes
+    ]
     relationships = []
     for rel in graph.relationships:
-        mapped_rel = _map_relationship(rel, caption_property=relationship_caption)
+        mapped_rel = _map_relationship(rel, all_rel_field_aliases, caption_property=relationship_caption)
         if mapped_rel:
             relationships.append(mapped_rel)
 
@@ -62,7 +67,12 @@ def from_neo4j(
     return VG
 
 
-def _map_node(node: neo4j.graph.Node, size_property: Optional[str], caption_property: Optional[str]) -> Node:
+def _map_node(
+    node: neo4j.graph.Node,
+    all_node_field_aliases: set[str],
+    size_property: Optional[str],
+    caption_property: Optional[str],
+) -> Node:
     top_level_fields = {"id": node.element_id}
 
     if size_property:
@@ -78,7 +88,7 @@ def _map_node(node: neo4j.graph.Node, size_property: Optional[str], caption_prop
 
     properties = {}
     for prop, value in node.items():
-        if prop not in Node.model_fields.keys():
+        if prop not in all_node_field_aliases:
             properties[prop] = value
             continue
 
@@ -95,7 +105,9 @@ def _map_node(node: neo4j.graph.Node, size_property: Optional[str], caption_prop
     return Node(**top_level_fields, properties=properties)
 
 
-def _map_relationship(rel: neo4j.graph.Relationship, caption_property: Optional[str]) -> Optional[Relationship]:
+def _map_relationship(
+    rel: neo4j.graph.Relationship, all_rel_field_aliases: set[str], caption_property: Optional[str]
+) -> Optional[Relationship]:
     if rel.start_node is None or rel.end_node is None:
         return None
 
@@ -109,7 +121,7 @@ def _map_relationship(rel: neo4j.graph.Relationship, caption_property: Optional[
 
     properties = {}
     for prop, value in rel.items():
-        if prop not in Relationship.model_fields.keys():
+        if prop not in all_rel_field_aliases:
             properties[prop] = value
             continue
 

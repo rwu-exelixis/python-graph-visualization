@@ -249,13 +249,8 @@ def from_gql_create(
     node_pattern = re.compile(r"^\(([^)]*)\)$")
     rel_pattern = re.compile(r"^\(([^)]*)\)-\s*\[\s*:(\w+)\s*(\{[^}]*\})?\s*\]->\(([^)]*)\)$")
 
-    node_top_level_keys = set(Node.model_fields.keys())
-    node_top_level_keys.remove("id")
-
-    rel_top_level_keys = set(Relationship.model_fields.keys())
-    rel_top_level_keys.remove("id")
-    rel_top_level_keys.remove("source")
-    rel_top_level_keys.remove("target")
+    node_top_level_keys = Node.all_validation_aliases(exempted_fields=["id"])
+    rel_top_level_keys = Relationship.all_validation_aliases(exempted_fields=["id", "source", "target"])
 
     nodes = []
     relationships = []

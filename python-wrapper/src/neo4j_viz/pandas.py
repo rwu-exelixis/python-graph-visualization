@@ -23,6 +23,9 @@ def _from_dfs(
     else:
         node_dfs_iter = node_dfs
 
+    all_node_field_aliases = Node.all_validation_aliases()
+    all_rel_field_aliases = Relationship.all_validation_aliases()
+
     has_size = True
     nodes = []
     for node_df in node_dfs_iter:
@@ -31,7 +34,7 @@ def _from_dfs(
             top_level = {}
             properties = {}
             for key, value in row.to_dict().items():
-                if key in Node.model_fields.keys():
+                if key in all_node_field_aliases:
                     top_level[key] = value
                 else:
                     if rename_properties and key in rename_properties:
@@ -51,7 +54,7 @@ def _from_dfs(
             top_level = {}
             properties = {}
             for key, value in row.to_dict().items():
-                if key in Relationship.model_fields.keys():
+                if key in all_rel_field_aliases:
                     top_level[key] = value
                 else:
                     if rename_properties and key in rename_properties:
