@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Optional, Union
 from uuid import uuid4
 
-from pydantic import AliasChoices, AliasGenerator, BaseModel, ConfigDict, Field, field_serializer, field_validator
+from pydantic import AliasChoices, AliasGenerator, BaseModel, Field, field_serializer, field_validator
 from pydantic.alias_generators import to_camel
 from pydantic_extra_types.color import Color, ColorType
 
@@ -23,7 +23,14 @@ def create_aliases(field_name: str) -> AliasChoices:
     return AliasChoices(*[alias for aliases in choices for alias in aliases])
 
 
-class Relationship(BaseModel, extra="forbid"):
+class Relationship(
+    BaseModel,
+    extra="forbid",
+    alias_generator=AliasGenerator(
+        validation_alias=create_aliases,
+        serialization_alias=lambda field_name: to_camel(field_name),
+    ),
+):
     """
     A relationship in a graph to visualize.
 
@@ -33,13 +40,6 @@ class Relationship(BaseModel, extra="forbid"):
 
     For more info on each field, see the NVL library docs: https://neo4j.com/docs/nvl/current/base-library/#_relationships
     """
-
-    model_config = ConfigDict(
-        alias_generator=AliasGenerator(
-            validation_alias=create_aliases,
-            serialization_alias=lambda field_name: to_camel(field_name),
-        ),
-    )
 
     #: Unique identifier for the relationship
     id: Union[str, int] = Field(
