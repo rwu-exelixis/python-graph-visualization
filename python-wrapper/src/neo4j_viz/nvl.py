@@ -19,9 +19,26 @@ class NVL:
         nvl_entry_point = resource_folder / "nvl_entrypoint"
 
         js_path = nvl_entry_point / "base.js"
-
         with js_path.open("r", encoding="utf-8") as file:
             self.library_code = file.read()
+
+        styles_path = nvl_entry_point / "styles.css"
+        with styles_path.open("r", encoding="utf-8") as file:
+            self.styles = file.read()
+
+        icons = resource_folder / "icons"
+
+        zoom_in_path = icons / "zoom-in.svg"
+        with zoom_in_path.open("r", encoding="utf-8") as file:
+            self.zoom_in_svg = file.read()
+
+        zoom_out_path = icons / "zoom-out.svg"
+        with zoom_out_path.open("r", encoding="utf-8") as file:
+            self.zoom_out_svg = file.read()
+
+        screenshot_path = icons / "screenshot.svg"
+        with screenshot_path.open("r", encoding="utf-8") as file:
+            self.screenshot_svg = file.read()
 
     def unsupported_field_type_error(self, e: TypeError, entity: str) -> Exception:
         if "not JSON serializable" in str(e):
@@ -51,13 +68,19 @@ class NVL:
 
         if show_hover_tooltip:
             hover_element = f"document.getElementById('{container_id}-tooltip')"
-            hover_div = f'<div id="{container_id}-tooltip" style="width: 20%; min-width: 100px; max-width: 600px; max-height: 80%; position: absolute; z-index: 2147483647; right: 0; bottom: 0; background: white; display: none; border: solid; border-color: #BBBEC3; border-width: 0.5px; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; margin-right: 0.5rem; filter: drop-shadow(0 4px 8px rgba(26,27,29,0.12)); font-family: PublicSans; color: #4D5157; font-size: 14px"></div>'
+            hover_div = f'<div id="{container_id}-tooltip" class="tooltip" style="display: none;"></div>'
         else:
             hover_element = "null"
             hover_div = ""
 
+        # Using a different varname for every instance, so that a notebook
+        # can use several instances without unwanted interactions.
+        # The first part of the UUID should be "unique enough" in this context.
+        nvl_varname = "graph_" + container_id.split("-")[0]
+        download_name = nvl_varname + ".png"
+
         js_code = f"""
-        var myNvl = new NVLBase.NVL(
+        var {nvl_varname} = new NVLBase.NVL(
             document.getElementById('{container_id}'),
             {hover_element},
             {nodes_json},
@@ -66,12 +89,37 @@ class NVL:
         );
         """
         full_code = self.library_code + js_code
+
         html_output = f"""
+        <style>
+            {self.styles}
+        </style>
         <div id="{container_id}" style="width: {width}; height: {height}; position: relative;">
+            <div style="position: absolute; z-index: 2147483647; right: 0; top: 0; padding: 1rem">
+                <button type="button" title="Save as PNG" onclick="{nvl_varname}.nvl.saveToFile({{ filename: '{download_name}' }})" class="icon">
+                    {self.screenshot_svg}
+                </button>
+                <button type="button" title="Zoom in" onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() + 0.5)" class="icon">
+                    {self.zoom_in_svg}
+                </button>
+                <button type="button" title="Zoom out" onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() - 0.5)" class="icon">
+                    {self.zoom_out_svg}
+                </button>
+            </div>
             {hover_div}
         </div>
+
         <script>
+            getTheme = () => {{
+                const backgroundColorString = window.getComputedStyle(document.body, null).getPropertyValue('background-color')
+                const colorsArray = backgroundColorString.match(/\d+/g);
+                const brightness = Number(colorsArray[0]) * 0.2126 + Number(colorsArray[1]) * 0.7152 + Number(colorsArray[2]) * 0.0722
+                return brightness < 128 ? "dark" : "light"
+            }}
+            document.documentElement.className = getTheme()
+
             {full_code}
         </script>
         """
+
         return HTML(html_output)  # type: ignore[no-untyped-call]
