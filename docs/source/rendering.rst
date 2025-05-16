@@ -23,7 +23,7 @@ The ``render`` method
 
 Once you have a ``VisualizationGraph`` object, you can render it using the ``render`` method.
 This will return a HTML object that will be displayed in an environment that supports HTML rendering, such as
-Jupyter notebooks or streamlit.
+Jupyter notebooks or streamlit application.
 
 All parameter of the ``render`` method are optional, and the full list of parameters of them is listed in the API
 reference: :meth:`neo4j_viz.VisualizationGraph.render`.
@@ -50,7 +50,23 @@ But you can disable this by passing ``show_hover_tooltip=False``.
 
 
 Examples
---------
+~~~~~~~~
 
 Please refer to the :doc:`Getting started section <./getting-started>` and the :doc:`tutorials <./tutorials/index>` for
 examples of ``render`` method usage.
+
+
+Exporting to HTML
+~~~~~~~~~~~~~~~~~
+
+The object returned by the ``render`` method is a ``IPython.display.HTML`` object.
+In addition to being displayed in a Jupyter notebook or streamlit application, it can also be saved as an HTML file.
+This could be useful if you want to share the visualization with others or embed it in a web page.
+
+To save the HTML data to a file, you can use the ``data`` attribute of the HTML object:
+
+.. code-block:: python
+
+    html = VG.render(...)
+    with open("my_graph.html", "w") as f:
+        f.write(html.data)
