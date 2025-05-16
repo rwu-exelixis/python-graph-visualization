@@ -16,7 +16,7 @@
 button.icon {
   stroke: var(--stroke);
   background-color: inherit;
-  padding: .4rem .41rem .19rem 0.41rem;
+  padding: 10px 10px 5px 10px;
   border: 1.3px solid #bcbcbc;
   border-radius: 10px;
 }
@@ -38,7 +38,7 @@ button.icon:active {
   z-index: 2147483647;
   right: 0;
   bottom: 0;
-  background:inherit;
+  background-color:var(--button-hover-bg-color);
   border: solid;
   border-color: #BBBEC3;
   border-width: 0.5px;
@@ -47,7 +47,7 @@ button.icon:active {
   margin-bottom: 1rem;
   margin-right: 0.5rem;
   filter: drop-shadow(0 4px 8px rgba(26,27,29,0.12));
-  font-family: PublicSans;
+  font-family: 'Public Sans', sans-serif;
   color: var(--neutral-text-default);
   font-size: 14px
 }

@@ -1,6 +1,7 @@
 *.egg-info
 __pycache__
 build
+dist
 
 # Should we ignore the following?
 src/neo4j_viz/resources/nvl_entrypoint/*

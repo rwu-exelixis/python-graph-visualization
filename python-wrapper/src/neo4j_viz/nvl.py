@@ -68,7 +68,7 @@ class NVL:
 
         if show_hover_tooltip:
             hover_element = f"document.getElementById('{container_id}-tooltip')"
-            hover_div = f'<div id="{container_id}-tooltip" class="tooltip" style="display: none;"/>'
+            hover_div = f'<div id="{container_id}-tooltip" class="tooltip" style="display: none;"></div>'
         else:
             hover_element = "null"
             hover_div = ""
@@ -94,18 +94,18 @@ class NVL:
         <style>
             {self.styles}
         </style>
-        <div style="position: absolute; z-index: 2147483647; right: 0; top: 0; padding: 1rem">
-            <button type="button" title="Save as PNG" onclick="{nvl_varname}.nvl.saveToFile({{ filename: '{download_name}' }})" class="icon">
-                {self.screenshot_svg}
-            </button>
-            <button type="button" title="Zoom in" onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() + 0.5)" class="icon">
-                {self.zoom_in_svg}
-            </button>
-            <button type="button" title="Zoom out" onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() - 0.5)" class="icon">
-                {self.zoom_out_svg}
-            </button>
-        </div>
         <div id="{container_id}" style="width: {width}; height: {height}; position: relative;">
+            <div style="position: absolute; z-index: 2147483647; right: 0; top: 0; padding: 1rem">
+                <button type="button" title="Save as PNG" onclick="{nvl_varname}.nvl.saveToFile({{ filename: '{download_name}' }})" class="icon">
+                    {self.screenshot_svg}
+                </button>
+                <button type="button" title="Zoom in" onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() + 0.5)" class="icon">
+                    {self.zoom_in_svg}
+                </button>
+                <button type="button" title="Zoom out" onclick="{nvl_varname}.nvl.setZoom({nvl_varname}.nvl.getScale() - 0.5)" class="icon">
+                    {self.zoom_out_svg}
+                </button>
+            </div>
             {hover_div}
         </div>
 
