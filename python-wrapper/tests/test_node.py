@@ -83,10 +83,10 @@ def test_node_validation() -> None:
 
 def test_node_casing() -> None:
     node = Node(
-        ID="4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
+        ID="4:d09f48a4-5fca-421d-921d-a30a896c604d:0",  # type: ignore[call-arg]
         caption="Person",
-        captionAlign=CaptionAlignment.TOP,
-        CAPTION_SIZE=1,
+        captionAlign=CaptionAlignment.TOP,  # type: ignore[call-arg]
+        CAPTION_SIZE=1,  # type: ignore[call-arg]
     )
 
     assert node.id == "4:d09f48a4-5fca-421d-921d-a30a896c604d:0"

@@ -91,11 +91,11 @@ def test_trg_aliases(trg_alias: str) -> None:
 
 def test_rel_casing() -> None:
     rel = Relationship(
-        ID="1",
+        ID="1",  # type: ignore[call-arg]
         source="2",
         target="3",
-        captionAlign=CaptionAlignment.TOP,
-        CAPTION_SIZE=12,
+        captionAlign=CaptionAlignment.TOP, # type: ignore[call-arg]
+        CAPTION_SIZE=12,  # type: ignore[call-arg]
     )
 
     assert rel.id == "1"
