@@ -3,15 +3,40 @@ from __future__ import annotations
 from typing import Any, Optional, Union
 from uuid import uuid4
 
-from pydantic import AliasChoices, BaseModel, Field, field_serializer, field_validator
+from pydantic import AliasChoices, AliasGenerator, BaseModel, Field, field_serializer, field_validator
+from pydantic.alias_generators import to_camel
 from pydantic_extra_types.color import Color, ColorType
 
 from .options import CaptionAlignment
 
 
-class Relationship(BaseModel, extra="allow"):
+def create_aliases(field_name: str) -> AliasChoices:
+    valid_names = [field_name]
+
+    if field_name == "source":
+        valid_names.extend(["sourcenodeid", "source_node_id", "from"])
+    if field_name == "target":
+        valid_names.extend(["targetnodeid", "target_node_id", "to"])
+
+    choices = [[choice, choice.upper(), to_camel(choice)] for choice in valid_names]
+
+    return AliasChoices(*[alias for aliases in choices for alias in aliases])
+
+
+class Relationship(
+    BaseModel,
+    extra="forbid",
+    alias_generator=AliasGenerator(
+        validation_alias=create_aliases,
+        serialization_alias=lambda field_name: to_camel(field_name),
+    ),
+):
     """
     A relationship in a graph to visualize.
+
+    Each field is case-insensitive for input, and camelCase is also accepted.
+    For example, "CAPTION_ALIGN", "captionAlign" are also valid inputs keys for the `caption_align` field.
+    Upon construction however, the field names are converted to snake_case.
 
     For more info on each field, see the NVL library docs: https://neo4j.com/docs/nvl/current/base-library/#_relationships
     """
@@ -23,25 +48,19 @@ class Relationship(BaseModel, extra="allow"):
     #: Node ID where the relationship points from
     source: Union[str, int] = Field(
         serialization_alias="from",
-        validation_alias=AliasChoices("source", "sourceNodeId", "source_node_id", "from"),
         description="Node ID where the relationship points from",
     )
     #: Node ID where the relationship points to
     target: Union[str, int] = Field(
         serialization_alias="to",
-        validation_alias=AliasChoices("target", "targetNodeId", "target_node_id", "to"),
         description="Node ID where the relationship points to",
     )
     #: The caption of the relationship
     caption: Optional[str] = Field(None, description="The caption of the relationship")
     #: The alignment of the caption text
-    caption_align: Optional[CaptionAlignment] = Field(
-        None, serialization_alias="captionAlign", description="The alignment of the caption text"
-    )
+    caption_align: Optional[CaptionAlignment] = Field(None, description="The alignment of the caption text")
     #: The size of the caption text
-    caption_size: Optional[Union[int, float]] = Field(
-        None, gt=0.0, serialization_alias="captionSize", description="The size of the caption text"
-    )
+    caption_size: Optional[Union[int, float]] = Field(None, gt=0.0, description="The size of the caption text")
     #: The color of the relationship. Allowed input is for example "#FF0000", "red" or (255, 0, 0)
     color: Optional[ColorType] = Field(None, description="The color of the relationship")
     #: Additional properties of the relationship that do not directly impact the visualization

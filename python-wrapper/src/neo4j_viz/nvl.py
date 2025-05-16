@@ -112,7 +112,7 @@ class NVL:
         <script>
             getTheme = () => {{
                 const backgroundColorString = window.getComputedStyle(document.body, null).getPropertyValue('background-color')
-                const colorsArray = backgroundColorString.match(/\d+/g);
+                const colorsArray = backgroundColorString.match(/\\d+/g);
                 const brightness = Number(colorsArray[0]) * 0.2126 + Number(colorsArray[1]) * 0.7152 + Number(colorsArray[2]) * 0.0722
                 return brightness < 128 ? "dark" : "light"
             }}
