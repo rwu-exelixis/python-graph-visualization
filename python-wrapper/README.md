@@ -8,9 +8,9 @@
 [![Community forum](https://img.shields.io/website?down_color=lightgrey&down_message=offline&label=Forums&logo=discourse&up_color=green&up_message=online&url=https%3A%2F%2Fcommunity.neo4j.com%2F)](https://community.neo4j.com)
 [![License](https://img.shields.io/pypi/l/neo4j-viz)](https://pypi.org/project/neo4j-viz/)
 
-`neo4j-viz` is a Python package for creating interactive graph visualizations based on data from Neo4j products.
+`neo4j-viz` is a Python package for creating interactive graph visualizations.
 
-The output is of type `IPython.display.HTML` and can be viewed directly in a Jupyter Notebook, Streamlit.
+The output is of type `IPython.display.HTML` and can be viewed directly in a Jupyter Notebook or Streamlit application.
 Alternatively, you can export the output to a file and view it in a web browser.
 
 The package wraps the [Neo4j Visualization JavaScript library (NVL)](https://neo4j.com/docs/nvl/current/).
