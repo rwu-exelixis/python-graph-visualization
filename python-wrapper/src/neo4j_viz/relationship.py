@@ -102,7 +102,9 @@ class Relationship(
             exempted_fields = []
 
         by_field = [
-            v.validation_alias.choices for k, v in Relationship.model_fields.items() if k not in exempted_fields
+            v.validation_alias.choices  # type: ignore
+            for k, v in Relationship.model_fields.items()
+            if k not in exempted_fields
         ]
 
-        return {alias for aliases in by_field for alias in aliases}
+        return {str(alias) for aliases in by_field for alias in aliases}
