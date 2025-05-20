@@ -93,3 +93,15 @@ def test_node_casing() -> None:
     assert node.caption == "Person"
     assert node.caption_align == CaptionAlignment.TOP
     assert node.caption_size == 1
+
+
+def test_all_validation_aliases() -> None:
+    all_aliases = Node.all_validation_aliases()
+    assert "CAPTION_ALIGN" in all_aliases
+    assert "captionAlign" in all_aliases
+    assert "caption_align" in all_aliases
+
+    all_aliases = Node.all_validation_aliases(exempted_fields=["caption_align"])
+    assert "CAPTION_ALIGN" not in all_aliases
+    assert "captionAlign" not in all_aliases
+    assert "caption_align" not in all_aliases
