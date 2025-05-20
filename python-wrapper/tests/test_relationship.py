@@ -101,3 +101,15 @@ def test_rel_casing() -> None:
     assert rel.id == "1"
     assert rel.caption_align == CaptionAlignment.TOP
     assert rel.caption_size == 12
+
+
+def test_all_validation_aliases() -> None:
+    all_aliases = Relationship.all_validation_aliases()
+    assert "CAPTION_ALIGN" in all_aliases
+    assert "captionAlign" in all_aliases
+    assert "caption_align" in all_aliases
+
+    all_aliases = Relationship.all_validation_aliases(exempted_fields=["caption_align"])
+    assert "CAPTION_ALIGN" not in all_aliases
+    assert "captionAlign" not in all_aliases
+    assert "caption_align" not in all_aliases
