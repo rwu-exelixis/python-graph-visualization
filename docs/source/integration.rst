@@ -225,7 +225,7 @@ more extensive example.
 GQL ``CREATE`` query
 --------------------
 
-The ``neo4j-viz`` library provides a convenience method for creating visualization graphs from GQL ``CREATE`` queries via the :doc:`from_neo4j <./api-reference/from_gql_create>` method method.
+The ``neo4j-viz`` library provides convenience for creating visualization graphs from GQL ``CREATE`` queries via the :doc:`from_gql_create <./api-reference/from_gql_create>` method.
 
 The ``from_gql_create`` method takes one mandatory positional parameter:
 
