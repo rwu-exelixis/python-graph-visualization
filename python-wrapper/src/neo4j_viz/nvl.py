@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import uuid
 from importlib.resources import files
-from typing import Any, Union
+from typing import Union
 
 from IPython.display import HTML
 
@@ -42,11 +42,10 @@ class NVL:
             self.screenshot_svg = file.read()
 
     @staticmethod
-    def _serialize_entity(entity: Union[Node, Relationship]) -> dict[str, Any]:
+    def _serialize_entity(entity: Union[Node, Relationship]) -> str:
         try:
             entity_dict = entity.to_dict()
-            json.dumps(entity_dict)
-            return entity_dict
+            return json.dumps(entity_dict)
         except TypeError:
             props_as_strings = {}
             for k, v in entity_dict["properties"].items():
@@ -57,8 +56,7 @@ class NVL:
             entity_dict["properties"].update(props_as_strings)
 
             try:
-                json.dumps(entity_dict)
-                return entity_dict
+                return json.dumps(entity_dict)
             except TypeError as e:
                 # This should never happen anymore, but just in case
                 if "not JSON serializable" in str(e):
@@ -75,8 +73,8 @@ class NVL:
         height: str,
         show_hover_tooltip: bool,
     ) -> HTML:
-        nodes_json = json.dumps([self._serialize_entity(node) for node in nodes])
-        rels_json = json.dumps([self._serialize_entity(rel) for rel in relationships])
+        nodes_json = f"[{','.join([self._serialize_entity(node) for node in nodes])}]"
+        rels_json = f"[{','.join([self._serialize_entity(rel) for rel in relationships])}]"
 
         render_options_json = json.dumps(render_options.to_dict())
         container_id = str(uuid.uuid4())
