@@ -3,8 +3,9 @@ name: Run Snowflake integration tests
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
+  # FIXME: Requires MFA, so need to be run manually for now. Figure out a better way at some point!
+  #  push:
+  #    branches: [ "main" ]
   # Skip on this check PR to minimize the load against Snowflake (and keep PR checks fast)
 
 
