@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import uuid
 from importlib.resources import files
+from typing import Union
 
 from IPython.display import HTML
 
@@ -40,10 +41,28 @@ class NVL:
         with screenshot_path.open("r", encoding="utf-8") as file:
             self.screenshot_svg = file.read()
 
-    def unsupported_field_type_error(self, e: TypeError, entity: str) -> Exception:
-        if "not JSON serializable" in str(e):
-            return ValueError(f"A field of a {entity} object is not supported: {str(e)}")
-        return e
+    @staticmethod
+    def _serialize_entity(entity: Union[Node, Relationship]) -> str:
+        try:
+            entity_dict = entity.to_dict()
+            return json.dumps(entity_dict)
+        except TypeError:
+            props_as_strings = {}
+            for k, v in entity_dict["properties"].items():
+                try:
+                    json.dumps(v)
+                except TypeError:
+                    props_as_strings[k] = str(v)
+            entity_dict["properties"].update(props_as_strings)
+
+            try:
+                return json.dumps(entity_dict)
+            except TypeError as e:
+                # This should never happen anymore, but just in case
+                if "not JSON serializable" in str(e):
+                    raise ValueError(f"A field of a {type(entity).__name__} object is not supported: {str(e)}")
+                else:
+                    raise e
 
     def render(
         self,
@@ -54,14 +73,8 @@ class NVL:
         height: str,
         show_hover_tooltip: bool,
     ) -> HTML:
-        try:
-            nodes_json = json.dumps([node.to_dict() for node in nodes])
-        except TypeError as e:
-            raise self.unsupported_field_type_error(e, "node")
-        try:
-            rels_json = json.dumps([rel.to_dict() for rel in relationships])
-        except TypeError as e:
-            raise self.unsupported_field_type_error(e, "relationship")
+        nodes_json = f"[{','.join([self._serialize_entity(node) for node in nodes])}]"
+        rels_json = f"[{','.join([self._serialize_entity(rel) for rel in relationships])}]"
 
         render_options_json = json.dumps(render_options.to_dict())
         container_id = str(uuid.uuid4())

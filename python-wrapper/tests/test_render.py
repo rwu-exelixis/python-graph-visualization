@@ -6,6 +6,7 @@ import pytest
 from selenium import webdriver
 
 from neo4j_viz import Node, Relationship, VisualizationGraph
+from neo4j_viz.nvl import NVL
 from neo4j_viz.options import Layout, Renderer
 
 render_cases = {
@@ -64,34 +65,6 @@ def test_basic_render(render_option: dict[str, Any], tmp_path: Path) -> None:
     assert not severe_logs, f"Severe logs found: {severe_logs}, all logs: {logs}"
 
 
-def test_unsupported_field_type() -> None:
-    with pytest.raises(
-        ValueError, match="A field of a node object is not supported: Object of type set is not JSON serializable"
-    ):
-        nodes = [
-            Node(
-                id="4:d09f48a4-5fca-421d-921d-a30a896c604d:0", caption="Person", properties={"unsupported": {1, 2, 3}}
-            ),
-        ]
-        VG = VisualizationGraph(nodes=nodes, relationships=[])
-        VG.render()
-
-    with pytest.raises(
-        ValueError,
-        match="A field of a relationship object is not supported: Object of type set is not JSON serializable",
-    ):
-        relationships = [
-            Relationship(
-                source="4:d09f48a4-5fca-421d-921d-a30a896c604d:0",
-                target="4:d09f48a4-5fca-421d-921d-a30a896c604d:6",
-                caption="BUYS",
-                properties={"unsupported": {1, 2, 3}},
-            ),
-        ]
-        VG = VisualizationGraph(nodes=[], relationships=relationships)
-        VG.render()
-
-
 def test_max_allowed_nodes_limit() -> None:
     nodes = [Node(id=i) for i in range(10_001)]
     VG = VisualizationGraph(nodes=nodes, relationships=[])
@@ -121,3 +94,20 @@ def test_render_warnings() -> None:
         "relationships. If you need these features, use the canvas renderer by setting the `renderer` parameter",
     ):
         VG.render(max_allowed_nodes=20_000, renderer=Renderer.WEB_GL)
+
+
+def test_render_non_json_serializable() -> None:
+    import datetime
+
+    now = datetime.datetime.now()
+    node = Node(
+        id=0,
+        properties={
+            "non-json-serializable": now,
+        },
+    )
+    assert str(now) in NVL._serialize_entity(node)
+
+    VG = VisualizationGraph(nodes=[node], relationships=[])
+    # Should not raise an error
+    VG.render()
