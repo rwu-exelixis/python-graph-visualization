@@ -6,6 +6,7 @@ import pytest
 from selenium import webdriver
 
 from neo4j_viz import Node, Relationship, VisualizationGraph
+from neo4j_viz.nvl import NVL
 from neo4j_viz.options import Layout, Renderer
 
 render_cases = {
@@ -98,15 +99,15 @@ def test_render_warnings() -> None:
 def test_render_non_json_serializable() -> None:
     import datetime
 
-    nodes = [
-        Node(
-            id=0,
-            properties={
-                "non-json-serializable": datetime.datetime.now(),
-            },
-        )
-    ]
+    now = datetime.datetime.now()
+    node = Node(
+        id=0,
+        properties={
+            "non-json-serializable": now,
+        },
+    )
+    assert str(now) in NVL._serialize_entity(node)
 
-    VG = VisualizationGraph(nodes=nodes, relationships=[])
-
+    VG = VisualizationGraph(nodes=[node], relationships=[])
+    # Should not raise an error
     VG.render()
