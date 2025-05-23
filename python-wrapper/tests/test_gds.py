@@ -132,3 +132,36 @@ def test_from_gds_mocked(mocker: MockerFixture) -> None:
         (1, 2, "REL2"),
         (2, 0, "REL"),
     ]
+
+
+@pytest.mark.requires_neo4j_and_gds
+def test_from_gds_node_errors(gds: Any) -> None:
+    from neo4j_viz.gds import from_gds
+
+    nodes = pd.DataFrame(
+        {
+            "nodeId": [0, 1, 2],
+            "labels": [["A"], ["C"], ["A", "B"]],
+            "component": [1, 4, 2],
+            "size": [-0.1, 0.2, 0.3],
+        }
+    )
+    rels = pd.DataFrame(
+        {
+            "sourceNodeId": [0, 1, 2],
+            "targetNodeId": [1, 2, 0],
+            "relationshipType": ["REL", "REL2", "REL"],
+        }
+    )
+
+    with gds.graph.construct("flo", nodes, rels) as G:
+        with pytest.raises(
+            ValueError,
+            match=r"Error for node property 'size' with provided input '-0.1'. Reason: Input should be greater than or equal to 0",
+        ):
+            from_gds(
+                gds,
+                G,
+                additional_node_properties=["component", "size"],
+                node_radius_min_max=None,
+            )
