@@ -2,7 +2,10 @@ import re
 import uuid
 from typing import Any, Optional
 
+from pydantic import ValidationError
+
 from neo4j_viz import Node, Relationship, VisualizationGraph
+from neo4j_viz.neo4j import _parse_validation_error
 
 
 def _parse_value(value_str: str) -> Any:
@@ -267,7 +270,10 @@ def from_gql_create(
                 anonymous_count += 1
             if alias not in alias_to_id:
                 alias_to_id[alias] = str(uuid.uuid4())
-            nodes.append(Node(id=alias_to_id[alias], **top_level, properties=props))
+            try:
+                nodes.append(Node(id=alias_to_id[alias], **top_level, properties=props))
+            except ValidationError as e:
+                _parse_validation_error(e, Node)
 
             continue
 
@@ -283,7 +289,10 @@ def from_gql_create(
                 anonymous_count += 1
                 if left_alias not in alias_to_id:
                     alias_to_id[left_alias] = str(uuid.uuid4())
-                nodes.append(Node(id=alias_to_id[left_alias], **left_top_level, properties=left_props))
+                try:
+                    nodes.append(Node(id=alias_to_id[left_alias], **left_top_level, properties=left_props))
+                except ValidationError as e:
+                    _parse_validation_error(e, Node)
             elif left_alias not in alias_to_id:
                 snippet = _get_snippet(query, query.index(left_node))
                 raise ValueError(f"Relationship references unknown node alias: '{left_alias}' near: `{snippet}`.")
@@ -295,7 +304,10 @@ def from_gql_create(
                 anonymous_count += 1
                 if right_alias not in alias_to_id:
                     alias_to_id[right_alias] = str(uuid.uuid4())
-                nodes.append(Node(id=alias_to_id[right_alias], **right_top_level, properties=right_props))
+                try:
+                    nodes.append(Node(id=alias_to_id[right_alias], **right_top_level, properties=right_props))
+                except ValidationError as e:
+                    _parse_validation_error(e, Node)
             elif right_alias not in alias_to_id:
                 snippet = _get_snippet(query, query.index(right_node))
                 raise ValueError(f"Relationship references unknown node alias: '{right_alias}' near: `{snippet}`.")
@@ -313,15 +325,20 @@ def from_gql_create(
             if "type" in props:
                 props["__type"] = props["type"]
             props["type"] = rel_type
-            relationships.append(
-                Relationship(
-                    id=rel_id,
-                    source=alias_to_id[left_alias],
-                    target=alias_to_id[right_alias],
-                    **top_level,
-                    properties=props,
+
+            try:
+                relationships.append(
+                    Relationship(
+                        id=rel_id,
+                        source=alias_to_id[left_alias],
+                        target=alias_to_id[right_alias],
+                        **top_level,
+                        properties=props,
+                    )
                 )
-            )
+            except ValidationError as e:
+                _parse_validation_error(e, Relationship)
+
             continue
 
         snippet = part[:30]
