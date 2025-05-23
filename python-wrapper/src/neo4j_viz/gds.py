@@ -98,10 +98,8 @@ def from_gds(
     rel_df.rename(columns={"sourceNodeId": "source", "targetNodeId": "target"}, inplace=True)
 
     try:
-        VG = _from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max, rename_properties={"__size": "size"})
+        return _from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max, rename_properties={"__size": "size"})
     except ValueError as e:
         if "column" in str(e):
             raise ValueError(str(e).replace("column", "property"))
         raise e
-
-    return VG

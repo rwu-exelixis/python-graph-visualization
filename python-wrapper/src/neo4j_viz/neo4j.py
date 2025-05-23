@@ -4,10 +4,19 @@ from typing import Optional, Union
 
 import neo4j.graph
 from neo4j import Result
+from pydantic import BaseModel, ValidationError
 
 from neo4j_viz.node import Node
 from neo4j_viz.relationship import Relationship
 from neo4j_viz.visualization_graph import VisualizationGraph
+
+
+def _parse_validation_error(e: ValidationError, entity_type: type[BaseModel]) -> None:
+    for err in e.errors():
+        loc = err["loc"][0]
+        raise ValueError(
+            f"Error for {entity_type.__name__.lower()} property '{loc}' with provided input '{err['input']}'. Reason: {err['msg']}"
+        )
 
 
 def from_neo4j(
@@ -102,7 +111,12 @@ def _map_node(
         properties["__labels"] = properties["labels"]
     properties["labels"] = labels
 
-    return Node(**top_level_fields, properties=properties)
+    try:
+        viz_node = Node(**top_level_fields, properties=properties)
+    except ValidationError as e:
+        _parse_validation_error(e, Node)
+
+    return viz_node
 
 
 def _map_relationship(
@@ -135,4 +149,9 @@ def _map_relationship(
         properties["__type"] = properties["type"]
     properties["type"] = rel.type
 
-    return Relationship(**top_level_fields, properties=properties)
+    try:
+        viz_rel = Relationship(**top_level_fields, properties=properties)
+    except ValidationError as e:
+        _parse_validation_error(e, Relationship)
+
+    return viz_rel
