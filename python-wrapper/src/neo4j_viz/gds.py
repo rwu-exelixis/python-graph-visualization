@@ -100,6 +100,10 @@ def from_gds(
     try:
         return _from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max, rename_properties={"__size": "size"})
     except ValueError as e:
-        if "column" in str(e):
-            raise ValueError(str(e).replace("column", "property"))
+        err_msg = str(e)
+        if "column" in err_msg:
+            err_msg = err_msg.replace("column", "property")
+            if ("'size'" in err_msg) and (size_property is not None):
+                err_msg = err_msg.replace("'size'", f"'{size_property}'")
+            raise ValueError(err_msg)
         raise e

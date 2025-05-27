@@ -2,10 +2,9 @@ import re
 import uuid
 from typing import Any, Optional
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from neo4j_viz import Node, Relationship, VisualizationGraph
-from neo4j_viz.neo4j import _parse_validation_error
 
 
 def _parse_value(value_str: str) -> Any:
@@ -255,6 +254,20 @@ def from_gql_create(
     node_top_level_keys = Node.all_validation_aliases(exempted_fields=["id"])
     rel_top_level_keys = Relationship.all_validation_aliases(exempted_fields=["id", "source", "target"])
 
+    def _parse_validation_error(e: ValidationError, entity_type: type[BaseModel]) -> None:
+        for err in e.errors():
+            loc = err["loc"][0]
+            if (loc == "size") and size_property is not None:
+                loc = size_property
+            if loc == "caption":
+                if (entity_type == Node) and (node_caption is not None):
+                    loc = node_caption
+                elif (entity_type == Relationship) and (relationship_caption is not None):
+                    loc = relationship_caption
+            raise ValueError(
+                f"Error for {entity_type.__name__.lower()} property '{loc}' with provided input '{err['input']}'. Reason: {err['msg']}"
+            )
+
     nodes = []
     relationships = []
     alias_to_id = {}
@@ -363,6 +376,10 @@ def from_gql_create(
 
     VG = VisualizationGraph(nodes=nodes, relationships=relationships)
     if (node_radius_min_max is not None) and (size_property is not None):
-        VG.resize_nodes(node_radius_min_max=node_radius_min_max)
+        try:
+            VG.resize_nodes(node_radius_min_max=node_radius_min_max)
+        except TypeError:
+            loc = "size" if size_property is None else size_property
+            raise ValueError(f"Error for node property '{loc}'. Reason: must be a numerical value")
 
     return VG

@@ -228,7 +228,16 @@ def test_illegal_node_x() -> None:
         from_gql_create(query)
 
 
-def test_illegal_rel_color() -> None:
+def test_illegal_node_size() -> None:
+    query = "CREATE (a:User {hello: 'tennis'})"
+    with pytest.raises(
+        ValueError,
+        match="Error for node property 'hello'. Reason: must be a numerical value",
+    ):
+        from_gql_create(query, size_property="hello")
+
+
+def test_illegal_rel_caption_size() -> None:
     query = "CREATE ()-[:LINK {caption_size: -42}]->()"
     with pytest.raises(
         ValueError,

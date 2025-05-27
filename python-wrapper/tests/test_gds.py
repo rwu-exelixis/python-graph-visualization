@@ -143,6 +143,7 @@ def test_from_gds_node_errors(gds: Any) -> None:
             "nodeId": [0, 1, 2],
             "labels": [["A"], ["C"], ["A", "B"]],
             "component": [1, 4, 2],
+            "score": [1337, -42, 3.14],
             "size": [-0.1, 0.2, 0.3],
         }
     )
@@ -162,6 +163,19 @@ def test_from_gds_node_errors(gds: Any) -> None:
             from_gds(
                 gds,
                 G,
+                additional_node_properties=["component", "size"],
+                node_radius_min_max=None,
+            )
+
+    with gds.graph.construct("flo", nodes, rels) as G:
+        with pytest.raises(
+            ValueError,
+            match=r"Error for node property 'score' with provided input '-42.0'. Reason: Input should be greater than or equal to 0",
+        ):
+            from_gds(
+                gds,
+                G,
+                size_property="score",
                 additional_node_properties=["component", "size"],
                 node_radius_min_max=None,
             )

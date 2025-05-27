@@ -59,14 +59,30 @@ def from_neo4j(
     all_node_field_aliases = Node.all_validation_aliases()
     all_rel_field_aliases = Relationship.all_validation_aliases()
 
-    nodes = [
-        _map_node(node, all_node_field_aliases, size_property, caption_property=node_caption) for node in graph.nodes
-    ]
+    try:
+        nodes = [
+            _map_node(node, all_node_field_aliases, size_property, caption_property=node_caption)
+            for node in graph.nodes
+        ]
+    except ValueError as e:
+        err_msg = str(e)
+        if ("'size'" in err_msg) and (size_property is not None):
+            err_msg = err_msg.replace("'size'", f"'{size_property}'")
+        elif ("'caption'" in err_msg) and (node_caption is not None):
+            err_msg = err_msg.replace("'caption'", f"'{node_caption}'")
+        raise ValueError(err_msg)
+
     relationships = []
-    for rel in graph.relationships:
-        mapped_rel = _map_relationship(rel, all_rel_field_aliases, caption_property=relationship_caption)
-        if mapped_rel:
-            relationships.append(mapped_rel)
+    try:
+        for rel in graph.relationships:
+            mapped_rel = _map_relationship(rel, all_rel_field_aliases, caption_property=relationship_caption)
+            if mapped_rel:
+                relationships.append(mapped_rel)
+    except ValueError as e:
+        err_msg = str(e)
+        if ("'caption'" in err_msg) and (relationship_caption is not None):
+            err_msg = err_msg.replace("'caption'", f"'{relationship_caption}'")
+        raise ValueError(err_msg)
 
     VG = VisualizationGraph(nodes, relationships)
 

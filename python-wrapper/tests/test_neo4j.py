@@ -177,6 +177,15 @@ def test_from_neo4j_node_error(neo4j_session: Session) -> None:
     ):
         from_neo4j(graph)
 
+    neo4j_session.run("MATCH (n:_CI_A|_CI_B) DETACH DELETE n")
+    neo4j_session.run("CREATE (a:_CI_A {name:'Alice', height:20, id:42, _id: 1337, hello: -5})")
+    graph = neo4j_session.run("MATCH (a:_CI_A) RETURN a").graph()
+    with pytest.raises(
+        ValueError,
+        match="Error for node property 'hello' with provided input '-5'. Reason: Input should be greater than or equal to 0",
+    ):
+        from_neo4j(graph, size_property="hello")
+
 
 @pytest.mark.requires_neo4j_and_gds
 def test_from_neo4j_rel_error(neo4j_session: Session) -> None:
