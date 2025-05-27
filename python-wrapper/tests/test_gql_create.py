@@ -217,3 +217,30 @@ def test_no_create_keyword() -> None:
     query = "(a:User {y:4})"
     with pytest.raises(ValueError, match=r"Query must begin with 'CREATE' \(case insensitive\)."):
         from_gql_create(query)
+
+
+def test_illegal_node_x() -> None:
+    query = "CREATE (a:User {x:'tennis'})"
+    with pytest.raises(
+        ValueError,
+        match="Error for node property 'x' with provided input 'tennis'. Reason: Input should be a valid integer, unable to parse string as an integer",
+    ):
+        from_gql_create(query)
+
+
+def test_illegal_node_size() -> None:
+    query = "CREATE (a:User {hello: 'tennis'})"
+    with pytest.raises(
+        ValueError,
+        match="Error for node property 'hello'. Reason: must be a numerical value",
+    ):
+        from_gql_create(query, size_property="hello")
+
+
+def test_illegal_rel_caption_size() -> None:
+    query = "CREATE ()-[:LINK {caption_size: -42}]->()"
+    with pytest.raises(
+        ValueError,
+        match="Error for relationship property 'caption_size' with provided input '-42'. Reason: Input should be greater than 0",
+    ):
+        from_gql_create(query)

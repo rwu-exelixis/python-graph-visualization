@@ -4,12 +4,26 @@ from collections.abc import Iterable
 from typing import Optional, Union
 
 from pandas import DataFrame
+from pydantic import BaseModel, ValidationError
 
 from .node import Node
 from .relationship import Relationship
 from .visualization_graph import VisualizationGraph
 
 DFS_TYPE = Union[DataFrame, Iterable[DataFrame]]
+
+
+def _parse_validation_error(e: ValidationError, entity_type: type[BaseModel]) -> None:
+    for err in e.errors():
+        loc = err["loc"][0]
+        if err["type"] == "missing":
+            raise ValueError(
+                f"Mandatory {entity_type.__name__.lower()} column '{loc}' is missing. Expected one of {entity_type.model_fields[loc].validation_alias.choices} to be present"  # type: ignore
+            )
+        else:
+            raise ValueError(
+                f"Error for {entity_type.__name__.lower()} column '{loc}' with provided input '{err['input']}'. Reason: {err['msg']}"
+            )
 
 
 def _from_dfs(
@@ -63,7 +77,11 @@ def _parse_nodes(node_dfs: DFS_TYPE, rename_properties: Optional[dict[str, str]]
                         key = rename_properties[key]
                     properties[key] = value
 
-            nodes.append(Node(**top_level, properties=properties))
+            try:
+                nodes.append(Node(**top_level, properties=properties))
+            except ValidationError as e:
+                _parse_validation_error(e, Node)
+
     return nodes, has_size
 
 
@@ -88,7 +106,11 @@ def _parse_relationships(rel_dfs: DFS_TYPE, rename_properties: Optional[dict[str
                         key = rename_properties[key]
                     properties[key] = value
 
-            relationships.append(Relationship(**top_level, properties=properties))
+            try:
+                relationships.append(Relationship(**top_level, properties=properties))
+            except ValidationError as e:
+                _parse_validation_error(e, Relationship)
+
     return relationships
 
 

@@ -97,4 +97,13 @@ def from_gds(
     rel_df = _rel_df(gds, G)
     rel_df.rename(columns={"sourceNodeId": "source", "targetNodeId": "target"}, inplace=True)
 
-    return _from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max, rename_properties={"__size": "size"})
+    try:
+        return _from_dfs(node_df, rel_df, node_radius_min_max=node_radius_min_max, rename_properties={"__size": "size"})
+    except ValueError as e:
+        err_msg = str(e)
+        if "column" in err_msg:
+            err_msg = err_msg.replace("column", "property")
+            if ("'size'" in err_msg) and (size_property is not None):
+                err_msg = err_msg.replace("'size'", f"'{size_property}'")
+            raise ValueError(err_msg)
+        raise e

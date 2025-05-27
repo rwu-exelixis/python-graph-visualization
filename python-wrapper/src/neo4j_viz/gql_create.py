@@ -2,6 +2,8 @@ import re
 import uuid
 from typing import Any, Optional
 
+from pydantic import BaseModel, ValidationError
+
 from neo4j_viz import Node, Relationship, VisualizationGraph
 
 
@@ -252,6 +254,20 @@ def from_gql_create(
     node_top_level_keys = Node.all_validation_aliases(exempted_fields=["id"])
     rel_top_level_keys = Relationship.all_validation_aliases(exempted_fields=["id", "source", "target"])
 
+    def _parse_validation_error(e: ValidationError, entity_type: type[BaseModel]) -> None:
+        for err in e.errors():
+            loc = err["loc"][0]
+            if (loc == "size") and size_property is not None:
+                loc = size_property
+            if loc == "caption":
+                if (entity_type == Node) and (node_caption is not None):
+                    loc = node_caption
+                elif (entity_type == Relationship) and (relationship_caption is not None):
+                    loc = relationship_caption
+            raise ValueError(
+                f"Error for {entity_type.__name__.lower()} property '{loc}' with provided input '{err['input']}'. Reason: {err['msg']}"
+            )
+
     nodes = []
     relationships = []
     alias_to_id = {}
@@ -267,7 +283,10 @@ def from_gql_create(
                 anonymous_count += 1
             if alias not in alias_to_id:
                 alias_to_id[alias] = str(uuid.uuid4())
-            nodes.append(Node(id=alias_to_id[alias], **top_level, properties=props))
+            try:
+                nodes.append(Node(id=alias_to_id[alias], **top_level, properties=props))
+            except ValidationError as e:
+                _parse_validation_error(e, Node)
 
             continue
 
@@ -283,7 +302,10 @@ def from_gql_create(
                 anonymous_count += 1
                 if left_alias not in alias_to_id:
                     alias_to_id[left_alias] = str(uuid.uuid4())
-                nodes.append(Node(id=alias_to_id[left_alias], **left_top_level, properties=left_props))
+                try:
+                    nodes.append(Node(id=alias_to_id[left_alias], **left_top_level, properties=left_props))
+                except ValidationError as e:
+                    _parse_validation_error(e, Node)
             elif left_alias not in alias_to_id:
                 snippet = _get_snippet(query, query.index(left_node))
                 raise ValueError(f"Relationship references unknown node alias: '{left_alias}' near: `{snippet}`.")
@@ -295,7 +317,10 @@ def from_gql_create(
                 anonymous_count += 1
                 if right_alias not in alias_to_id:
                     alias_to_id[right_alias] = str(uuid.uuid4())
-                nodes.append(Node(id=alias_to_id[right_alias], **right_top_level, properties=right_props))
+                try:
+                    nodes.append(Node(id=alias_to_id[right_alias], **right_top_level, properties=right_props))
+                except ValidationError as e:
+                    _parse_validation_error(e, Node)
             elif right_alias not in alias_to_id:
                 snippet = _get_snippet(query, query.index(right_node))
                 raise ValueError(f"Relationship references unknown node alias: '{right_alias}' near: `{snippet}`.")
@@ -313,15 +338,20 @@ def from_gql_create(
             if "type" in props:
                 props["__type"] = props["type"]
             props["type"] = rel_type
-            relationships.append(
-                Relationship(
-                    id=rel_id,
-                    source=alias_to_id[left_alias],
-                    target=alias_to_id[right_alias],
-                    **top_level,
-                    properties=props,
+
+            try:
+                relationships.append(
+                    Relationship(
+                        id=rel_id,
+                        source=alias_to_id[left_alias],
+                        target=alias_to_id[right_alias],
+                        **top_level,
+                        properties=props,
+                    )
                 )
-            )
+            except ValidationError as e:
+                _parse_validation_error(e, Relationship)
+
             continue
 
         snippet = part[:30]
@@ -346,6 +376,10 @@ def from_gql_create(
 
     VG = VisualizationGraph(nodes=nodes, relationships=relationships)
     if (node_radius_min_max is not None) and (size_property is not None):
-        VG.resize_nodes(node_radius_min_max=node_radius_min_max)
+        try:
+            VG.resize_nodes(node_radius_min_max=node_radius_min_max)
+        except TypeError:
+            loc = "size" if size_property is None else size_property
+            raise ValueError(f"Error for node property '{loc}'. Reason: must be a numerical value")
 
     return VG
