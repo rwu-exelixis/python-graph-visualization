@@ -1,6 +1,7 @@
 from pandas import DataFrame
 from pydantic_extra_types.color import Color
 
+from neo4j_viz.node import Node
 from neo4j_viz.pandas import from_dfs
 
 
@@ -43,6 +44,31 @@ def test_from_df() -> None:
     assert VG.relationships[1].target == 0
     assert VG.relationships[1].caption == "REL2"
     assert VG.relationships[1].properties == {"weight": 2.0}
+
+
+def test_from_rel_dfs() -> None:
+    relationships = [
+        DataFrame(
+            {
+                "source": [0, 1],
+                "target": [1, 0],
+                "caption": ["REL", "REL2"],
+                "weight": [1.0, 2.0],
+            }
+        ),
+        DataFrame(
+            {
+                "source": [2, 3],
+                "target": [1, 0],
+                "caption": ["REL", "REL2"],
+                "weight": [1.0, 2.0],
+            }
+        ),
+    ]
+    VG = from_dfs(None, relationships)
+
+    assert len(VG.relationships) == 4
+    assert VG.nodes == [Node(id=id) for id in [0, 1, 2, 3]]
 
 
 def test_from_dfs() -> None:

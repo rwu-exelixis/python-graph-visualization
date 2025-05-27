@@ -38,6 +38,7 @@ The ``from_dfs`` method takes two mandatory positional parameters:
   on corresponding nodes under that field name.
   Otherwise, the column name will be a key in each node's `properties` dictionary, that maps to the node's corresponding
   value in the column.
+  If the graph has no node properties, the nodes can be derived from the relationships DataFrame alone.
 * A Pandas ``DataFrame``, or iterable (eg. list) of DataFrames representing the relationships of the graph.
   The rows of the DataFrame(s) should represent the individual relationships, and the columns should represent the
   relationship IDs and attributes.
