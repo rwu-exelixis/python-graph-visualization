@@ -13,5 +13,7 @@
 
 ## Improvements
 
+* Improved error messages when constructing `VisualizationGraph`s using `from_dfs`, `from_neo4j`, `from_gds` and `from_gql_create` methods
+
 
 ## Other changes
