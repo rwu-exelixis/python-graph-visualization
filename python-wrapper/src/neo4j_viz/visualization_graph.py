@@ -294,7 +294,8 @@ class VisualizationGraph:
             color = colors.get(node_to_attr(node))
 
             if color is None:
-                continue
+                node.color = Color('#cccccc') # rwu
+                # continue
 
             if node.color is not None and not override:
                 continue
