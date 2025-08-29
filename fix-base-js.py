@@ -1,22 +1,19 @@
 #!/bin/env python3
 
-# This script is used to modify the base.js file 
-# so it properly quote dict keys.
-# the js lib with un-quoted dict cannot be rendered
-# in Browser Safari but occasionally work in Chrome
-
+# This script modifies the base.js file 
+# dict keys are properly quoted.
+# without this fix, the output html object can only be rendered locally by chrome
+# but not remotes (via http) or by other browser (safari, firefox) in any way.
 
 # R WU Aug 2025
-# credit to CV 
+# credit to Charle V 
 
 import re,shutil,pathlib
 import os,sys
 
 # files in the current folder
 # this might change in a future release of neo4j_viz
-base_folder = pathlib.Path('./python-wrapper/src/neo4j_viz')
-resource_folder = base_folder / "resources"
-nvl_entry_point = resource_folder / "nvl_entrypoint"
+nvl_entry_point = pathlib.Path('./python-wrapper/src/neo4j_viz/resources/nvl_entrypoint')
 
 js_path = nvl_entry_point / "base.js" 
 js_ori_path = nvl_entry_point / "base.origin.js" 
